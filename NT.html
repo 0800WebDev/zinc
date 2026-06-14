@@ -62,14 +62,19 @@
     }
 
     .search-bar {
-        width: 100%;
-        padding: 15px 25px;
-        border-radius: 50px;
-        border: 3px solid #1a1a1a;
-        background: rgba(255, 255, 255, 0.2);
-        color: #1a1a1a;
-        font-size: 1.1rem;
-        outline: none;
+        width: 250px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: whitesmoke;
+    outline: none;
+    box-shadow: 0 0 5px rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+      text-align: center;
+       display: block;
+  margin: 0 auto;
     }
 
     #engine {
@@ -216,7 +221,7 @@
 
     function loadBackground() {
       const savedBg = localStorage.getItem('customBg');
-      document.body.style.backgroundImage = savedBg ? `url(${savedBg})` : "url('nexus.jpg')";
+      document.body.style.backgroundImage = savedBg ? `url(${savedBg})` : "url('bg.png')";
     }
     loadBackground();
 
@@ -290,7 +295,7 @@
       });
     }
 
-    const quotes = ["Gaming Paradise", "Made by Bubber", "Bro just do your work", "Best Browser awarded by me"];
+    const quotes = ["Gaming Paradise", "Made by 0800", "Bro just do your work", "Best Browser awarded by me"];
     $('#quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
     renderCustom();
   </script>
