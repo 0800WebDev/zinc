@@ -10,13 +10,39 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap');
     html, body {
-      
-        margin: 0;
+      margin: 0;
         padding: 0;
         min-height: 100vh;
         width: 100%;
         font-family: 'Sora', sans-serif;
-        background:
+        background-color: #1a1a1a;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover; /* Ensures image is full screen */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #000;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .glass-panel {
+       width:min(800px,90vw);
+  background:rgba(255,255,255,0.06);
+  border:1px solid #444;
+  border-radius:8px;
+  backdrop-filter:blur(8px);
+  padding:30px;
+  text-align: center;
+    }
+
+    h1 {
+       text-align:center;
+  font-family:'Sora',sans-serif;
+
+  background:
     linear-gradient(
       115deg,
       #4a4a4a 0%,
@@ -42,26 +68,8 @@
 @keyframes chrome{
   from{background-position:0% 50%;}
   to{background-position:100% 50%;}
-    }
+}
 
-    .glass-panel {
-       width:min(800px,90vw);
-  background:rgba(255,255,255,0.06);
-  border:1px solid #444;
-  border-radius:8px;
-  backdrop-filter:blur(8px);
-  padding:30px;
-  text-align: center;
-    }
-
-    h1 {
-        font-size: 4rem;
-        margin: 0;
-        letter-spacing: 12px;
-        color: #1a1a1a;
-        font-weight: 900;
-        text-transform: uppercase;
-    }
 
     .time-container { margin: 10px 0 30px 0; }
     .clock { font-size: 3rem; font-weight: 700; color: #1a1a1a; }
