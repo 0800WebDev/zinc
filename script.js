@@ -1,3 +1,4 @@
+
 // =====================================================
 // CONFIGURATION - Gets from config.js
 // =====================================================
@@ -115,6 +116,76 @@ let tabs = [];
 let activeTabId = null;
 let nextTabId = 1;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function runInActiveFrame(code) {
+    const tab = getActiveTab();
+    const frame = tab?.frame?.frame;
+
+    if (!frame) return false;
+
+    try {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument;
+
+        if (!win || !doc) return false;
+
+        const script = doc.createElement("script");
+        script.textContent = `(function(){ try { ${code} } catch(e){ console.error(e); } })();`;
+        doc.documentElement.appendChild(script);
+        script.remove();
+
+        return true;
+    } catch (e) {
+        console.warn("Injection failed:", e);
+        return false;
+    }
+}
+
+function parseBookmarklet(input) {
+    if (!input) return null;
+    if (input.startsWith("javascript:")) {
+        return input.slice("javascript:".length);
+    }
+    return null;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =====================================================
 // UTILITIES
 // =====================================================
@@ -135,6 +206,32 @@ const notify = (type, title, message) => {
         Notify[type](title, message);
     }
 };
+
+
+
+
+function isBookmarklet(input) {
+    return input?.trim().startsWith("javascript:");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // =====================================================
 // INITIALIZATION
@@ -446,12 +543,30 @@ function handleSubmit(url) {
     let input = url ?? document.getElementById("address-bar").value.trim();
     if (!input) return;
 
+    // =========================
+    // BOOKMARKLET SUPPORT
+    // =========================
+    const bookmarkletCode = parseBookmarklet(input);
+
+    if (bookmarkletCode) {
+        const ok = runInActiveFrame(bookmarkletCode);
+
+        if (!ok) {
+            notify('error', 'Bookmarklet failed', 'Could not inject into page');
+        }
+
+        return; // IMPORTANT: do not navigate
+    }
+
+    // =========================
+    // NORMAL NAVIGATION
+    // =========================
     if (!input.startsWith('http')) {
-        input = input.includes('.') && !input.includes(' ') 
+        input = input.includes('.') && !input.includes(' ')
             ? `https://${input}`
             : `https://search.brave.com/search?q=${encodeURIComponent(input)}`;
     }
-    
+
     tab.loading = true;
     showIframeLoading(true, input);
     updateLoadingBar(tab, 10);
