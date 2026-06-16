@@ -124,20 +124,6 @@ let nextTabId = 1;
 
 
 
-if (input.startsWith("zinc://")) {
-    const target = input.slice("zinc://".length).trim();
-
-    if (!target) return;
-
-    const internalUrl = `${target}.html`;
-
-    tab.loading = true;
-    showIframeLoading(true, internalUrl);
-    updateLoadingBar(tab, 10);
-
-    tab.frame.go(internalUrl);
-    return;
-}
 
 
 
@@ -234,6 +220,20 @@ function isBookmarklet(input) {
 
 
 
+if (input.startsWith("zinc://")) {
+    const target = input.slice("zinc://".length).trim();
+
+    if (!target) return;
+
+    const internalUrl = `${target}.html`;
+
+    tab.loading = true;
+    showIframeLoading(true, internalUrl);
+    updateLoadingBar(tab, 10);
+
+    tab.frame.go(internalUrl);
+    return;
+}
 
 
 
