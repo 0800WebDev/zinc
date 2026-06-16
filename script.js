@@ -551,7 +551,7 @@ if (input.startsWith("zinc://")) {
     const target = input.slice("zinc://".length).trim();
     if (!target) return;
 
-    const internalUrl = `${target}.html`;
+    const internalUrl = `internal/${target}.html`;
 
     tab.loading = true;
     showIframeLoading(true, internalUrl);
