@@ -40,11 +40,54 @@
                     <button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button>
                 </div>
             </div>
+            
             <div class="settings-footer">
                 Lower ping = faster browsing
+
+
+                
+                <div class="settings-header">
+                <h2> User Settings</h2>
+            </div>
+            <div class="settings-content">
+               
+                <div class="section-title"><i class="fa-solid fa-plus-circle"></i>Tab title</div>
+                <div class="custom-input-group">
+                    <input type="text" id="titleInput" placeholder="Google Classroom">
+                </div>
+            </div>
+
+<div class="section-title"><i class="fa-solid fa-plus-circle"></i>Favicon</div>
+                <div class="custom-input-group">
+                    <input type="text" id="faviconInput" placeholder="favicon.ico">
+                    <button onclick="applyChanges()">Apply</button>
+                </div>
+            </div>
+                
             </div>
         </div>
     </div>
+
+
+<script>
+function applyChanges() {
+  const title = document.getElementById("titleInput").value;
+  const favicon = document.getElementById("faviconInput").value;
+
+  document.title = title;
+
+  let link = document.querySelector("link[rel~='icon']");
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "icon";
+    document.head.appendChild(link);
+  }
+
+  link.href = favicon;
+}
+</script>
+
+    
 </body>
 
 </html>
