@@ -5,3 +5,4 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 - its static
 - easy to manage
 - simple interface
+- javascript: support
