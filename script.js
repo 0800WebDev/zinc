@@ -220,20 +220,7 @@ function isBookmarklet(input) {
 
 
 
-if (input.startsWith("zinc://")) {
-    const target = input.slice("zinc://".length).trim();
 
-    if (!target) return;
-
-    const internalUrl = `${target}.html`;
-
-    tab.loading = true;
-    showIframeLoading(true, internalUrl);
-    updateLoadingBar(tab, 10);
-
-    tab.frame.go(internalUrl);
-    return;
-}
 
 
 
@@ -556,6 +543,30 @@ function handleSubmit(url) {
     let input = url ?? document.getElementById("address-bar").value.trim();
     if (!input) return;
 
+
+
+
+
+if (input.startsWith("zinc://")) {
+    const target = input.slice("zinc://".length).trim();
+
+    if (!target) return;
+
+    const internalUrl = `internal/${target}.html`;
+
+    tab.loading = true;
+    showIframeLoading(true, internalUrl);
+    updateLoadingBar(tab, 10);
+
+    tab.frame.go(internalUrl);
+    return;
+}
+
+
+
+
+
+    
     // =========================
     // BOOKMARKLET SUPPORT
     // =========================
