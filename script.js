@@ -3,7 +3,11 @@
 // CONFIGURATION - Gets from config.js
 // =====================================================
 const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://wisp.mercurywork.shop/";
-const WISP_SERVERS = [{ name: "MercuryWorkshop", url: "wss://wisp.mercurywork.shop/" }];
+const WISP_SERVERS = [
+    { name: "MercuryWorkshop", url: "wss://wisp.mercurywork.shop/" },
+    { name: "PGIS", url: "wss://pgis-wisp.onrender.com/" }
+
+];
 
 // Initialize default proxy server if not set
 if (!localStorage.getItem("proxServer")) {
