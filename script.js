@@ -4,8 +4,9 @@
 // =====================================================
 const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.onrender.com/";
 const WISP_SERVERS = [
-    { name: "PGIS", url: "wss://pgis-wisp.onrender.com/" },
-    { name: "MercuryWorkshop", url: "wss://wisp.mercurywork.shop/" }
+    { name: "PGIS wisp server", url: "wss://pgis-wisp.onrender.com/" },
+    { name: "PGIS Ƥr0xy", url: "wss://homework--spmspy0800.replit.app/wisp/" },
+    { name: "MercuryWorkshop", url: "wss://wisp.mercurywork.shop/" }, 
 
 ];
 
