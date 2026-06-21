@@ -7,7 +7,8 @@ const WISP_SERVERS = [
     { name: "PGIS wisp server", url: "wss://pgis-wisp.onrender.com/" },
     { name: "PGIS Ƥr0xy", url: "wss://homework--spmspy0800.replit.app/wisp/" },
     { name: "MercuryWorkshop", url: "wss://wisp.mercurywork.shop/" }, 
-
+    { name: "TOMP Bare Server", url: "wss://bare-server.fly.dev/wisp/" }
+    
 ];
 
 // Initialize default proxy server if not set
