@@ -2,7 +2,7 @@
 // =====================================================
 // CONFIGURATION - Gets from config.js
 // =====================================================
-const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://wisp.mercurywork.shop/";
+const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.onrender.com/";
 const WISP_SERVERS = [
     { name: "PGIS", url: "wss://pgis-wisp.onrender.com/" },
     { name: "MercuryWorkshop", url: "wss://wisp.mercurywork.shop/" }
