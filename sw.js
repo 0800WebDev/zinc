@@ -1,4 +1,4 @@
-
+console.log("SW started");
 const ADBLOCK = {
     blocked: [
   "googlevideo.com/videoplayback",
