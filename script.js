@@ -903,6 +903,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 <br> <br>
                 <small style="
                 color:white;
+                text-align: left;
                 ">Zinc</small>
             </div>
         </div>
