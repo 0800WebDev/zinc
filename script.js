@@ -900,6 +900,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 >
                     Refresh
                 </button>
+                <br> <br>
                 <small style="
                 color:white;
                 ">Zinc</small>
