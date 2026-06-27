@@ -870,6 +870,25 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         await initializeBrowser();
     } catch (err) {
-        console.error("Initialization error:", err);
+    console.error("Initialization error:", err);
+
+    document.body.innerHTML = `
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+            background:#0a0a0a;
+            color:white;
+            font-family:Inter,sans-serif;
+            text-align:center;
+            padding:20px;
+        ">
+            <div>
+                <h1>Initialization Failed</h1>
+                <p>${err.message}</p>
+            </div>
+        </div>
+    `;
     }
 });
