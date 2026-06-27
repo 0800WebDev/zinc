@@ -887,6 +887,22 @@ document.addEventListener('DOMContentLoaded', async function () {
             <div>
                 <h1>Initialization Failed</h1>
                 <p>${err.message}</p>
+                <button
+                    onclick="location.reload()"
+                    style="
+                        margin-top:20px;
+                        padding:10px 20px;
+                        border:none;
+                        border-radius:8px;
+                        cursor:pointer;
+                        font-size:16px;
+                    "
+                >
+                    Refresh
+                </button>
+                <small style="
+                color:white;
+                ">Zinc</small>
             </div>
         </div>
     `;
