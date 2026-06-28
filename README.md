@@ -12,7 +12,7 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 - zinc://storage
 
 ## official links
-- https://zinc-browser.vercel.app
+- https://zinc-browser.vercel.app (official)
 - https://zinc-proxy.vercel.app
 - https://zinc.chemistry.bumon.ar
 - https://zinc.math.bumon.ar
