@@ -13,6 +13,8 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 
 ## official links
 - https://zinc-browser.vercel.app
+- https://zinc-proxy.vercel.app
+- https://zinc.chemistry.bumon.ar
 - https://zinc.math.bumon.ar
 
 default wisp server:   
