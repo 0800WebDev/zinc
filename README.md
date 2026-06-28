@@ -10,3 +10,8 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 ## internal urls
 - zinc://newtab
 - zinc://storage
+
+## official links
+- https://zinc-browser.vercel.app
+- zinc.math.bumon.ar
+default wisp server: wss://pgis-wisp.onrender.com
