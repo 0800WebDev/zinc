@@ -15,4 +15,5 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 - https://zinc-browser.vercel.app
 - zinc.math.bumon.ar
 
-default wisp server: wss://pgis-wisp.onrender.com
+default wisp server:   
+[wss://pgis-wisp.onrender.com](https://pgis-wisp.onrender.com)
