@@ -182,15 +182,16 @@
       .title {
     position: relative;
 }
-      /*
+      
       .logo {
     position: absolute;
     right: calc(50% + 120px); 
     top: 50%;
     transform: translateY(-50%);
-    height: 50px;
+    height: 100%;
+    width: auto;
       }
-*/
+
       
   </style>
 </head>
@@ -209,7 +210,7 @@
     </div>
 
     <form class="search-container" id="searchForm">
-      <img src="Zinc.png" height="10px" class="logo">
+      <img src="Zinc.png" class="logo">
       <input type="text" id="searchInput" class="search-bar" placeholder="Search the web..." autocomplete="off">
       <select id="engine">
         <option value="https://search.brave.com/search?q=">Brave</option>
