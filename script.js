@@ -901,10 +901,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     Refresh
                 </button>
                 <br> <br>
-                <small style="
-                color:white;
-                text-align: left;
-                ">Zinc</small>
+                <small>If the problem continues, try switching to a desktop or different browser. </small>
             </div>
         </div>
     `;
