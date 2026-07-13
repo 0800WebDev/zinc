@@ -177,9 +177,20 @@
     @keyframes spin { to { transform: rotate(360deg); } }
      .date { color: white;}
 
+      
+      
+      .title {
+    position: relative;
+}
       .logo {
-        height: 50px;
+    position: absolute;
+    right: calc(50% + 120px); /* adjust this value */
+    top: 50%;
+    transform: translateY(-50%);
+    height: 50px;
       }
+
+      
   </style>
 </head>
 
@@ -187,8 +198,11 @@
   <div class="loader" id="loader"><div class="spinner"></div></div>
 
   <div class="glass-panel">
- <img src="Zinc.png" class="logo"><h1>Zinc</h1>
     
+<div class="title">
+    <img src="Zinc.png" class="logo">
+    <h1>Zinc</h1>
+</div>
     <div class="time-container">
       <div class="clock" id="clock">00:00</div>
       <div class="date" id="date">LOADING...</div>
