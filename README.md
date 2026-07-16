@@ -21,3 +21,8 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 
 default wisp server:   
 [wss://pgis-wisp.onrender.com](https://pgis-wisp.onrender.com)
+
+---
+Zinc is open source and free to use under the MIT License.
+
+You are welcome to fork, modify, and redistribute Zinc. However, if you distribute a modified version, you must replace all Zinc branding, including the name, logo, icons, and other visual identity, with your own. This helps distinguish community forks from the official Zinc project.
