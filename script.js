@@ -6,22 +6,22 @@ const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.onrende
 const WISP_SERVERS = [
     {
         group: "PGIS Wisp",
-        name: "Server 1",
+        name: "Frankfurt (EU Central)",
         url: "wss://pgis-wisp.onrender.com/"
     },
     {
         group: "PGIS Wisp",
-        name: "Server 2",
+        name: "Ohio (US East)",
         url: "wss://pgis-wisp-2.onrender.com/"
     },
     {
         group: "PGIS Wisp",
-        name: "Server 3",
+        name: "Singapore (Southeast Asia)",
         url: "wss://pgis-wisp-3.onrender.com/"
     },
     {
         group: "PGIS Wisp",
-        name: "Server 4",
+        name: "Oregon (US West)",
         url: "wss://pgis-wisp-4.onrender.com/"
     },
     {
