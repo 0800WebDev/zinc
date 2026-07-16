@@ -6,6 +6,8 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 - easy to manage
 - simple interface
 - javascript: support
+- tab cloaking
+- variety of wisp servers to choose from
 
 ## internal urls
 - zinc://newtab
