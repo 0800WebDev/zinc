@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGIS Portable Games</title>
+
+<style>
+body{
+    margin:0;
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+h1{
+    text-align:center;
+    padding:20px;
+}
+
+#games{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.game{
+    background:#1e1e1e;
+    border-radius:12px;
+    overflow:hidden;
+    text-align:center;
+}
+
+.game img{
+    width:100%;
+    aspect-ratio:16/9;
+    object-fit:cover;
+}
+
+.game h3{
+    margin:10px;
+    font-size:18px;
+}
+
+.game button{
+    width:90%;
+    margin:10px;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#4CAF50;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+
+#launcher{
+    display:none;
+    width:100%;
+    height:100vh;
+    background:white;
+}
+</style>
+</head>
+<body>
+
+<div id="browser">
+    <h1>PGIS Portable Games</h1>
+    <div id="games"></div>
+</div>
+
+<div id="launcher"></div>
+
+<script>
+const BASE = "https://pgis3.vercel.app";
+
+async function loadGames() {
+    const names = await fetch(`${BASE}/games.json`).then(r => r.json());
+
+    const container = document.getElementById("games");
+
+    for (const name of names) {
+        const card = document.createElement("div");
+        card.className = "game";
+
+        card.innerHTML = `
+            <img src="${BASE}/games/${encodeURIComponent(name)}.png">
+            <h3>${name}</h3>
+            <button>Play</button>
+        `;
+
+        card.querySelector("button").onclick = () => playGame(name);
+
+        container.appendChild(card);
+    }
+}
+
+async function playGame(name) {
+    const html = await fetch(`${BASE}/games/${encodeURIComponent(name)}.html`)
+        .then(r => r.text());
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    document.getElementById("browser").style.display = "none";
+
+    const launcher = document.getElementById("launcher");
+    launcher.style.display = "block";
+    launcher.innerHTML = "";
+
+    // Copy CSS
+    document.querySelectorAll("[data-pgis]").forEach(e => e.remove());
+
+    doc.head.querySelectorAll("link,style").forEach(el=>{
+        const copy = el.cloneNode(true);
+        copy.dataset.pgis = "";
+        document.head.appendChild(copy);
+    });
+
+    // Load body
+    launcher.append(...doc.body.childNodes);
+
+    // Execute scripts
+    doc.querySelectorAll("script").forEach(oldScript=>{
+        const script = document.createElement("script");
+
+        for(const attr of oldScript.attributes){
+            script.setAttribute(attr.name, attr.value);
+        }
+
+        script.textContent = oldScript.textContent;
+        script.dataset.pgis = "";
+
+        document.body.appendChild(script);
+    });
+}
+
+loadGames();
+</script>
+
+</body>
+</html>
