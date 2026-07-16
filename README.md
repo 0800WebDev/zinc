@@ -1,5 +1,6 @@
 # zinc
-basicly pgis proxy but with its own branding, tabs, static and other stuff
+Zinc is a lightweight, static proxy browser with many features designed for a simple and flexible browsing experience.
+
 ## features:
 - scramjet
 - its static
