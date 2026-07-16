@@ -22,7 +22,7 @@ basicly pgis proxy but with its own branding, tabs, static and other stuff
 default wisp server:   
 [wss://pgis-wisp.onrender.com](https://pgis-wisp.onrender.com)
 
-## Credit
+## Credits
 
 [staticsjv2](https://github.com/Destroyed12121/staticsjv2)
 ---
