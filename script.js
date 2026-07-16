@@ -5,14 +5,24 @@ const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.onrende
 
 const WISP_SERVERS = [
     {
-        group: "Official PGIS",
-        name: "PGIS wisp server",
+        group: "PGIS Wisp",
+        name: "Server 1",
         url: "wss://pgis-wisp.onrender.com/"
     },
     {
-        group: "Official PGIS",
-        name: "PGIS Ƥr0xy",
-        url: "wss://homework--spmspy0800.replit.app/wisp/"
+        group: "PGIS Wisp",
+        name: "Server 2",
+        url: "wss://pgis-wisp-2.onrender.com/"
+    },
+    {
+        group: "PGIS Wisp",
+        name: "Server 3",
+        url: "wss://pgis-wisp-3.onrender.com/"
+    },
+    {
+        group: "PGIS Wisp",
+        name: "Server 4",
+        url: "wss://pgis-wisp-4.onrender.com/"
     },
     {
         group: "Public",
@@ -23,7 +33,12 @@ const WISP_SERVERS = [
         group: "Public",
         name: "TOMP Bare Server",
         url: "wss://bare-server.fly.dev/wisp/"
-    }
+    },
+    {
+        group: "Other",
+        name: "PGIS Ƥr0xy",
+        url: "wss://homework--spmspy0800.replit.app/wisp/"
+    },
 ];
 
 
