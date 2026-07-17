@@ -15,6 +15,7 @@ Zinc is a lightweight, static proxy browser with many features designed for a si
 - zinc://storage
 - zinc://about
 - zinc://games
+- zinc://urls
 
 ## official links
 - https://zinc-browser.vercel.app (Main)
