@@ -325,7 +325,7 @@ async function openExtensionUrl(url) {
     console.log("ID:", extensionId);
     console.log("File:", file);
 
-    const html = await getExtensionFile(extensionId, file);
+    const html = await buildExtensionPage(extensionId, file);
 
     console.log("HTML:", html);
 
