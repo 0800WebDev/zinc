@@ -9,6 +9,7 @@ Zinc is a lightweight, static proxy browser with many features designed for a si
 - javascript: support
 - tab cloaking
 - variety of wisp servers to choose from
+- costum extensions (Beta)
 
 ## internal urls
 - zinc://newtab
