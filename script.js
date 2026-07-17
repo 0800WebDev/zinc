@@ -312,17 +312,22 @@ async function getExtensionFile(extensionId, filename) {
 
 async function openExtensionUrl(url) {
 
+    console.log("Opening:", url);
+
     const tab = getActiveTab();
 
     const path = url.slice("extension://".length);
-
     const parts = path.split("/");
 
     const extensionId = parts.shift();
-
     const file = parts.join("/") || "popup.html";
 
+    console.log("ID:", extensionId);
+    console.log("File:", file);
+
     const html = await getExtensionFile(extensionId, file);
+
+    console.log("HTML:", html);
 
     if (!html) {
         notify("error", "Extension", "Page not found");
@@ -334,6 +339,8 @@ async function openExtensionUrl(url) {
     });
 
     const blobUrl = URL.createObjectURL(blob);
+
+    console.log("Blob:", blobUrl);
 
     tab.frame.frame.src = blobUrl;
 }
