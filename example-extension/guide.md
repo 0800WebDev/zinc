@@ -5,6 +5,7 @@ An extension in Zinc is basicly a costum website that runs inside zinc and can i
 to make an extension you have to have to at least have two essential files:
 1. manifest.json
 2. popup.html
+
 you can find examples of both files in this folder, making the extension itself is just like making any other web app.
 ## importing extensions
 to import an extension all you gotta do is upload your folder containing the extension files in the settings page accessed via the button on the top right.
