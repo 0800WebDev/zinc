@@ -86,6 +86,16 @@ async function importExtension(files) {
 
     tx.objectStore(STORE_NAME).put(extension);
 
+
+
+
+console.log("Stored extension:", extension);
+
+
+
+
+
+    
     return new Promise(resolve => {
 
         tx.oncomplete = () => {
