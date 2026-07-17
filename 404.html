@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <script>
+if (location.pathname.startsWith("/internal/")) {
+    if (document.referrer && new URL(document.referrer).origin === location.origin) {
+        history.back();
+    } else {
+        location.href = "/NT.html";
+    }
+}
+  </script>
+</head>
+<body>
+   <div style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+            background:#0a0a0a;
+            color:white;
+            font-family:Inter,sans-serif;
+            text-align:center;
+            padding:20px;
+        ">
+            <div>
+                <h1>404</h1>
+                <p>not found</p>
+                <button
+                    onclick="if (document.referrer && new URL(document.referrer).origin === location.origin) {
+        history.back();
+    }"
+                    style="
+                        margin-top:20px;
+                        padding:10px 20px;
+                        border:none;
+                        border-radius:8px;
+                        cursor:pointer;
+                        font-size:16px;
+                    "
+                >
+                    Return
+                </button>
+                <br> <br>
+                <small></small>
+            </div>
+   </div>
+</body>
+</html>
