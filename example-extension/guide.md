@@ -6,9 +6,10 @@ to make an extension you have to have to at least have two essential files:
 1. manifest.json
 2. popup.html
 
-you can find examples of both files in this folder, making the extension itself is just like making any other web app.
+you can find examples of both files in this folder, making the extension itself is just like making any other website.
 ## importing extensions
 to import an extension all you gotta do is upload your folder containing the extension files in the settings page accessed via the button on the top right.
+
 **only import extensions you trust, if anyone has shared an extension with you, make sure to double check it. extensions can run malicious scripts to steal your data, make the site unusable**
 ## Other info
 right now the extension system is very simple and still in beta, here are some features that we plan on adding:
