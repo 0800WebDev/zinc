@@ -275,6 +275,41 @@ function isBookmarklet(input) {
 
 
 
+async function openExtensionUrl(url) {
+
+    const tab = getActiveTab();
+
+    const path = url.slice("extension://".length);
+
+    const parts = path.split("/");
+
+    const extensionId = parts.shift();
+
+    const file = parts.join("/") || "popup.html";
+
+    const html = await getExtensionFile(extensionId, file);
+
+    if (!html) {
+        notify("error", "Extension", "Page not found");
+        return;
+    }
+
+    const blob = new Blob([html], {
+        type: "text/html"
+    });
+
+    const blobUrl = URL.createObjectURL(blob);
+
+    tab.frame.frame.src = blobUrl;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -595,7 +630,10 @@ function handleSubmit(url) {
     if (!input) return;
 
 
-
+if (input.startsWith("extension://")) {
+    await openExtensionUrl(input);
+    return;
+}
 
 
 if (input.startsWith("zinc://")) {
