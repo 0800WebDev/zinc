@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Opening...</title>
+</head>
+<body>
+<script>
+const url = "https://github.com/0800WebDev/zinc";
+
+window.open(url, "_blank");
+
+if (history.length > 1) {
+    history.back();
+} else {
+    location.replace("zinc://newtab");
+}
+</script>
+</body>
+</html>
