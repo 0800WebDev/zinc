@@ -1,0 +1,8 @@
+{
+    "id": "example-extension",
+    "name": "Example Extension",
+    "version": "1.0",
+    "description": "Example extension for Zinc.",
+    "icon": "",
+    "popup": "popup.html"
+}
