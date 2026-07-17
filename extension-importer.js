@@ -116,3 +116,46 @@ document
     }
 
 });
+
+
+
+
+
+
+
+
+
+
+async function getExtension(extensionId) {
+
+    const db = await openDB();
+
+    return new Promise(resolve => {
+
+        const tx = db.transaction(STORE_NAME, "readonly");
+
+        const request = tx.objectStore(STORE_NAME).get(extensionId);
+
+        request.onsuccess = () => {
+            resolve(request.result || null);
+        };
+
+        request.onerror = () => {
+            resolve(null);
+        };
+
+    });
+}
+
+
+async function getExtensionFile(extensionId, filename) {
+
+    const extension = await getExtension(extensionId);
+
+    if (!extension) {
+        console.error("Extension not found:", extensionId);
+        return null;
+    }
+
+    return extension.files[filename]?.data ?? null;
+}
