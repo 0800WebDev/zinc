@@ -31,7 +31,7 @@ const WISP_SERVERS = [
     },
     {
         group: "Public",
-        name: "TOMP Bare Server",
+        name: "TOMP Bare Server (best for youtube)",
         url: "wss://bare-server.fly.dev/wisp/"
     },
     {
