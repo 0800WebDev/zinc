@@ -169,3 +169,71 @@ async function getExtensionFile(extensionId, filename) {
 
     return extension.files[filename]?.data ?? null;
 }
+
+
+
+
+
+
+
+
+
+
+
+async function buildExtensionPage(extensionId, filename) {
+
+    const extension = await getExtension(extensionId);
+
+    if (!extension) return null;
+
+    let html = extension.files[filename]?.data;
+
+    if (!html) return null;
+
+
+    // Replace CSS files
+    html = html.replace(
+        /<link\s+[^>]*href=["']([^"']+)["'][^>]*>/gi,
+        (match, path) => {
+
+            const file = extension.files[path];
+
+            if (!file) return match;
+
+            return `<style>${file.data}</style>`;
+        }
+    );
+
+
+    // Replace JavaScript files
+    html = html.replace(
+        /<script\s+src=["']([^"']+)["']\s*><\/script>/gi,
+        (match, path) => {
+
+            const file = extension.files[path];
+
+            if (!file) return match;
+
+            return `<script>${file.data}<\/script>`;
+        }
+    );
+
+
+    // Replace images
+    html = html.replace(
+        /src=["']([^"']+)["']/gi,
+        (match, path) => {
+
+            const file = extension.files[path];
+
+            if (!file || !file.type.startsWith("image/")) {
+                return match;
+            }
+
+            return `src="${file.data}"`;
+        }
+    );
+
+
+    return html;
+}
