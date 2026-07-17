@@ -624,7 +624,7 @@ function updateAddressBar() {
     }
 }
 
-function handleSubmit(url) {
+async function handleSubmit(url) {
     const tab = getActiveTab();
     let input = url ?? document.getElementById("address-bar").value.trim();
     if (!input) return;
