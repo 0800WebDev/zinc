@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zinc Browser - Version</title>
+
+<style>
+body {
+    background: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 40px;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #333;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    color: #aaa;
+}
+
+.value {
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="row">
+<span class="label">Version</span>
+<span class="value">1.5.0 Stable</span>
+</div>
+
+<div class="row">
+<span class="label">Build</span>
+<span class="value">2026.07.17</span>
+</div>
+
+<div class="row">
+<span class="label">Engine</span>
+<span class="value">Scramjet + Wisp</span>
+</div>
+
+<div class="row">
+<span class="label">User Agent</span>
+<span class="value" id="ua">Loading...</span>
+</div>
+
+<div class="row">
+<span class="label">License</span>
+<span class="value">MIT</span>
+</div>
+
+<div class="row">
+<span class="label">Build Date</span>
+<span class="value">July 17, 2026</span>
+</div>
+
+<div class="row">
+<span class="label">Browser ID</span>
+<span class="value" id="browserID"></span>
+</div>
+
+<div class="row">
+<span class="label">Developer</span>
+<span class="value">0800</span>
+</div>
+
+</div>
+
+<script>
+document.getElementById("ua").textContent = navigator.userAgent;
+
+let id = localStorage.getItem("zincID");
+
+if (!id) {
+    id = "zinc-" + Math.random().toString(36).substring(2,8);
+    localStorage.setItem("zincID", id);
+}
+
+document.getElementById("browserID").textContent = id;
+</script>
+
+</body>
+</html>
