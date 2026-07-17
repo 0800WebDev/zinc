@@ -268,7 +268,42 @@ function isBookmarklet(input) {
 
 
 
+async function getExtension(extensionId) {
+    const db = await openDB();
 
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction("extensions", "readonly");
+        const request = tx.objectStore("extensions").get(extensionId);
+
+        request.onsuccess = () => {
+            resolve(request.result || null);
+        };
+
+        request.onerror = () => {
+            resolve(null);
+        };
+    });
+}
+
+
+async function getExtensionFile(extensionId, filename) {
+
+    const extension = await getExtension(extensionId);
+
+    if (!extension) {
+        console.error("Extension not found:", extensionId);
+        return null;
+    }
+
+    const file = extension.files[filename];
+
+    if (!file) {
+        console.error("File not found:", filename);
+        return null;
+    }
+
+    return file.data;
+}
 
 
 
