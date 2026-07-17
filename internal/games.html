@@ -103,40 +103,31 @@ async function playGame(name) {
     const html = await fetch(`${BASE}/games/${encodeURIComponent(name)}.html`)
         .then(r => r.text());
 
-    const doc = new DOMParser().parseFromString(html, "text/html");
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
 
     document.getElementById("browser").style.display = "none";
 
     const launcher = document.getElementById("launcher");
     launcher.style.display = "block";
-    launcher.innerHTML = "";
+    launcher.innerHTML = `
+        <button id="back">← Back</button>
+        <iframe
+            id="game"
+            src="${url}"
+            style="width:100%;height:calc(100vh - 50px);border:none;"
+        ></iframe>
+    `;
 
-    // Copy CSS
-    document.querySelectorAll("[data-pgis]").forEach(e => e.remove());
+    document.getElementById("back").onclick = () => {
+        URL.revokeObjectURL(url);
 
-    doc.head.querySelectorAll("link,style").forEach(el=>{
-        const copy = el.cloneNode(true);
-        copy.dataset.pgis = "";
-        document.head.appendChild(copy);
-    });
+        launcher.style.display = "none";
+        launcher.innerHTML = "";
 
-    // Load body
-    launcher.append(...doc.body.childNodes);
-
-    // Execute scripts
-    doc.querySelectorAll("script").forEach(oldScript=>{
-        const script = document.createElement("script");
-
-        for(const attr of oldScript.attributes){
-            script.setAttribute(attr.name, attr.value);
-        }
-
-        script.textContent = oldScript.textContent;
-        script.dataset.pgis = "";
-
-        document.body.appendChild(script);
-    });
-}
+        document.getElementById("browser").style.display = "block";
+    };
+    }
 
 loadGames();
 </script>
