@@ -14,5 +14,5 @@ to import an extension all you gotta do is upload your folder containing the ext
 ## Other info
 right now the extension system is very simple and still in beta, here are some features that we plan on adding:
 1. background.js that runs on start
-2. zinc://extension page to manage extension
+2. zinc://extensions page to manage extensions
 3. proxy site interactivity (costum javascript inside proxied page)
