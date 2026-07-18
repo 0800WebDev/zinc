@@ -12,7 +12,7 @@ to import an extension all you gotta do is upload your folder containing the ext
 
 **only import extensions you trust, if anyone has shared an extension with you, make sure to double check it. extensions can run malicious scripts to steal your data or make the site unusable. import at your own risk**
 ## Other info
-right now the extension system is very simple and still in beta, here are some features that we plan on adding:
+right now the extension system is very simple and still in beta, here are some features that i plan on adding:
 1. background.js that runs on start
 2. zinc://extensions page to manage extensions
 3. proxy site interactivity (costum javascript inside proxied page)
