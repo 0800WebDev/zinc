@@ -565,6 +565,52 @@ document.addEventListener("click", () => {
 
     createTab(true);
     checkHashParameters();
+
+
+
+
+
+
+
+    
+
+
+
+window.addEventListener("message", async event => {
+
+    const data = event.data;
+
+    if (!data) return;
+
+    switch (data.type) {
+
+        case "zinc-execute-script":
+
+            const result = runInActiveFrame(data.code);
+
+            event.source.postMessage({
+                type: "zinc-response",
+                id: data.id,
+                result
+            }, "*");
+
+            break;
+
+    }
+
+});
+
+    
+
+
+
+
+
+
+
+
+
+    
 }
 
 // =====================================================
