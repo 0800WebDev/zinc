@@ -465,7 +465,7 @@ async function initializeBrowser() {
         <i class="fa-brands fa-github"></i> Github 
         </button>
         <button onclick="window.open('https://github.com/0800WebDev/zinc/issues/new', '_blank')" title="issue">
-           <i class="fa-brands fa-github"></i> Issue 
+           <i class="fa-solid fa-bug"></i> Issue 
         </button>
     </div>
 </div>       
