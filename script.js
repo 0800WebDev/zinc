@@ -1162,7 +1162,13 @@ document.addEventListener('DOMContentLoaded', async function () {
                 <small>If the problem continues, try switching to a desktop or different browser. </small>
             </div>
         </div>
+            <!--temporary eruda dev tools for testing--->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+eruda.init();
+</script>
     `;
+        eruda.init();
     }
 });
 
