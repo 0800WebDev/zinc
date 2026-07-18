@@ -191,6 +191,79 @@ async function buildExtensionPage(extensionId, filename) {
     if (!html) return null;
 
 
+
+
+
+
+
+    
+
+
+
+
+const runtime = `
+window.zinc = {
+
+    tabs: {
+
+        executeScript(code) {
+
+            return new Promise(resolve => {
+
+                const id = Math.random().toString(36).slice(2);
+
+                function listener(event) {
+
+                    if (
+                        event.data?.type === "zinc-response" &&
+                        event.data.id === id
+                    ) {
+
+                        window.removeEventListener("message", listener);
+
+                        resolve(event.data.result);
+
+                    }
+
+                }
+
+                window.addEventListener("message", listener);
+
+                window.parent.postMessage({
+                    type: "zinc-execute-script",
+                    id,
+                    code
+                }, "*");
+
+            });
+
+        }
+
+    }
+
+};
+`;
+
+html = html.replace(
+    "</head>",
+    `<script>${runtime}<\/script></head>`
+);
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
     // Replace CSS files
     html = html.replace(
         /<link\s+[^>]*href=["']([^"']+)["'][^>]*>/gi,
