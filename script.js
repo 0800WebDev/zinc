@@ -478,6 +478,34 @@ async function initializeBrowser() {
             </div>
         </div>`;
 
+
+
+
+
+
+    
+
+
+const toolsBtn = document.getElementById("tools-btn");
+const toolsMenu = document.getElementById("tools-menu");
+
+toolsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toolsMenu.style.display =
+        toolsMenu.style.display === "block" ? "none" : "block";
+});
+
+document.addEventListener("click", () => {
+    toolsMenu.style.display = "none";
+});
+
+
+
+    
+
+
+
+    
     // Cache DOM elements
     const elements = {
         backBtn: document.getElementById('back-btn'),
