@@ -1230,10 +1230,14 @@ function startBackground(extension, code) {
 
     };
 
-    new Function(
-        "zinc",
-        code
-    )(zinc);
+    try {
+    new Function("zinc", code)(zinc);
+} catch (e) {
+    console.error(
+        `Background script failed for ${extension.id}:`,
+        e
+    );
+}
 
 }
 
