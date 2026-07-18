@@ -460,6 +460,13 @@ async function initializeBrowser() {
 <button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
+<hr>
+<button title="github repository">
+           <a href="https://github.com/0800WebDev/zinc/" target="_blank"> <i class="fa-brands fa-github"></i>Github </a>
+        </button>
+        <button title="issue">
+           <a href="https://github.com/0800WebDev/zinc/issues/new" target="_blank"> <i class="fa-brands fa-github"></i> Issue </a>
+        </button>
     </div>
 </div>       
                             
