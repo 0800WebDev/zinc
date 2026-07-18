@@ -1270,4 +1270,4 @@ async function loadBackgroundScripts() {
 
 }
 
-await loadBackgroundScripts();
+loadBackgroundScripts();
