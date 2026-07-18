@@ -436,9 +436,29 @@ async function initializeBrowser() {
                     <input class="bar" id="address-bar" autocomplete="off" placeholder="Search or enter URL">
                     <button id="home-btn-nav" title="Home"><i class="fa-solid fa-house"></i></button>
                 </div>
-                <button id="devtools-btn" title="DevTools"><i class="fa-solid fa-code"></i></button>
-                <button id="wisp-settings-btn" title="Proxy Settings"><i class="fa-solid fa-gear"></i></button>
-            </div>
+                
+                            
+                            
+                     <div class="dropdown">
+    <button id="tools-btn" title="Tools">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="dropdown-menu" id="tools-menu">
+        <button id="devtools-btn" title="DevTools">
+            <i class="fa-solid fa-code"></i> DevTools
+        </button>
+
+        <button id="wisp-settings-btn" title="Proxy Settings">
+            <i class="fa-solid fa-gear"></i>Settings
+        </button>
+    </div>
+</div>       
+                            
+                            
+                            
+                            
+                            </div>
             <div class="loading-bar-container"><div class="loading-bar" id="loading-bar"></div></div>
             <div class="iframe-container" id="iframe-container">
                 <div id="loading" class="message-container" style="display: none;">
