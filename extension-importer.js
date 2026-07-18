@@ -310,3 +310,36 @@ html = html.replace(
 
     return html;
 }
+
+
+
+
+
+
+
+async function setExtensionEnabled(id, enabled) {
+
+    const db = await openDB();
+
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    const req = store.get(id);
+
+    req.onsuccess = () => {
+
+        const extension = req.result;
+
+        if (!extension) return;
+
+        extension.enabled = enabled;
+
+        store.put(extension);
+
+    };
+
+    return new Promise(resolve => {
+        tx.oncomplete = resolve;
+    });
+
+}
