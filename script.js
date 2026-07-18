@@ -1165,3 +1165,109 @@ document.addEventListener('DOMContentLoaded', async function () {
     `;
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =====================================================
+// EXTENSIONS
+// =====================================================
+
+function startBackground(extension, code) {
+
+    const zinc = {
+
+        runtime: {
+            id: extension.id,
+            manifest: extension.manifest
+        },
+
+        tabs: {
+
+            executeScript(script) {
+
+                return runInActiveFrame(script);
+
+            }
+
+        },
+
+        storage: {
+
+            get(key) {
+
+                return JSON.parse(
+                    localStorage.getItem(
+                        `${extension.id}:${key}`
+                    )
+                );
+
+            },
+
+            set(key, value) {
+
+                localStorage.setItem(
+                    `${extension.id}:${key}`,
+                    JSON.stringify(value)
+                );
+
+            }
+
+        }
+
+    };
+
+    new Function(
+        "zinc",
+        code
+    )(zinc);
+
+}
+
+async function loadBackgroundScripts() {
+
+    const db = await openDB();
+
+    const tx = db.transaction(STORE_NAME, "readonly");
+
+    const req = tx.objectStore(STORE_NAME).getAll();
+
+    req.onsuccess = () => {
+
+        for (const extension of req.result) {
+
+            if (extension.enabled === false)
+                continue;
+
+            const background = extension.manifest.background;
+
+            if (!background)
+                continue;
+
+            const file = extension.files[background];
+
+            if (!file)
+                continue;
+
+            startBackground(extension, file.data);
+
+        }
+
+    };
+
+}
+
+await loadBackgroundScripts();
