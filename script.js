@@ -461,11 +461,11 @@ async function initializeBrowser() {
     <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
 <hr>
-<button title="github repository">
-           <a href="https://github.com/0800WebDev/zinc/" target="_blank"> <i class="fa-brands fa-github"></i>Github </a>
+<button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
+        <i class="fa-brands fa-github"></i> Github 
         </button>
-        <button title="issue">
-           <a href="https://github.com/0800WebDev/zinc/issues/new" target="_blank"> <i class="fa-brands fa-github"></i> Issue </a>
+        <button onclick="window.open('https://github.com/0800WebDev/zinc/issues/new', '_blank')" title="issue">
+           <i class="fa-brands fa-github"></i> Issue 
         </button>
     </div>
 </div>       
