@@ -1,116 +1,188 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Extensions</title>
+    <meta charset="UTF-8">
+    <title>Extensions</title>
 
-<style>
-body{
-    font-family:sans-serif;
-    background:#111;
-    color:white;
-    margin:20px;
-}
+    <style>
+        body {
+            margin: 20px;
+            font-family: sans-serif;
+            background: #111;
+            color: white;
+        }
 
-#extensions{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
+        h1 {
+            margin-bottom: 20px;
+        }
 
-.extension{
-    background:#1b1b1b;
-    border-radius:10px;
-    padding:15px;
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
+        #extensions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-.extension img{
-    width:48px;
-    height:48px;
-    object-fit:contain;
-}
+        .extension {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #1b1b1b;
+            border-radius: 10px;
+            padding: 15px;
+        }
 
-.info{
-    flex:1;
-}
+        .extension img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            background: #222;
+            border-radius: 8px;
+        }
 
-button{
-    padding:8px 14px;
-    cursor:pointer;
-}
-</style>
+        .info {
+            flex: 1;
+        }
 
+        .info h2 {
+            margin: 0 0 5px;
+            font-size: 18px;
+        }
+
+        .info p {
+            margin: 3px 0;
+            color: #bbb;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            background: #2c2c2c;
+            color: white;
+        }
+
+        button:hover {
+            background: #3c3c3c;
+        }
+
+        .disabled {
+            opacity: .5;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Installed Extensions</h1>
+    <h1>Installed Extensions</h1>
 
-<div id="extensions"></div>
+    <div id="extensions"></div>
 
-<script src="../extension-importer.js"></script>
+    <script src="../extension-importer.js"></script>
 
-<script>
+    <script>
+        async function loadExtensions() {
 
-async function loadExtensions(){
+            const db = await openDB();
 
-    const db = await openDB();
+            const tx = db.transaction(STORE_NAME, "readonly");
 
-    const tx = db.transaction(STORE_NAME, "readonly");
+            const request = tx.objectStore(STORE_NAME).getAll();
 
-    const request = tx.objectStore(STORE_NAME).getAll();
+            request.onsuccess = () => {
 
-    request.onsuccess = ()=>{
+                const container = document.getElementById("extensions");
 
-        const container = document.getElementById("extensions");
+                container.innerHTML = "";
 
-        container.innerHTML = "";
+                for (const extension of request.result) {
 
-        for(const extension of request.result){
+                    const card = document.createElement("div");
 
-            const card = document.createElement("div");
-            card.className = "extension";
+                    card.className = "extension";
 
-            const iconPath = extension.manifest.icon;
+                    if (extension.enabled === false) {
+                        card.classList.add("disabled");
+                    }
 
-            const icon =
-                iconPath &&
-                extension.files[iconPath]
-                    ? extension.files[iconPath].data
-                    : "";
+                    const icon = extension.manifest.icon &&
+                        extension.files[extension.manifest.icon]
+                        ? extension.files[extension.manifest.icon].data
+                        : "";
 
-            card.innerHTML = `
-                <img src="${icon}">
-                <div class="info">
-                    <h2>${extension.manifest.name}</h2>
-                    <div>${extension.manifest.version}</div>
-                    <div>${extension.manifest.description || ""}</div>
-                </div>
-                <button>Open</button>
-            `;
+                    card.innerHTML = `
+                        <img src="${icon}">
+                        <div class="info">
+                            <h2>${extension.manifest.name}</h2>
+                            <p>Version ${extension.manifest.version}</p>
+                            <p>${extension.manifest.description || ""}</p>
+                        </div>
 
-            card.querySelector("button").onclick = ()=>{
+                        <div class="buttons">
 
-                parent.postMessage({
-                    type:"navigate",
-                    url:`extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
-                },"*");
+                            <button class="open">
+                                Open
+                            </button>
+
+                            <button class="toggle">
+                                ${(extension.enabled ?? true) ? "Disable" : "Enable"}
+                            </button>
+
+                            <button class="remove">
+                                Remove
+                            </button>
+
+                        </div>
+                    `;
+
+                    card.querySelector(".open").onclick = () => {
+
+                        parent.postMessage({
+                            type: "navigate",
+                            url: `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
+                        }, "*");
+
+                    };
+
+                    card.querySelector(".toggle").onclick = async () => {
+
+                        await setExtensionEnabled(
+                            extension.id,
+                            !(extension.enabled ?? true)
+                        );
+
+                        loadExtensions();
+
+                    };
+
+                    card.querySelector(".remove").onclick = async () => {
+
+                        if (!confirm(`Remove "${extension.manifest.name}"?`))
+                            return;
+
+                        await uninstallExtension(extension.id);
+
+                        loadExtensions();
+
+                    };
+
+                    container.appendChild(card);
+
+                }
 
             };
 
-            container.appendChild(card);
-
         }
 
-    };
-
-}
-
-loadExtensions();
-
-</script>
+        loadExtensions();
+    </script>
 
 </body>
+
 </html>
