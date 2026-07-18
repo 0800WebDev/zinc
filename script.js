@@ -36,7 +36,7 @@ const WISP_SERVERS = [
     },
     {
         group: "Other",
-        name: "PGIS Ƥr0xy",
+        name: "PGIS proxy",
         url: "wss://homework--spmspy0800.replit.app/wisp/"
     },
 ];
