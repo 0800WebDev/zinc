@@ -438,7 +438,9 @@ async function initializeBrowser() {
                 </div>
                 
                             
-                            
+                        
+                <button id="wisp-settings-btn" title="Proxy Settings"><i class="fa-solid fa-gear"></i></button>
+     
                      <div class="dropdown">
     <button id="tools-btn" title="Tools">
         <i class="fa-solid fa-bars"></i>
