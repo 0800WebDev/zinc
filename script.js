@@ -452,13 +452,13 @@ async function initializeBrowser() {
         <button id="wisp-settings-btn" title="Proxy Settings">
             <i class="fa-solid fa-gear"></i>Settings
         </button>
-
+<hr>
         <button onclick='handleSubmit("zinc://urls"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-link"></i> URLs <small>zinc://urls</small>
 </button>
 
 <button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
-    <i class="fa-solid fa-info"></i> About Zinc. <small>zinc://about</small>
+    <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
     </div>
 </div>       
