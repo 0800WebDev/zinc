@@ -456,10 +456,14 @@ async function initializeBrowser() {
             <i class="fa-solid fa-code"></i> DevTools
         </button>
 
-        <button id="wisp-settings-btn" title="Proxy Settings">
+        <button id="wisp-settings-btn-menu" title="Proxy Settings">
             <i class="fa-solid fa-gear"></i>Settings
         </button>
 <hr>
+ <button onclick='handleSubmit("zinc://extensions"); document.getElementById("tools-menu").style.display = "none";'>
+    <i class="fa-solid fa-plus"></i> Extensions <small>zinc://extensions</small>
+</button>
+
         <button onclick='handleSubmit("zinc://urls"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-link"></i> URLs <small>zinc://urls</small>
 </button>
@@ -467,6 +471,8 @@ async function initializeBrowser() {
 <button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
+<button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
+    <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 <hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
         <i class="fa-brands fa-github"></i> Github 
@@ -544,7 +550,7 @@ document.addEventListener("click", () => {
     document.getElementById('home-btn-nav').onclick = () => window.location.href = '../index.html';
     document.getElementById('devtools-btn').onclick = toggleDevTools;
     document.getElementById('wisp-settings-btn').onclick = openSettings;
-
+    document.getElementById('wisp-settings-btn-menu').onclick = openSettings;
     // Skip button logic
     elements.skipBtn.onclick = () => {
         const tab = getActiveTab();
