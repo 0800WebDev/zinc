@@ -480,7 +480,7 @@ async function initializeBrowser() {
         </button>
         <hr>
         <button onclick="window.open('https://zinc-byod.vercel.app/', '_blank')" title="github repository">
-        <i class="fa-regular fa-globe"></i> BYOD
+        <i class="fa-solid fa-globe"></i> BYOD
         </button>
         
     </div>
