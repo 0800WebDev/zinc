@@ -18,6 +18,8 @@ Zinc is a lightweight, static proxy browser with many features designed for a si
 - zinc://games
 - zinc://urls
 - zinc://version
+- zinc://extensions
+- zinc://changelog
 
 more at zinc://urls
 
