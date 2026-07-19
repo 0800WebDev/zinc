@@ -478,6 +478,11 @@ async function initializeBrowser() {
         <button onclick="window.open('https://github.com/0800WebDev/zinc/issues/new', '_blank')" title="issue">
            <i class="fa-solid fa-bug"></i> Issue 
         </button>
+        <hr>
+        <button onclick="window.open('https://zinc-byod.vercel.app/', '_blank')" title="github repository">
+        <i class="fa-regular fa-globe"></i> BYOD
+        </button>
+        
     </div>
 </div>       
                             
