@@ -471,8 +471,6 @@ async function initializeBrowser() {
 <button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
-<button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
-    <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 <hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
         <i class="fa-brands fa-github"></i> Github 
