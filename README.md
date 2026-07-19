@@ -10,7 +10,7 @@ Zinc is a lightweight, static proxy browser with many features designed for a si
 - tab cloaking
 - variety of wisp servers to choose from
 - costum extensions (example and guide in [/example-extension](https://github.com/0800WebDev/zinc/tree/main/example-extension))
-- [BYOD](https://zinc-byod.vercel.app/)
+- [BYOD](https://zinc-byod.vercel.app/) (Bring Your Own Domain)
 
 ## internal urls
 - zinc://newtab
