@@ -235,6 +235,10 @@ input.bar {
     font-family: inherit;
     outline: none;
     transition: all 0.15s;
+
+    
+    box-shadow: 0 0 5px rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
 }
 
 input.bar:focus {
@@ -678,4 +682,9 @@ input.bar::placeholder {
 
 .dropdown-menu button:hover {
     background: #333;
+}
+
+button {
+    box-shadow: 0 0 5px rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
 }
