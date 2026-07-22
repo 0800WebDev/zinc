@@ -483,7 +483,7 @@ async function initializeBrowser() {
         <i class="fa-solid fa-globe"></i> BYOD
         </button>
         <button onclick="window.open('https://ubghub.org/?site=Zinc', '_blank')" title="ubghub">
-        <i class=""></i> UBGHub
+        <i class="fa-solid fa-list"></i> UBGHub
         </button>
     </div>
 </div>       
