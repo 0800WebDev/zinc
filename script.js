@@ -479,10 +479,12 @@ async function initializeBrowser() {
            <i class="fa-solid fa-bug"></i> Issue 
         </button>
         <hr>
-        <button onclick="window.open('https://zinc-byod.vercel.app/', '_blank')" title="github repository">
+        <button onclick="window.open('https://zinc-byod.vercel.app/', '_blank')" title="byod">
         <i class="fa-solid fa-globe"></i> BYOD
         </button>
-        
+        <button onclick="window.open('https://ubghub.org/?site=Zinc', '_blank')" title="ubghub">
+        <i class=""></i> UBGHub
+        </button>
     </div>
 </div>       
                             
