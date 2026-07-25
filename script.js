@@ -1041,6 +1041,10 @@ function setWisp(url) {
     const oldUrl = localStorage.getItem('proxServer');
     localStorage.setItem('proxServer', url);
 
+    if (typeof trackWispServer === "function") {
+        trackWispServer(url);
+    }
+
     if (oldUrl !== url) {
         const serverName = [...WISP_SERVERS, ...getStoredWisps()].find(s => s.url === url)?.name ?? 'Custom Server';
         notify('success', 'Proxy Changed', `Switching to ${serverName}...`);
@@ -1049,7 +1053,6 @@ function setWisp(url) {
     navigator.serviceWorker.controller?.postMessage({ type: 'config', wispurl: url });
     setTimeout(() => location.reload(), 600);
 }
-
 // =====================================================
 // UTILITIES
 // =====================================================
