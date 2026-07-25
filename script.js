@@ -151,10 +151,15 @@ async function initializeWithBestServer() {
     const best = await findBestWispServer(allServers, currentUrl);
     
     if (best && best !== currentUrl) {
-        console.log("Init: Auto-switching to faster server:", best);
-        localStorage.setItem("proxServer", best);
-        const serverName = allServers.find(s => s.url === best)?.name || 'Faster Server';
-        notify('info', 'Auto-switched', `Using ${serverName} for best performance`);
+    console.log("Init: Auto-switching to faster server:", best);
+    localStorage.setItem("proxServer", best);
+
+    if (typeof trackWispServer === "function") {
+        trackWispServer(best);
+    }
+
+    const serverName = allServers.find(s => s.url === best)?.name || 'Faster Server';
+    notify('info', 'Auto-switched', `Using ${serverName} for best performance`);
     }
 }
 
