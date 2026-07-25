@@ -119,6 +119,38 @@ function applyChanges() {
 
 
     
-</body>
+
+<script>
+  // Vercel Web Analytics loader
+  window.va = window.va || function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+
+  // Wait until Vercel Analytics is ready
+  window.addEventListener("load", () => {
+    const wispServer = localStorage.getItem("wispServer");
+
+    if (wispServer) {
+      va("event", "wisp_server_used", {
+        server: wispServer
+      });
+    } else {
+      va("event", "wisp_server_used", {
+        server: "unknown"
+      });
+    }
+  });
+
+  // Function you can call when your proxy changes Wisp servers
+  window.trackWispServer = function(server) {
+    localStorage.setItem("wispServer", server);
+
+    va("event", "wisp_server_changed", {
+      server: server
+    });
+  };
+</script>
+
 <script defer src="/_vercel/insights/script.js"></script>
+</body>
 </html>
