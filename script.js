@@ -5,7 +5,7 @@ const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.onrende
 
 const WISP_SERVERS = [
     {
-        group: "PGIS Wisp",
+        group: "PGIS Wisp (down)",
         name: "1. Frankfurt (EU Central)",
         url: "wss://pgis-wisp.onrender.com/"
     },
