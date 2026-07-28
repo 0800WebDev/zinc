@@ -10,17 +10,17 @@ const WISP_SERVERS = [
         url: "wss://pgis-wisp.onrender.com/"
     },
     {
-        group: "PGIS Wisp",
+        group: "PGIS Wisp (down)",
         name: "2. Ohio (US East)",
         url: "wss://pgis-wisp-2.onrender.com/"
     },
     {
-        group: "PGIS Wisp",
+        group: "PGIS Wisp (down)",
         name: "3. Singapore (Southeast Asia)",
         url: "wss://pgis-wisp-3.onrender.com/"
     },
     {
-        group: "PGIS Wisp",
+        group: "PGIS Wisp (down)",
         name: "4. Oregon (US West)",
         url: "wss://pgis-wisp-4.onrender.com/"
     },
