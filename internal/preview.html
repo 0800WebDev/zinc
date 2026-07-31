@@ -214,63 +214,61 @@
 
 
   <script>
-(() => {
-    const input = document.querySelector("#searchInput");
-    if (!input) return;
+const input = document.querySelector("#searchInput");
+
+input.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
 
     let url = input.value.trim();
-    if (!/^https?:\/\//i.test(url)) {
-        url = "https://" + url;
-    }
+    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
 
-    document.documentElement.innerHTML = "";
-
+    document.body.innerHTML = "";
     document.body.style.margin = "0";
-    document.body.style.background = "#666";
+    document.body.style.background = "#777";
     document.body.style.overflow = "hidden";
 
-    const container = document.createElement("div");
-    container.style.position = "fixed";
-    container.style.inset = "0";
-    container.style.padding = "12px";
-    container.style.boxSizing = "border-box";
+    const bar = document.createElement("div");
+    bar.style.position = "fixed";
+    bar.style.top = "0";
+    bar.style.left = "0";
+    bar.style.right = "0";
+    bar.style.height = "28px";
+    bar.style.display = "flex";
+    bar.style.justifyContent = "space-between";
+    bar.style.alignItems = "center";
+    bar.style.padding = "0 10px";
+    bar.style.boxSizing = "border-box";
+    bar.style.fontFamily = "sans-serif";
+    bar.style.fontSize = "13px";
+    bar.style.color = "#fff";
+    bar.style.background = "#666";
+    bar.style.zIndex = "9999";
 
-    const frame = document.createElement("iframe");
-    frame.src = url;
-    frame.style.width = "100%";
-    frame.style.height = "100%";
-    frame.style.border = "2px solid #888";
-    frame.style.borderRadius = "6px";
-    frame.style.background = "#fff";
-
-    const preview = document.createElement("div");
+    const preview = document.createElement("span");
     preview.textContent = "Preview";
-    preview.style.position = "fixed";
-    preview.style.top = "16px";
-    preview.style.left = "20px";
-    preview.style.color = "#fff";
-    preview.style.font = "14px sans-serif";
-    preview.style.pointerEvents = "none";
-    preview.style.zIndex = "9999";
 
-    const loadedUrl = document.createElement("div");
+    const loadedUrl = document.createElement("span");
     loadedUrl.textContent = url;
-    loadedUrl.style.position = "fixed";
-    loadedUrl.style.top = "16px";
-    loadedUrl.style.right = "20px";
-    loadedUrl.style.color = "#fff";
-    loadedUrl.style.font = "14px sans-serif";
-    loadedUrl.style.pointerEvents = "none";
-    loadedUrl.style.zIndex = "9999";
-    loadedUrl.style.maxWidth = "50vw";
+    loadedUrl.style.whiteSpace = "nowrap";
     loadedUrl.style.overflow = "hidden";
     loadedUrl.style.textOverflow = "ellipsis";
-    loadedUrl.style.whiteSpace = "nowrap";
-    loadedUrl.style.textAlign = "right";
+    loadedUrl.style.maxWidth = "60%";
 
-    container.appendChild(frame);
-    document.body.append(container, preview, loadedUrl);
-})();
+    bar.append(preview, loadedUrl);
+
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.position = "fixed";
+    iframe.style.top = "28px";
+    iframe.style.left = "8px";
+    iframe.style.width = "calc(100vw - 16px)";
+    iframe.style.height = "calc(100vh - 36px)";
+    iframe.style.border = "2px solid #888";
+    iframe.style.background = "#fff";
+    iframe.style.boxSizing = "border-box";
+
+    document.body.append(bar, iframe);
+});
   </script>
 </body>
 </html>
