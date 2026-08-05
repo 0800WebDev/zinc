@@ -150,7 +150,19 @@ function applyChanges() {
     });
   };
 </script>
+<script>
+const direct = document.referrer === "";
 
+window.vercelFlags = {
+  direct_visit: direct
+};
+
+document.documentElement.setAttribute(
+  "data-flag-direct_visit",
+  direct ? "true" : "false"
+);
+</script>
+    
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
