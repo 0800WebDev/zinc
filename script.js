@@ -401,6 +401,38 @@ function removeBookmark(url) {
 
 
 
+function renderBookmarks() {
+    const toolbar = document.getElementById("toolbar");
+    if (!toolbar) return;
+
+    toolbar.innerHTML = "";
+
+    const bookmarks = getBookmarks();
+
+    bookmarks.forEach(bookmark => {
+        const button = document.createElement("button");
+
+        button.className = "bookmark-button";
+        button.textContent = bookmark.title;
+        button.title = bookmark.url;
+
+        button.onclick = () => {
+            handleSubmit(bookmark.url);
+        };
+
+        button.oncontextmenu = (e) => {
+            e.preventDefault();
+
+            if (confirm(`Remove ${bookmark.title}?`)) {
+                removeBookmark(bookmark.url);
+            }
+        };
+
+        toolbar.appendChild(button);
+    });
+}
+
+
 
 
 
@@ -483,6 +515,7 @@ async function initializeBrowser() {
                 <button id="reload-btn" title="Reload"><i class="fa-solid fa-rotate-right"></i></button>
                 <div class="address-wrapper">
                     <input class="bar" id="address-bar" autocomplete="off" placeholder="Search or enter URL">
+                    <button id="bookmark-btn" title="Bookmark"><i class="fa-solid fa-star"></i></button>
                     <button id="home-btn-nav" title="Home"><i class="fa-solid fa-house"></i></button>
                 </div>
                 
@@ -611,6 +644,18 @@ document.addEventListener("click", () => {
     document.getElementById('devtools-btn').onclick = toggleDevTools;
     document.getElementById('wisp-settings-btn').onclick = openSettings;
     document.getElementById('wisp-settings-btn-menu').onclick = openSettings;
+
+    document.getElementById("bookmark-btn").onclick = () => {
+    const tab = getActiveTab();
+
+    if (!tab || !tab.url) return;
+
+    addBookmark(
+        tab.title || "Untitled",
+        tab.url
+    );
+};
+    
     // Skip button logic
     elements.skipBtn.onclick = () => {
         const tab = getActiveTab();
@@ -631,7 +676,7 @@ document.addEventListener("click", () => {
 
     createTab(true);
     checkHashParameters();
-
+    renderBookmarks();
 
 
 
