@@ -686,6 +686,7 @@ input.bar::placeholder {
 
 #toolbar {
     width: 100vw;
-    height: 10vh;
+    height: 1vh;
+    color: red;
 }
 
