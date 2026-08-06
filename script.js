@@ -457,8 +457,7 @@ async function initializeBrowser() {
     </button>
 
     
-<br>
-<div id="toolbar">
+
 
 
 
@@ -504,11 +503,11 @@ async function initializeBrowser() {
 
     
 </div>       
-                            
-                            
-                            
-                            
-                            </div>
+<div id="toolbar">
+               
+</div>
+
+        
             <div class="loading-bar-container"><div class="loading-bar" id="loading-bar"></div></div>
             <div class="iframe-container" id="iframe-container">
                 <div id="loading" class="message-container" style="display: none;">
