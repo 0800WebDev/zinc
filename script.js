@@ -359,6 +359,45 @@ async function openExtensionUrl(url) {
 
 
 
+//bookmarks
+
+
+
+
+function getBookmarks() {
+    try {
+        return JSON.parse(localStorage.getItem("bookmarks") || "[]");
+    } catch {
+        return [];
+    }
+}
+
+function saveBookmarks(bookmarks) {
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+}
+
+function addBookmark(title, url) {
+    const bookmarks = getBookmarks();
+
+    if (bookmarks.some(b => b.url === url)) {
+        notify("warning", "Bookmark exists", "This page is already bookmarked");
+        return;
+    }
+
+    bookmarks.push({
+        title,
+        url
+    });
+
+    saveBookmarks(bookmarks);
+    renderBookmarks();
+}
+
+function removeBookmark(url) {
+    const bookmarks = getBookmarks().filter(b => b.url !== url);
+    saveBookmarks(bookmarks);
+    renderBookmarks();
+}
 
 
 
