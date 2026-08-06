@@ -699,7 +699,7 @@ bookmark-btn {
     right: 4px;
     width: 28px;
     height: 28px;
-    background: transparent;
+    background: red;
     border: none;
     color: var(--text-muted);
     border-radius: 6px;
