@@ -696,10 +696,10 @@ input.bar::placeholder {
 
 #bookmark-btn {
     position: absolute;
-    right: 4px;
+    right: 8px;
     width: 28px;
     height: 28px;
-    background: red;
+    background: transparent;
     border: none;
     color: var(--text-muted);
     border-radius: 6px;
