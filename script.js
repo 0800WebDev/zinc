@@ -491,6 +491,13 @@ async function initializeBrowser() {
         <i class="fa-solid fa-list"></i> UBGHub
         </button>
     </div>
+
+
+<div id="toolbar">
+
+</div>
+
+    
 </div>       
                             
                             
