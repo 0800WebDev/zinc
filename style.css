@@ -712,7 +712,7 @@ input.bar::placeholder {
 }
 
 .bookmark-button {
-    padding: 5px 10px;
+    padding: 0px 5px 0px;
     border-radius: 6px;
     cursor: pointer;
     height: 1vh;
@@ -720,6 +720,7 @@ input.bar::placeholder {
     background: transparent;
     border: none;
     color: white;
+    font-size: 0.8vh;  
 }
 
 
