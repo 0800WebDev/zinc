@@ -720,7 +720,7 @@ input.bar::placeholder {
     background: transparent;
     border: none;
     color: white;
-    font-size: 0.8vh;  
+    font-size: 1vh;  
 }
 
 
