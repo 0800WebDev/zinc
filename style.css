@@ -688,5 +688,26 @@ input.bar::placeholder {
     width: 100vw;
     height: 1.5vh;
     background-color: red;
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    overflow-x: auto;
+}
+
+bookmark-btn {
+    position: absolute;
+    right: 4px;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    padding: 0;
 }
 
