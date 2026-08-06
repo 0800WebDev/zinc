@@ -694,7 +694,7 @@ input.bar::placeholder {
     overflow-x: auto;
 }
 
-bookmark-btn {
+#bookmark-btn {
     position: absolute;
     right: 4px;
     width: 28px;
