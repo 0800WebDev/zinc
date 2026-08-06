@@ -456,6 +456,12 @@ async function initializeBrowser() {
         <i class="fa-solid fa-bars"></i>
     </button>
 
+    
+<br>
+<div id="toolbar">
+
+
+
     <div class="dropdown-menu" id="tools-menu">
         <button id="devtools-btn" title="DevTools">
             <i class="fa-solid fa-code"></i> DevTools
@@ -492,8 +498,7 @@ async function initializeBrowser() {
         </button>
     </div>
 
-<br> <br>
-<div id="toolbar">
+
 
 </div>
 
