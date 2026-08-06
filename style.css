@@ -684,3 +684,8 @@ input.bar::placeholder {
     background: #333;
 }
 
+#toolbar {
+    width: 100vw;
+    height: 10vh;
+}
+
