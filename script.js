@@ -492,7 +492,7 @@ async function initializeBrowser() {
         </button>
     </div>
 
-<br>
+<br> <br>
 <div id="toolbar">
 
 </div>
