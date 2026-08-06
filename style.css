@@ -687,7 +687,7 @@ input.bar::placeholder {
 #toolbar {
     width: 100vw;
     height: 1.5vh;
-    background-color: red;
+    background: transparent;
     display: flex;
     gap: 5px;
     padding: 5px;
@@ -710,4 +710,16 @@ input.bar::placeholder {
     font-size: 13px;
     padding: 0;
 }
+
+.bookmark-button {
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 1vh;
+    width: auto;
+    background: transparent;
+    border: none;
+    color: white;
+}
+
 
