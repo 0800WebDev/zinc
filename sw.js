@@ -105,6 +105,30 @@ const PING_TIMEOUT = 3000;
 let resolveConfigReady;
 const configReadyPromise = new Promise(resolve => resolveConfigReady = resolve);
 
+// Shared BareMux connection + client (proper BareClient has .fetch)
+let bareConnection = null;
+let bareClient = null;
+
+async function ensureBareClient() {
+    if (!wispConfig.wispurl) {
+        throw new Error("Wisp URL not configured");
+    }
+
+    // Recreate when client is missing or was intentionally nulled (server switch)
+    if (!bareClient || !scramjet.client) {
+        bareConnection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
+        await bareConnection.setTransport(
+            "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+            [{ wisp: wispConfig.wispurl }]
+        );
+        // BareClient is the object that actually implements .fetch()
+        bareClient = new BareMux.BareClient();
+        scramjet.client = bareClient;
+        console.log("SW: BareClient ready with", wispConfig.wispurl);
+    }
+    return bareClient;
+}
+
 // Ping a wisp server to check if it's responsive
 async function pingServer(url) {
     return new Promise((resolve) => {
@@ -157,6 +181,13 @@ function switchToServer(url, latency = null) {
     wispConfig.wispurl = url;
     currentServerStartTime = Date.now();
     
+    // Force recreation of BareClient with the new transport
+    bareClient = null;
+    bareConnection = null;
+    if (scramjet) {
+        scramjet.client = null;
+    }
+    
     // Notify all clients
     self.clients.matchAll().then(clients => {
         clients.forEach(client => {
@@ -168,11 +199,6 @@ function switchToServer(url, latency = null) {
             });
         });
     });
-
-    // Reset connection to force reconnection with new server
-    if (scramjet && scramjet.client) {
-        scramjet.client = null;
-    }
 }
 
 // Proactively check server health and switch if needed
@@ -205,6 +231,12 @@ async function proactiveServerCheck() {
 self.addEventListener("message", ({ data }) => {
     if (data.type === "config") {
         if (data.wispurl) {
+            // If the URL actually changed, force client recreation
+            if (wispConfig.wispurl && wispConfig.wispurl !== data.wispurl) {
+                bareClient = null;
+                bareConnection = null;
+                if (scramjet) scramjet.client = null;
+            }
             wispConfig.wispurl = data.wispurl;
             console.log("SW: Received wispurl", data.wispurl);
             currentServerStartTime = Date.now();
@@ -262,22 +294,13 @@ scramjet.addEventListener("request", async (e) => {
             return new Response("Wisp URL not configured", { status: 500 });
         }
 
-        if (!scramjet.client) {
-    const connection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
-    await connection.setTransport("https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs", [{ wisp: wispConfig.wispurl }]);
-
-    console.log("BareMux connection:", connection);
-    console.log("fetch:", typeof connection.fetch);
-
-    scramjet.client = connection;
-        }
-
         const MAX_RETRIES = 2;
         let lastErr;
 
         for (let i = 0; i <= MAX_RETRIES; i++) {
             try {
-                return await scramjet.client.fetch(e.url, {
+                const client = await ensureBareClient();
+                return await client.fetch(e.url, {
                     method: e.method,
                     body: e.body,
                     headers: e.requestHeaders,
@@ -289,11 +312,20 @@ scramjet.addEventListener("request", async (e) => {
                 });
             } catch (err) {
                 lastErr = err;
-                const errMsg = err.message.toLowerCase();
+                const errMsg = (err.message || "").toLowerCase();
                 const isRetryable = errMsg.includes("connect") ||
                     errMsg.includes("eof") ||
                     errMsg.includes("handshake") ||
-                    errMsg.includes("reset");
+                    errMsg.includes("reset") ||
+                    errMsg.includes("transport") ||
+                    errMsg.includes("not a function");
+
+                // Force client recreation on transport-related errors
+                if (isRetryable) {
+                    bareClient = null;
+                    bareConnection = null;
+                    if (scramjet) scramjet.client = null;
+                }
 
                 if (!isRetryable || i === MAX_RETRIES || e.method !== 'GET') break;
 
@@ -330,6 +362,6 @@ scramjet.addEventListener("request", async (e) => {
         }
 
         console.error("Scramjet Final Fetch Error:", lastErr);
-        return new Response("Scramjet Fetch Error: " + lastErr.message, { status: 502 });
+        return new Response("Scramjet Fetch Error: " + (lastErr?.message || String(lastErr)), { status: 502 });
     })();
 });
