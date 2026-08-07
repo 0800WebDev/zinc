@@ -712,6 +712,11 @@ input.bar::placeholder {
     padding: 0;
 }
 
+#bookmark-btn:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
 .bookmark-button {
     padding: 0px 5px;
     border-radius: 6px;
@@ -724,6 +729,10 @@ input.bar::placeholder {
     font-size: 0.999vh;
     position: relative;
     top: -0.3vh;
+}
+
+.bookmark-button:hover {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); 
 }
 
 
