@@ -692,6 +692,7 @@ input.bar::placeholder {
     gap: 5px;
     padding: 5px;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 #bookmark-btn {
