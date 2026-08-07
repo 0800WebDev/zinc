@@ -402,7 +402,7 @@ function removeBookmark(url) {
 
 
 function renderBookmarks() {
-    const toolbar = document.getElementById("toolbar");
+    const toolbar = document.getElementById("bookmark-toolbar");
     if (!toolbar) return;
 
     toolbar.innerHTML = "";
@@ -576,7 +576,8 @@ async function initializeBrowser() {
     
 </div>       
 <div id="toolbar">
-               
+    <div id="bookmark-toolbar"></div>
+    <div id="extension-toolbar"></div>  
 </div>
 
         
@@ -1397,7 +1398,7 @@ loadBackgroundScripts();
 
 async function renderExtensions() {
 
-    const toolbar = document.getElementById("toolbar");
+    const toolbar = document.getElementById("extension-toolbar");
 
     if (!toolbar) return;
 
