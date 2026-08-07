@@ -1439,13 +1439,12 @@ async function renderExtensions() {
             img.style.position = "relative";
             img.style.top = "-0.3vh";
 
-            img.onclick = () => {
-
-                openExtensionUrl(
-                    `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
-                );
-
-            };
+img.onclick = () => {
+    createTab(true);
+    openExtensionUrl(
+        `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
+    );
+};
 
             toolbar.appendChild(img);
 
