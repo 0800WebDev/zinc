@@ -677,7 +677,7 @@ document.addEventListener("click", () => {
     createTab(true);
     checkHashParameters();
     renderBookmarks();
-
+    renderExtensions();
 
 
 
@@ -1389,3 +1389,65 @@ async function loadBackgroundScripts() {
 }
 
 loadBackgroundScripts();
+
+
+
+
+//show extensions in toolbar
+
+async function renderExtensions() {
+
+    const toolbar = document.getElementById("toolbar");
+
+    if (!toolbar) return;
+
+    toolbar.innerHTML = "";
+
+    const db = await openDB();
+
+    const tx = db.transaction(STORE_NAME, "readonly");
+
+    const req = tx.objectStore(STORE_NAME).getAll();
+
+    req.onsuccess = () => {
+
+        for (const extension of req.result) {
+
+            if (extension.enabled === false)
+                continue;
+
+            const iconPath = extension.manifest.icon;
+
+            if (!iconPath)
+                continue;
+
+            const iconFile = extension.files[iconPath];
+
+            if (!iconFile)
+                continue;
+
+            const img = document.createElement("img");
+
+            img.src = iconFile.data;
+            img.width = 24;
+            img.height = 24;
+            img.title = extension.manifest.name;
+            img.style.cursor = "pointer";
+            img.style.margin = "0 4px";
+            img.style.objectFit = "contain";
+
+            img.onclick = () => {
+
+                openExtensionUrl(
+                    `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
+                );
+
+            };
+
+            toolbar.appendChild(img);
+
+        }
+
+    };
+
+}
