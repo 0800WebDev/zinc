@@ -326,6 +326,9 @@ async function openExtensionUrl(url) {
 
     const tab = getActiveTab();
 
+    tab.url = url;
+    updateAddressBar();
+    
     const path = url.slice("extension://".length);
     const parts = path.split("/");
 
@@ -912,11 +915,14 @@ if (input.startsWith("zinc://")) {
 
     const internalUrl = `internal/${target}.html`;
 
+    tab.url = input;
+
     tab.loading = true;
-    showIframeLoading(true, internalUrl);
+    showIframeLoading(true, input);
     updateLoadingBar(tab, 10);
 
-    // IMPORTANT: bypass Scramjet and load directly
+    updateAddressBar();
+
     tab.frame.frame.src = internalUrl;
 
     return;
