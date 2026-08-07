@@ -1431,11 +1431,13 @@ async function renderExtensions() {
 
             img.src = iconFile.data;
             img.width = 24;
-            img.height = 24;
+            img.height = 22;
             img.title = extension.manifest.name;
             img.style.cursor = "pointer";
             img.style.margin = "0 4px";
             img.style.objectFit = "contain";
+            img.style.position = "relative";
+            img.style.top = "-0.3vh";
 
             img.onclick = () => {
 
