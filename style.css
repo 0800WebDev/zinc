@@ -735,4 +735,8 @@ input.bar::placeholder {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
 }
 
-
+#extension-toolbar {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+}
