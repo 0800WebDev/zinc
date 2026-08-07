@@ -550,7 +550,7 @@ async function initializeBrowser() {
     <i class="fa-solid fa-link"></i> URLs <small>zinc://urls</small>
 </button>
 
-<button onclick='handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
+<button onclick='createTab(true); handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
 <hr>
