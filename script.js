@@ -542,11 +542,11 @@ async function initializeBrowser() {
             <i class="fa-solid fa-gear"></i>Settings
         </button>
 <hr>
- <button onclick='handleSubmit("zinc://extensions"); document.getElementById("tools-menu").style.display = "none";'>
+ <button onclick='createTab(true); handleSubmit("zinc://extensions"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-plus"></i> Extensions <small>zinc://extensions</small>
 </button>
 
-        <button onclick='handleSubmit("zinc://urls"); document.getElementById("tools-menu").style.display = "none";'>
+        <button onclick='createTab(true); handleSubmit("zinc://urls"); document.getElementById("tools-menu").style.display = "none";'>
     <i class="fa-solid fa-link"></i> URLs <small>zinc://urls</small>
 </button>
 
