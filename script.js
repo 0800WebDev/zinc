@@ -49,6 +49,26 @@ const WISP_SERVERS = [
 
 
 
+
+
+
+const URL_PARAMS = new URLSearchParams(window.location.search);
+
+const STARTUP_URL = URL_PARAMS.get("url");
+const PARAM_WISP = URL_PARAMS.get("wisp");
+const FULLSCREEN_MODE = URL_PARAMS.get("fullscreen") === "true";
+
+let startupWisp = PARAM_WISP || null;
+
+
+
+
+
+
+
+
+
+
 // Helper to get servers grouped
 function getGroupedWispServers() {
     return getAllWispServers().reduce((groups, server) => {
@@ -496,7 +516,7 @@ async function getSharedConnection() {
     if (sharedConnectionReady) return sharedConnection;
 
     const basePath = getBasePath();
-    const wispUrl = localStorage.getItem("proxServer") ?? DEFAULT_WISP;
+    const wispUrl = startupWisp || localStorage.getItem("proxServer") || DEFAULT_WISP;
     
     sharedConnection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
     await sharedConnection.setTransport(
@@ -608,6 +628,16 @@ async function initializeBrowser() {
 
 
 
+
+if (FULLSCREEN_MODE) {
+    document.querySelector(".browser-container").classList.add("fullscreen-browser");
+}
+
+
+
+
+
+    
     
 
 
@@ -678,7 +708,13 @@ document.addEventListener("click", () => {
         if (e.data?.type === 'navigate') handleSubmit(e.data.url);
     });
 
-    createTab(true);
+    
+    const startupTab = createTab(true);
+
+if (STARTUP_URL) {
+    handleSubmit(STARTUP_URL);
+}
+
     checkHashParameters();
     renderBookmarks();
     renderExtensions();
@@ -1201,7 +1237,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             // Wait for SW to be ready
             await navigator.serviceWorker.ready;
             
-            const wispUrl = localStorage.getItem("proxServer") ?? DEFAULT_WISP;
+            const wispUrl = startupWisp || localStorage.getItem("proxServer") || DEFAULT_WISP;
             const allServers = getAllWispServers();
             const autoswitch = localStorage.getItem('wispAutoswitch') !== 'false';
             
