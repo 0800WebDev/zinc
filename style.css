@@ -732,7 +732,7 @@ input.bar::placeholder {
 }
 
 .bookmark-button:hover {
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
 }
 
 
