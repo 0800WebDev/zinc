@@ -740,3 +740,27 @@ input.bar::placeholder {
     display: flex;
     gap: 4px;
 }
+
+
+
+
+
+.fullscreen-browser > *:not(.iframe-container) {
+    display: none !important;
+}
+
+.fullscreen-browser,
+.fullscreen-browser .iframe-container {
+    position: fixed;
+    inset: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0;
+    padding: 0;
+}
+
+.fullscreen-browser .iframe-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0;
+}
