@@ -41,4 +41,6 @@ default wisp server:
 ---
 Zinc is open source and free to use under the MIT License.
 
-You are welcome to fork, modify, and redistribute Zinc. However, if you distribute a modified version, you must replace all Zinc branding, including the name, logo, icons, and other visual identity, with your own. This helps distinguish community forks from the official Zinc project.
+You are welcome to fork, modify, and redistribute Zinc. If you distribute a modified version, you must replace all Zinc branding, including the name, logo, icons, and other visual identity, with your own. Unmodified versions may retain the original Zinc branding.
+
+All modified or redistributed versions must retain the original copyright notices, license, and credits.
