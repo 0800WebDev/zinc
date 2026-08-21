@@ -28,6 +28,7 @@ more at zinc://urls
 - https://zinc-proxy.vercel.app
 - https://zinc.chemistry.bumon.ar
 - https://zinc.math.bumon.ar
+- https://zinc.happy0.co.uk/
 
 default wisp server:   
 [wss://pgis-wisp.onrender.com](https://pgis-wisp.onrender.com)
