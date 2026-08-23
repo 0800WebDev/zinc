@@ -646,8 +646,13 @@ const toolsMenu = document.getElementById("tools-menu");
 
 toolsBtn.addEventListener("click", (e) => {
     e.stopPropagation();
+
     toolsMenu.style.display =
         toolsMenu.style.display === "block" ? "none" : "block";
+});
+
+toolsMenu.addEventListener("click", (e) => {
+    e.stopPropagation();
 });
 
 document.addEventListener("click", () => {
