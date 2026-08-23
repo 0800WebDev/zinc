@@ -782,7 +782,7 @@ function createTab(makeActive = true) {
 
     frame.frame.src = "NT.html";
 
-   frame.addEventListener("urlchange", (e) => {
+  frame.addEventListener("urlchange", (e) => {
     let displayUrl = e.url;
 
     try {
@@ -797,7 +797,6 @@ function createTab(makeActive = true) {
 
     tab.url = displayUrl;
     tab.loading = true;
-        tab.loading = true;
         tab.loadStartTime = Date.now();
 
         if (tab.id === activeTabId) {
