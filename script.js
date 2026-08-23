@@ -651,14 +651,17 @@ toolsBtn.addEventListener("click", (e) => {
         toolsMenu.style.display === "block" ? "none" : "block";
 });
 
-toolsMenu.addEventListener("click", (e) => {
-    e.stopPropagation();
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".dropdown")) {
+        toolsMenu.style.display = "none";
+    }
 });
 
-document.addEventListener("click", () => {
-    toolsMenu.style.display = "none";
+window.addEventListener("blur", () => {
+    if (document.activeElement?.tagName === "IFRAME") {
+        toolsMenu.style.display = "none";
+    }
 });
-
 
 
     
