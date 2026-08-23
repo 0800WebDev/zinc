@@ -788,11 +788,12 @@ window.addEventListener("message", async event => {
 
 
 
-async function openViewSource(url) {
+
+async function openViewSource(input) {
     const tab = getActiveTab();
     if (!tab) return;
 
-    let targetUrl = url.slice("viewsource:".length).trim();
+    let targetUrl = input.slice("view-source:".length).trim();
 
     if (!targetUrl) return;
 
@@ -800,7 +801,7 @@ async function openViewSource(url) {
         targetUrl = `https://${targetUrl}`;
     }
 
-    tab.url = `viewsource:${targetUrl}`;
+    tab.url = `view-source:${targetUrl}`;
     tab.title = "View Source";
     tab.favicon = null;
     tab.loading = true;
@@ -808,22 +809,25 @@ async function openViewSource(url) {
     updateAddressBar();
     updateTabsUI();
     showIframeLoading(true, targetUrl);
-    updateLoadingBar(tab, 20);
+    updateLoadingBar(tab, 10);
 
     try {
-        const apiUrl = `https://r.jina.ai/${targetUrl}`;
+        const apiUrl =
+            `https://api.chocodata.com/api/v1/universal?api_key=${encodeURIComponent(window.CHOCODATA_API_KEY)}&url=${encodeURIComponent(targetUrl)}`;
 
-        const response = await fetch(apiUrl, {
-            method: "GET"
-        });
+        const response = await fetch(apiUrl);
 
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+            throw new Error(`API returned HTTP ${response.status}`);
         }
 
-        const source = await response.text();
+        const data = await response.json();
 
-        updateLoadingBar(tab, 70);
+        if (!data.html) {
+            throw new Error("API did not return HTML");
+        }
+
+        const source = data.html;
 
         const escaped = source
             .replace(/&/g, "&amp;")
@@ -836,7 +840,7 @@ async function openViewSource(url) {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>View Source</title>
+<title>view-source:${targetUrl}</title>
 <style>
 html, body {
     margin: 0;
@@ -845,14 +849,11 @@ html, body {
     color: #d4d4d4;
 }
 
-body {
-    overflow: auto;
-}
-
 pre {
     margin: 0;
     padding: 16px;
-    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-word;
     font-family: Consolas, Monaco, monospace;
     font-size: 14px;
     line-height: 1.5;
@@ -873,16 +874,13 @@ pre {
 
         tab.frame.frame.src = blobUrl;
         tab.loading = false;
-        tab.title = "View Source";
 
         updateAddressBar();
         updateTabsUI();
         updateLoadingBar(tab, 100);
         showIframeLoading(false);
 
-        setTimeout(() => {
-            URL.revokeObjectURL(blobUrl);
-        }, 60000);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
 
     } catch (error) {
         console.error("View source failed:", error);
@@ -893,11 +891,10 @@ pre {
         notify(
             "error",
             "View Source",
-            `Could not retrieve source: ${error.message}`
+            error.message
         );
     }
 }
-
 
 
 
@@ -1139,7 +1136,7 @@ async function handleSubmit(url) {
 
 
 
-if (input.startsWith("viewsource:")) {
+if (input.startsWith("view-source:")) {
     await openViewSource(input);
     return;
 }
