@@ -783,93 +783,120 @@ window.addEventListener("message", async event => {
 
 
 
-function showSourceInFrame(tab, targetUrl) {
-    const code = `
-        const source = "<!DOCTYPE html>\\n" + document.documentElement.outerHTML;
 
-        const escapeHtml = str => str
+
+
+
+
+async function openViewSource(url) {
+    const tab = getActiveTab();
+    if (!tab) return;
+
+    let targetUrl = url.slice("viewsource:".length).trim();
+
+    if (!targetUrl) return;
+
+    if (!/^https?:\/\//i.test(targetUrl)) {
+        targetUrl = `https://${targetUrl}`;
+    }
+
+    tab.url = `viewsource:${targetUrl}`;
+    tab.title = "View Source";
+    tab.favicon = null;
+    tab.loading = true;
+
+    updateAddressBar();
+    updateTabsUI();
+    showIframeLoading(true, targetUrl);
+    updateLoadingBar(tab, 20);
+
+    try {
+        const apiUrl = `https://r.jina.ai/${targetUrl}`;
+
+        const response = await fetch(apiUrl, {
+            method: "GET"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const source = await response.text();
+
+        updateLoadingBar(tab, 70);
+
+        const escaped = source
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;");
 
-        document.open();
-        document.write(\`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>View Source</title>
-                <style>
-                    html, body {
-                        margin: 0;
-                        padding: 0;
-                        background: #1e1e1e;
-                        color: #d4d4d4;
-                    }
+        const viewer = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>View Source</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #1e1e1e;
+    color: #d4d4d4;
+}
 
-                    pre {
-                        margin: 0;
-                        padding: 16px;
-                        white-space: pre-wrap;
-                        word-break: break-word;
-                        font-family: Consolas, Monaco, monospace;
-                        font-size: 14px;
-                        line-height: 1.5;
-                        tab-size: 4;
-                    }
-                </style>
-            </head>
-            <body>
-                <pre>\${escapeHtml(source)}</pre>
-            </body>
-            </html>
-        \`);
-        document.close();
-    `;
+body {
+    overflow: auto;
+}
 
-    const ok = (() => {
-        try {
-            const frame = tab.frame.frame;
-            const doc = frame.contentDocument;
+pre {
+    margin: 0;
+    padding: 16px;
+    white-space: pre;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    tab-size: 4;
+}
+</style>
+</head>
+<body>
+<pre>${escaped}</pre>
+</body>
+</html>`;
 
-            if (!doc) return false;
+        const blob = new Blob([viewer], {
+            type: "text/html"
+        });
 
-            const script = doc.createElement("script");
-            script.textContent = `(function(){ try { ${code} } catch(e) { console.error(e); } })();`;
+        const blobUrl = URL.createObjectURL(blob);
 
-            doc.documentElement.appendChild(script);
-            script.remove();
+        tab.frame.frame.src = blobUrl;
+        tab.loading = false;
+        tab.title = "View Source";
 
-            return true;
-        } catch (e) {
-            console.error("View source injection failed:", e);
-            return false;
-        }
-    })();
+        updateAddressBar();
+        updateTabsUI();
+        updateLoadingBar(tab, 100);
+        showIframeLoading(false);
 
-    if (!ok) {
+        setTimeout(() => {
+            URL.revokeObjectURL(blobUrl);
+        }, 60000);
+
+    } catch (error) {
+        console.error("View source failed:", error);
+
+        tab.loading = false;
+        showIframeLoading(false);
+
         notify(
             "error",
             "View Source",
-            "Could not access the proxied page"
+            `Could not retrieve source: ${error.message}`
         );
-        return;
     }
-
-    tab.loading = false;
-    tab.title = "View Source";
-    tab.favicon = null;
-
-    updateAddressBar();
-    updateTabsUI();
-    updateLoadingBar(tab, 100);
-    showIframeLoading(false);
 }
-
-
-
-
 
 
 
@@ -909,11 +936,9 @@ const tab = {
     loading: false,
     favicon: null,
     skipTimeout: null,
-    loadStartTime: null,
-    viewSource: false,
-    viewSourceTarget: null
+    loadStartTime: null
 };
-
+    
     frame.frame.src = "NT.html";
 
   frame.addEventListener("urlchange", (e) => {
@@ -959,17 +984,8 @@ const tab = {
     });
 
 frame.frame.addEventListener('load', () => {
-    clearTimeout(tab.skipTimeout);
-
-    if (tab.viewSource && tab.viewSourceTarget) {
-        setTimeout(() => {
-            showSourceInFrame(tab, tab.viewSourceTarget);
-        }, 50);
-
-        return;
-    }
-
     tab.loading = false;
+    clearTimeout(tab.skipTimeout);
 
     updateInternalUrl(tab);
 
@@ -1121,32 +1137,16 @@ async function handleSubmit(url) {
 
 
 
+
+
 if (input.startsWith("viewsource:")) {
-    let targetUrl = input.slice("viewsource://".length).trim();
-
-    if (!targetUrl) return;
-
-    if (!/^https?:\/\//i.test(targetUrl)) {
-        targetUrl = `https://${targetUrl}`;
-    }
-
-    tab.viewSource = true;
-    tab.viewSourceTarget = targetUrl;
-    tab.url = `viewsource://${targetUrl}`;
-    tab.title = "View Source";
-    tab.favicon = null;
-    tab.loading = true;
-
-    updateAddressBar();
-    updateTabsUI();
-    showIframeLoading(true, targetUrl);
-    updateLoadingBar(tab, 10);
-
-    tab.frame.go(targetUrl);
-
+    await openViewSource(input);
     return;
 }
 
+
+
+    
 
     
 
