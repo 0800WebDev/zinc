@@ -780,6 +780,160 @@ window.addEventListener("message", async event => {
 // =====================================================
 // TAB MANAGEMENT
 // =====================================================
+
+
+async function openViewSource(url) {
+    const tab = getActiveTab();
+    if (!tab) return;
+
+    let targetUrl = url.slice("viewsource://".length).trim();
+
+    if (!targetUrl) return;
+
+    if (!/^https?:\/\//i.test(targetUrl)) {
+        targetUrl = `https://${targetUrl}`;
+    }
+
+    tab.url = `viewsource://${targetUrl}`;
+    tab.title = "View Source";
+    tab.favicon = null;
+    tab.loading = true;
+
+    updateAddressBar();
+    updateTabsUI();
+    showIframeLoading(true, targetUrl);
+    updateLoadingBar(tab, 10);
+
+    const sourceFrame = sharedScramjet.createFrame();
+
+    sourceFrame.frame.style.display = "none";
+    document.getElementById("iframe-container").appendChild(sourceFrame.frame);
+
+    let finished = false;
+
+    const cleanup = () => {
+        if (sourceFrame.frame) {
+            sourceFrame.frame.src = "about:blank";
+            sourceFrame.frame.remove();
+        }
+    };
+
+    const showSource = () => {
+        if (finished) return;
+        finished = true;
+
+        try {
+            const doc = sourceFrame.frame.contentDocument;
+
+            if (!doc) {
+                throw new Error("Could not access proxied document");
+            }
+
+            const html = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+
+            const escaped = html
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+
+            const sourcePage = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>View Source</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #1e1e1e;
+    color: #d4d4d4;
+}
+
+pre {
+    margin: 0;
+    padding: 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    tab-size: 4;
+}
+</style>
+</head>
+<body>
+<pre>${escaped}</pre>
+</body>
+</html>`;
+
+            const blob = new Blob([sourcePage], {
+                type: "text/html"
+            });
+
+            const blobUrl = URL.createObjectURL(blob);
+
+            tab.frame.frame.src = blobUrl;
+            tab.loading = false;
+            tab.title = "View Source";
+
+            updateAddressBar();
+            updateTabsUI();
+            updateLoadingBar(tab, 100);
+            showIframeLoading(false);
+
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+        } catch (error) {
+            console.error("View source failed:", error);
+
+            tab.loading = false;
+            showIframeLoading(false);
+
+            notify(
+                "error",
+                "View Source",
+                "Could not read the proxied page source"
+            );
+        }
+
+        cleanup();
+    };
+
+    sourceFrame.addEventListener("urlchange", () => {
+        updateLoadingBar(tab, 40);
+    });
+
+    sourceFrame.frame.addEventListener("load", () => {
+        setTimeout(showSource, 50);
+    });
+
+    sourceFrame.frame.addEventListener("error", () => {
+        if (!finished) {
+            finished = true;
+            cleanup();
+
+            tab.loading = false;
+            showIframeLoading(false);
+
+            notify(
+                "error",
+                "View Source",
+                "The page could not be loaded"
+            );
+        }
+    });
+
+    sourceFrame.frame.src = targetUrl;
+}
+
+
+
+
+
+
+
 function updateInternalUrl(tab) {
     try {
         const url = new URL(tab.frame.frame.contentWindow.location.href);
@@ -976,12 +1130,41 @@ function updateAddressBar() {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function handleSubmit(url) {
     const tab = getActiveTab();
     let input = url ?? document.getElementById("address-bar").value.trim();
     if (!input) return;
 
+if (input.startsWith("viewsource://")) {
+    await openViewSource(input);
+    return;
+}
 
+    
 if (input.startsWith("extension://")) {
     await openExtensionUrl(input);
     return;
