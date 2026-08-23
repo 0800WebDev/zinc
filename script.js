@@ -657,12 +657,17 @@ document.addEventListener("click", (e) => {
     }
 });
 
+toolsMenu.addEventListener("click", (e) => {
+    if (e.target.closest("button")) {
+        toolsMenu.style.display = "none";
+    }
+});
+
 window.addEventListener("blur", () => {
     if (document.activeElement?.tagName === "IFRAME") {
         toolsMenu.style.display = "none";
     }
 });
-
 
     
 
