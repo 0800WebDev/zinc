@@ -809,25 +809,24 @@ async function openViewSource(input) {
     updateAddressBar();
     updateTabsUI();
     showIframeLoading(true, targetUrl);
-    updateLoadingBar(tab, 10);
+    updateLoadingBar(tab, 20);
 
     try {
-        const apiUrl =
-            `https://api.chocodata.com/api/v1/universal?api_key=${encodeURIComponent(window.CHOCODATA_API_KEY)}&url=${encodeURIComponent(targetUrl)}`;
-
-        const response = await fetch(apiUrl);
+        const response = await fetch(
+            `https://r.jina.ai/${targetUrl}`,
+            {
+                headers: {
+                    "X-Respond-With": "html",
+                    "X-Respond-Timing": "html"
+                }
+            }
+        );
 
         if (!response.ok) {
-            throw new Error(`API returned HTTP ${response.status}`);
+            throw new Error(`HTTP ${response.status}`);
         }
 
-        const data = await response.json();
-
-        if (!data.html) {
-            throw new Error("API did not return HTML");
-        }
-
-        const source = data.html;
+        const source = await response.text();
 
         const escaped = source
             .replace(/&/g, "&amp;")
@@ -852,8 +851,7 @@ html, body {
 pre {
     margin: 0;
     padding: 16px;
-    white-space: pre-wrap;
-    word-break: break-word;
+    white-space: pre;
     font-family: Consolas, Monaco, monospace;
     font-size: 14px;
     line-height: 1.5;
@@ -891,7 +889,7 @@ pre {
         notify(
             "error",
             "View Source",
-            error.message
+            `Could not retrieve source: ${error.message}`
         );
     }
 }
