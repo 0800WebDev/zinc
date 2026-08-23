@@ -782,8 +782,21 @@ function createTab(makeActive = true) {
 
     frame.frame.src = "NT.html";
 
-    frame.addEventListener("urlchange", (e) => {
-        tab.url = e.url;
+   frame.addEventListener("urlchange", (e) => {
+    let displayUrl = e.url;
+
+    try {
+        const urlObj = new URL(e.url);
+        const internalMatch = urlObj.pathname.match(/\/internal\/([^/]+)\.html$/);
+
+        if (internalMatch) {
+            const pageName = internalMatch[1];
+            displayUrl = `zinc://${pageName}`;
+        }
+    } catch {}
+
+    tab.url = displayUrl;
+    tab.loading = true;
         tab.loading = true;
         tab.loadStartTime = Date.now();
 
