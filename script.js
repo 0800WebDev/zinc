@@ -767,6 +767,22 @@ window.addEventListener("message", async event => {
 // =====================================================
 // TAB MANAGEMENT
 // =====================================================
+function updateInternalUrl(tab) {
+    try {
+        const url = new URL(tab.frame.frame.contentWindow.location.href);
+        const match = url.pathname.match(/\/internal\/([^/]+)\.html$/);
+
+        if (match) {
+            tab.url = `zinc://${match[1]}`;
+            updateAddressBar();
+            updateTabsUI();
+            return true;
+        }
+    } catch {}
+
+    return false;
+}
+
 function createTab(makeActive = true) {
     const frame = sharedScramjet.createFrame();
     const tab = {
@@ -825,28 +841,30 @@ function createTab(makeActive = true) {
     });
 
     frame.frame.addEventListener('load', () => {
-        tab.loading = false;
-        clearTimeout(tab.skipTimeout);
+    tab.loading = false;
+    clearTimeout(tab.skipTimeout);
 
-        if (tab.id === activeTabId) {
-            showIframeLoading(false);
-        }
+    updateInternalUrl(tab);
 
-        try {
-            const title = frame.frame.contentWindow.document.title;
-            if (title) tab.title = title;
-        } catch { }
+    if (tab.id === activeTabId) {
+        showIframeLoading(false);
+    }
 
-        if (frame.frame.contentWindow.location.href.includes('NT.html')) {
-            tab.title = "New Tab";
-            tab.url = "";
-            tab.favicon = null;
-        }
+    try {
+        const title = frame.frame.contentWindow.document.title;
+        if (title) tab.title = title;
+    } catch {}
 
-        updateTabsUI();
-        updateAddressBar();
-        updateLoadingBar(tab, 100);
-    });
+    if (frame.frame.contentWindow.location.href.includes('NT.html')) {
+        tab.title = "New Tab";
+        tab.url = "";
+        tab.favicon = null;
+    }
+
+    updateTabsUI();
+    updateAddressBar();
+    updateLoadingBar(tab, 100);
+});
 
     tabs.push(tab);
     document.getElementById("iframe-container").appendChild(frame.frame);
