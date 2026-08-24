@@ -577,6 +577,10 @@ async function initializeBrowser() {
     <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
 </button>
 <hr>
+<button onclick="document.querySelector('iframe').requestFullscreen()" title="fullscreen">
+    <i class="fa-solid fa-expand"></i> Fullscreen 
+</button>
+<hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
         <i class="fa-brands fa-github"></i> Github 
         </button>
