@@ -580,19 +580,7 @@ async function initializeBrowser() {
 <button onclick="document.querySelector('iframe').requestFullscreen()" title="fullscreen">
     <i class="fa-solid fa-expand"></i> Fullscreen 
 </button>
-<button onclick='
-const url = getActiveTab()?.url;
-
-if (url) {
-    try {
-        const parsed = new URL(url);
-
-        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-            handleSubmit("view-source:" + url);
-        }
-    } catch {}
-}
-'>
+<button onclick="viewSourceNav()">
 View Source
 </button>
 <hr>
@@ -643,11 +631,21 @@ View Source
         </div>`;
 
 
+function viewSourceNav() {
+const url = getActiveTab()?.url;
 
+if (url) {
+    try {
+        const parsed = new URL(url);
 
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+            handleSubmit("view-source:" + url);
+        }
+    } catch {}
+  }
+}
 
-
-
+    
 if (FULLSCREEN_MODE) {
     document.querySelector(".browser-container").classList.add("fullscreen-browser");
 }
