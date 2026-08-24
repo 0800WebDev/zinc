@@ -581,7 +581,7 @@ async function initializeBrowser() {
     <i class="fa-solid fa-expand"></i> Fullscreen 
 </button>
 <button onclick="viewSourceNav()">
-View Source
+<i class="fa-solid fa-code"> View Source
 </button>
 <hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
