@@ -769,17 +769,42 @@ window.addEventListener("message", async event => {
 
 
 
+const newTabQueue = [];
+let processingNewTabs = false;
+
+async function processNewTabQueue() {
+    if (processingNewTabs) return;
+
+    processingNewTabs = true;
+
+    while (newTabQueue.length > 0) {
+        const url = newTabQueue.shift();
+
+        if (!url) continue;
+
+        const newTab = createTab(true);
+        await handleSubmit(url);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+    processingNewTabs = false;
+}
+
 window.addEventListener("message", event => {
     if (event.data?.type !== "zinc-new-tab") return;
 
     const url = event.data.url;
     if (!url) return;
 
-    const newTab = createTab(true);
-    handleSubmit(url);
+    newTabQueue.push(url);
+    processNewTabQueue();
 });
 
 
+
+
+    
 
 
     
