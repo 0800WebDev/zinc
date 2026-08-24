@@ -580,6 +580,21 @@ async function initializeBrowser() {
 <button onclick="document.querySelector('iframe').requestFullscreen()" title="fullscreen">
     <i class="fa-solid fa-expand"></i> Fullscreen 
 </button>
+<button onclick='
+const url = getActiveTab()?.url;
+
+if (url) {
+    try {
+        const parsed = new URL(url);
+
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+            handleSubmit("view-source:" + url);
+        }
+    } catch {}
+}
+'>
+View Source
+</button>
 <hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
         <i class="fa-brands fa-github"></i> Github 
