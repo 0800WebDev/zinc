@@ -631,36 +631,7 @@ View Source
         </div>`;
 
 
-async function viewSourceNav() {
-    console.log("[viewSourceNav] Called");
 
-    const url = getActiveTab()?.url;
-    console.log("[viewSourceNav] Active tab URL:", url);
-
-    if (!url) {
-        console.log("[viewSourceNav] No URL found");
-        return;
-    }
-
-    try {
-        const parsed = new URL(url);
-        console.log("[viewSourceNav] Parsed URL:", parsed.href);
-        console.log("[viewSourceNav] Protocol:", parsed.protocol);
-
-        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-            const viewSourceUrl = "view-source:" + url;
-
-            console.log("[viewSourceNav] Valid HTTP(S) URL");
-            console.log("[viewSourceNav] Navigating to:", viewSourceUrl);
-
-         createTab(true); handleSubmit(viewSourceUrl);
-        } else {
-            console.log("[viewSourceNav] Invalid protocol:", parsed.protocol);
-        }
-    } catch (error) {
-        console.error("[viewSourceNav] Failed to parse URL:", url, error);
-    }
-}
 
     
 if (FULLSCREEN_MODE) {
@@ -844,6 +815,38 @@ window.addEventListener("message", event => {
 
 
     
+}
+
+
+async function viewSourceNav() {
+    console.log("[viewSourceNav] Called");
+
+    const url = getActiveTab()?.url;
+    console.log("[viewSourceNav] Active tab URL:", url);
+
+    if (!url) {
+        console.log("[viewSourceNav] No URL found");
+        return;
+    }
+
+    try {
+        const parsed = new URL(url);
+        console.log("[viewSourceNav] Parsed URL:", parsed.href);
+        console.log("[viewSourceNav] Protocol:", parsed.protocol);
+
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+            const viewSourceUrl = "view-source:" + url;
+
+            console.log("[viewSourceNav] Valid HTTP(S) URL");
+            console.log("[viewSourceNav] Navigating to:", viewSourceUrl);
+
+         createTab(true); handleSubmit(viewSourceUrl);
+        } else {
+            console.log("[viewSourceNav] Invalid protocol:", parsed.protocol);
+        }
+    } catch (error) {
+        console.error("[viewSourceNav] Failed to parse URL:", url, error);
+    }
 }
 
 // =====================================================
