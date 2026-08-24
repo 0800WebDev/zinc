@@ -794,13 +794,13 @@ async function processNewTabQueue() {
 window.addEventListener("message", event => {
     if (event.data?.type !== "zinc-new-tab") return;
 
-    const url = event.data.url;
-
-    if (!url) return;
+    console.log("ZINC NEW TAB REQUEST:", event.data.url);
 
     const tab = createTab(true);
 
-    handleSubmit(url);
+    console.log("CREATED TAB:", tab.id, event.data.url);
+
+    handleSubmit(event.data.url);
 });
 
 
