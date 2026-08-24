@@ -632,17 +632,34 @@ View Source
 
 
 function viewSourceNav() {
-const url = getActiveTab()?.url;
+    console.log("[viewSourceNav] Called");
 
-if (url) {
+    const url = getActiveTab()?.url;
+    console.log("[viewSourceNav] Active tab URL:", url);
+
+    if (!url) {
+        console.log("[viewSourceNav] No URL found");
+        return;
+    }
+
     try {
         const parsed = new URL(url);
+        console.log("[viewSourceNav] Parsed URL:", parsed.href);
+        console.log("[viewSourceNav] Protocol:", parsed.protocol);
 
         if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-            handleSubmit("view-source:" + url);
+            const viewSourceUrl = "view-source:" + url;
+
+            console.log("[viewSourceNav] Valid HTTP(S) URL");
+            console.log("[viewSourceNav] Navigating to:", viewSourceUrl);
+
+            handleSubmit(viewSourceUrl);
+        } else {
+            console.log("[viewSourceNav] Invalid protocol:", parsed.protocol);
         }
-    } catch {}
-  }
+    } catch (error) {
+        console.error("[viewSourceNav] Failed to parse URL:", url, error);
+    }
 }
 
     
