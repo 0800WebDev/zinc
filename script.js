@@ -631,7 +631,7 @@ View Source
         </div>`;
 
 
-function viewSourceNav() {
+async function viewSourceNav() {
     console.log("[viewSourceNav] Called");
 
     const url = getActiveTab()?.url;
@@ -653,7 +653,7 @@ function viewSourceNav() {
             console.log("[viewSourceNav] Valid HTTP(S) URL");
             console.log("[viewSourceNav] Navigating to:", viewSourceUrl);
 
-            handleSubmit(viewSourceUrl);
+         createTab(true); handleSubmit(viewSourceUrl);
         } else {
             console.log("[viewSourceNav] Invalid protocol:", parsed.protocol);
         }
