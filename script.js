@@ -775,7 +775,7 @@ window.addEventListener("message", event => {
     const url = event.data.url;
     if (!url) return;
 
-    createTab(true);
+    const newTab = createTab(true);
     handleSubmit(url);
 });
 
