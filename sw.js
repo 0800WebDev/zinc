@@ -48,7 +48,8 @@ const ADBLOCK = {
   "scorecardresearch.com",
   "quantserve.com",
   "krxd.net",
-  "demdex.net"
+  "demdex.net",
+  "googleads.g"
 ]   
 };
 
