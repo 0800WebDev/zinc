@@ -795,10 +795,12 @@ window.addEventListener("message", event => {
     if (event.data?.type !== "zinc-new-tab") return;
 
     const url = event.data.url;
+
     if (!url) return;
 
-    newTabQueue.push(url);
-    processNewTabQueue();
+    const tab = createTab(true);
+
+    handleSubmit(url);
 });
 
 
@@ -831,14 +833,21 @@ function setupNewTabInterception(tab) {
 
         script.textContent = `
             (() => {
-                window.open = function(url) {
-                    if (url) {
-                        window.parent.postMessage({
-                            type: "zinc-new-tab",
-                            url: String(url)
-                        }, "*");
-                    }
+                const zincOpen = (url) => {
+                    if (!url) return;
 
+                    try {
+                        url = new URL(url, location.href).href;
+                    } catch {}
+
+                    window.parent.postMessage({
+                        type: "zinc-new-tab",
+                        url
+                    }, "*");
+                };
+
+                window.open = function(url) {
+                    zincOpen(url);
                     return null;
                 };
 
@@ -852,11 +861,9 @@ function setupNewTabInterception(tab) {
                         link.target === "_new"
                     ) {
                         e.preventDefault();
+                        e.stopImmediatePropagation();
 
-                        window.parent.postMessage({
-                            type: "zinc-new-tab",
-                            url: link.href
-                        }, "*");
+                        zincOpen(link.href);
                     }
                 }, true);
 
@@ -871,20 +878,22 @@ function setupNewTabInterception(tab) {
                     }
 
                     e.preventDefault();
+                    e.stopImmediatePropagation();
 
                     const formData = new FormData(form);
                     const method = (form.method || "get").toLowerCase();
+
                     let url = form.action || location.href;
 
                     if (method === "get") {
                         const params = new URLSearchParams(formData);
-                        url += (url.includes("?") ? "&" : "?") + params.toString();
+
+                        if (params.toString()) {
+                            url += (url.includes("?") ? "&" : "?") + params.toString();
+                        }
                     }
 
-                    window.parent.postMessage({
-                        type: "zinc-new-tab",
-                        url
-                    }, "*");
+                    zincOpen(url);
                 }, true);
             })();
         `;
