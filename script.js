@@ -579,6 +579,13 @@ function generateCurrentPageQR() {
         link.href = canvas.toDataURL("image/png");
         link.click();
     };
+    document.addEventListener("click", (e) => {
+    const qr = document.getElementById("qr");
+
+    if (!qr || qr.contains(e.target)) return;
+
+    qr.style.display = "none";
+});
 }
 
 
@@ -882,13 +889,7 @@ window.addEventListener("message", event => {
     
 }
 
-document.addEventListener("click", (e) => {
-    const qr = document.getElementById("qr");
 
-    if (!qr || qr.contains(e.target)) return;
-
-    qr.style.display = "none";
-});
 
 async function viewSourceNav() {
     console.log("[viewSourceNav] Called");
