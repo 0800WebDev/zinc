@@ -684,3 +684,6 @@ input.bar::placeholder {
     background: #333;
 }
 
+#qr {
+    display: none
+}
