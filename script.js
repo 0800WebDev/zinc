@@ -659,7 +659,7 @@ async function initializeBrowser() {
     </div>
 
 <div class="dropdown-menu" id="qr">
-<div id="qr-preview"></div>
+<div id="qr-preview" width="100px" height="100px"></div>
 <button id="qr-download">Download</button>
 </div>
 
