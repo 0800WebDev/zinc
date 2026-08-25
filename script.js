@@ -641,7 +641,10 @@ async function initializeBrowser() {
 <button onclick="viewSourceNav()">
 <i class="fa-solid fa-code"></i> View Source
 </button>
-<button onclick="event.stopPropagation(); generateCurrentPageQR()">QR Code</button><hr>
+<button onclick="event.stopPropagation(); generateCurrentPageQR()">
+<i class="fa-solid fa-barcode"></i> Generate QR
+</button>
+<hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
         <i class="fa-brands fa-github"></i> Github 
         </button>
