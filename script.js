@@ -696,7 +696,15 @@ async function initializeBrowser() {
         </div>`;
 
 
+document.addEventListener("click", (e) => {
+    const qr = document.getElementById("qr");
 
+    if (!qr || qr.style.display !== "block") return;
+
+    if (!qr.contains(e.target)) {
+        qr.style.display = "none";
+    }
+});
 
     
 if (FULLSCREEN_MODE) {
