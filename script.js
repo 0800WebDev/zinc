@@ -491,7 +491,11 @@ async function initializeBrowser() {
         <i class="fa-solid fa-list"></i> UBGHub
         </button>
     </div>
-</div>       
+</div>
+<div class="dropdown" id="qr">
+<img src="qr-preview">
+<button id="qr-download">Download</button>
+</div>
                             
                             
                             
