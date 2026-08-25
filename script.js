@@ -582,10 +582,7 @@ function generateCurrentPageQR() {
 }
 
 
-document.getElementById("qr-open").addEventListener("click", (e) => {
-    e.stopPropagation();
-    document.getElementById("qr").style.display = "block";
-});
+
 
 
 async function initializeBrowser() {
@@ -885,6 +882,13 @@ window.addEventListener("message", event => {
     
 }
 
+document.addEventListener("click", (e) => {
+    const qr = document.getElementById("qr");
+
+    if (!qr || qr.contains(e.target)) return;
+
+    qr.style.display = "none";
+});
 
 async function viewSourceNav() {
     console.log("[viewSourceNav] Called");
