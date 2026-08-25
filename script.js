@@ -579,8 +579,6 @@ function generateCurrentPageQR() {
         link.href = canvas.toDataURL("image/png");
         link.click();
     };
-    
-
 }
 
 
@@ -698,18 +696,7 @@ async function initializeBrowser() {
         </div>`;
 
 
-document.addEventListener("click", (e) => {
-    const qr = document.getElementById("qr");
 
-    if (!qr) return;
-
-    const wasOpen = qr.style.display === "block";
-
-    if (!wasOpen) return;
-    if (qr.contains(e.target)) return;
-
-    qr.style.display = "none";
-});
 
     
 if (FULLSCREEN_MODE) {
@@ -894,7 +881,6 @@ window.addEventListener("message", event => {
 
     
 }
-
 
 
 async function viewSourceNav() {
