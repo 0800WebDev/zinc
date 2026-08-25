@@ -701,7 +701,12 @@ async function initializeBrowser() {
 document.addEventListener("click", (e) => {
     const qr = document.getElementById("qr");
 
-    if (!qr || qr.style.display !== "block" || qr.contains(e.target)) return;
+    if (!qr) return;
+
+    const wasOpen = qr.style.display === "block";
+
+    if (!wasOpen) return;
+    if (qr.contains(e.target)) return;
 
     qr.style.display = "none";
 });
