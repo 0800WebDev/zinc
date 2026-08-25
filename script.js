@@ -582,7 +582,10 @@ function generateCurrentPageQR() {
 }
 
 
-
+document.getElementById("qr-open").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("qr").style.display = "block";
+});
 
 
 async function initializeBrowser() {
