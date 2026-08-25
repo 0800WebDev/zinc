@@ -698,13 +698,16 @@ async function initializeBrowser() {
 document.addEventListener("click", (e) => {
     const qr = document.getElementById("qr");
 
-    if (!qr || qr.style.display !== "block") return;
+    if (!qr) return;
+
+    const isOpen = getComputedStyle(qr).display !== "none";
+
+    if (!isOpen) return;
 
     if (!qr.contains(e.target)) {
         qr.style.display = "none";
     }
 });
-
     
 if (FULLSCREEN_MODE) {
     document.querySelector(".browser-container").classList.add("fullscreen-browser");
