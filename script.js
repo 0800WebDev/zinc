@@ -527,6 +527,64 @@ async function getSharedConnection() {
     return sharedConnection;
 }
 
+
+
+
+
+
+
+function generateCurrentPageQR() {
+    const currentUrl = getActiveTab()?.url;
+
+    if (!currentUrl) return;
+
+    let parsed;
+
+    try {
+        parsed = new URL(currentUrl);
+    } catch {
+        return;
+    }
+
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        return;
+    }
+
+    const qrUrl =
+        window.location.origin +
+        "/?url=" +
+        encodeURIComponent(parsed.href) +
+        "&fullscreen=true";
+
+    const qrPreview = document.getElementById("qr-preview");
+    const qrContainer = document.getElementById("qr");
+
+    qrContainer.style.display = "block";
+    qrPreview.innerHTML = "";
+
+    new QRCode(qrPreview, {
+        text: qrUrl,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.M
+    });
+
+    document.getElementById("qr-download").onclick = () => {
+        const canvas = qrPreview.querySelector("canvas");
+
+        if (!canvas) return;
+
+        const link = document.createElement("a");
+        link.download = "zinc-qr.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    };
+}
+
+
+
+
+
 async function initializeBrowser() {
     const root = document.getElementById("app");
     root.innerHTML = `
@@ -583,6 +641,7 @@ async function initializeBrowser() {
 <button onclick="viewSourceNav()">
 <i class="fa-solid fa-code"></i> View Source
 </button>
+<button onclick="generateCurrentPageQR()">QR Code</button>
 <hr>
 <button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
         <i class="fa-brands fa-github"></i> Github 
@@ -601,6 +660,12 @@ async function initializeBrowser() {
 
 
 
+</div>
+
+
+<div class="dropdown" id="qr">
+<img src="qr-preview">
+<button id="qr-download">Download</button>
 </div>
 
     
