@@ -698,11 +698,7 @@ async function initializeBrowser() {
 document.addEventListener("click", (e) => {
     const qr = document.getElementById("qr");
 
-    if (!qr) return;
-
-    const isOpen = getComputedStyle(qr).display !== "none";
-
-    if (!isOpen) return;
+    if (!qr || getComputedStyle(qr).display === "none") return;
 
     if (!qr.contains(e.target)) {
         qr.style.display = "none";
