@@ -232,24 +232,33 @@ function applyChanges() {
 
     //theme
 
+
 const iframe = document.getElementById("preview");
 
-iframe.onload = () => {
+function fitPreview() {
   const doc = iframe.contentDocument;
+  if (!doc) return;
+
   const html = doc.documentElement;
 
   const pageWidth = html.scrollWidth;
   const pageHeight = html.scrollHeight;
 
-  const scaleX = iframe.clientWidth / pageWidth;
-  const scaleY = iframe.clientHeight / pageHeight;
-
-  const scale = Math.min(scaleX, scaleY);
+  const scale = Math.min(
+    iframe.clientWidth / pageWidth,
+    iframe.clientHeight / pageHeight
+  );
 
   html.style.transform = `scale(${scale})`;
   html.style.transformOrigin = "top left";
   html.style.width = `${100 / scale}%`;
-};
+}
+
+iframe.onload = fitPreview;
+
+new ResizeObserver(fitPreview).observe(iframe);
+
+    
     
 const uploadBtn = document.getElementById('uploadBtn');
 const resetBtn = document.getElementById('resetBtn');
