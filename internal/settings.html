@@ -127,6 +127,14 @@ function general() {
                 </div>
             </div>
   `
+
+  const titleInput = document.getElementById("titleInput");
+const faviconInput = document.getElementById("faviconInput");
+
+titleInput.value = localStorage.getItem("pageTitle") || "";
+faviconInput.value = localStorage.getItem("pageFavicon") || "";
+
+  
 }
 general()
 
@@ -196,9 +204,8 @@ function applyChanges() {
   localStorage.setItem("pageTitle", title);
   localStorage.setItem("pageFavicon", favicon);
 
-  document.getElementById("titleInput").value = "";
-  document.getElementById("faviconInput").value = "";
-}
+  
+  }
 
 
     function setTabPreset(tab) {
