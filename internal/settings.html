@@ -75,6 +75,10 @@
     .settings-header {
         border-top: 1px solid #444;
     }
+
+      #bg-preview {
+  pointer-events: none;
+}
     </style>
   </head>
   <body>
@@ -94,6 +98,7 @@
 </div>
     
   <script>
+    //settings
 function general() {
   document.getElementById("content").innerHTML = `
   <div class="settings-header">
@@ -136,6 +141,18 @@ function proxy() {
     <div class="settings-header">
                 <h2><i class="fa-solid fa-palette"></i>Theme</h2>
             </div>
+
+            <div class="settings-content">
+               
+                <div class="section-title">Background image</div>
+                <div class="custom-input-group" style=" display: flex; justify-content: left; text-align: left;">
+                <button style="color: black;" id="uploadBtn">Upload</button> <button style="color: black;" id="resetBtn">Reset</button>
+                </div>
+                <br>
+                <div class="section-title">Preview</div>
+                <iframe src="/NT.html" id="bg-preview"></iframe>
+                <hr>
+            </div>
   `
     }
 
@@ -152,7 +169,7 @@ function proxy() {
 
 
 
-
+//tab cloak
 
 
     
@@ -209,6 +226,62 @@ function applyChanges() {
       }
       applyChanges()
     }
+
+
+
+
+    //theme
+
+const iframe = document.getElementById("preview");
+
+
+    iframe.onload = () => {
+  const doc = iframe.contentDocument;
+  const body = doc.body;
+  const html = doc.documentElement;
+
+  const pageWidth = Math.max(body.scrollWidth, html.scrollWidth);
+  const pageHeight = Math.max(body.scrollHeight, html.scrollHeight);
+
+  const scaleX = iframe.clientWidth / pageWidth;
+  const scaleY = iframe.clientHeight / pageHeight;
+
+  html.style.zoom = Math.min(scaleX, scaleY);
+};
+    
+const uploadBtn = document.getElementById('uploadBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+uploadBtn.onclick = () => {
+  bgUpload.click();
+};
+
+resetBtn.onclick = () => {
+  localStorage.removeItem('customBg');
+  loadBackground();
+};
+
+bgUpload.onchange = e => {
+  const file = e.target.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      const imgData = event.target.result;
+
+      document.body.style.backgroundImage = `url(${imgData})`;
+
+      try {
+        localStorage.setItem('customBg', imgData);
+      } catch (err) {
+        alert("Image too large! Try a smaller file.");
+      }
+    };
+
+    reader.readAsDataURL(file);
+  }
+};
     
   </script>
   </body>
