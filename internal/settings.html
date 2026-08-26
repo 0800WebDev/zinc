@@ -157,6 +157,7 @@ function proxy() {
             </div>
   `
       fitPreview();
+      upload();
     }
 
       function extensions() {
@@ -274,7 +275,7 @@ function fitPreview() {
   };
 }
     
-    
+    function upload() {
 const uploadBtn = document.getElementById('uploadBtn');
 const resetBtn = document.getElementById('resetBtn');
 
@@ -308,7 +309,7 @@ bgUpload.onchange = e => {
     reader.readAsDataURL(file);
   }
 };
-    
+    }
   </script>
   </body>
 </html>
