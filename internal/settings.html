@@ -276,39 +276,40 @@ function fitPreview() {
 }
     
     function upload() {
-const uploadBtn = document.getElementById('uploadBtn');
-const resetBtn = document.getElementById('resetBtn');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const resetBtn = document.getElementById('resetBtn');
 
-uploadBtn.onclick = () => {
-  bgUpload.click();
-};
+  const bgUpload = document.createElement('input');
+  bgUpload.type = 'file';
+  bgUpload.accept = 'image/*';
+  bgUpload.style.display = 'none';
+  document.body.appendChild(bgUpload);
 
-resetBtn.onclick = () => {
-  localStorage.removeItem('customBg');
-  loadBackground();
-};
+  uploadBtn.onclick = () => {
+    bgUpload.click();
+  };
 
-bgUpload.onchange = e => {
-  const file = e.target.files[0];
+  resetBtn.onclick = () => {
+    localStorage.removeItem('customBg');
+  };
 
-  if (file) {
+  bgUpload.onchange = e => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
     const reader = new FileReader();
 
     reader.onload = event => {
-      const imgData = event.target.result;
-
-      document.body.style.backgroundImage = `url(${imgData})`;
-
       try {
-        localStorage.setItem('customBg', imgData);
+        localStorage.setItem('customBg', event.target.result);
       } catch (err) {
         alert("Image too large! Try a smaller file.");
       }
     };
 
     reader.readAsDataURL(file);
-  }
-};
+  };
     }
   </script>
   </body>
