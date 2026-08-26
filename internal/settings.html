@@ -274,16 +274,32 @@ function fitPreview() {
     html.style.height = `${100 / scale}%`;
   };
 }
+
+
+function reloadPreview() {
+  const oldPreview = document.getElementById("bg-preview");
+
+  if (!oldPreview) return;
+
+  const newPreview = oldPreview.cloneNode(true);
+  newPreview.src = "/NT.html?" + Date.now();
+
+  oldPreview.replaceWith(newPreview);
+
+  fitPreview();
+}
+
+    
+
     
     function upload() {
-  const uploadBtn = document.getElementById('uploadBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  const preview = document.getElementById('bg-preview');
+  const uploadBtn = document.getElementById("uploadBtn");
+  const resetBtn = document.getElementById("resetBtn");
 
-  const bgUpload = document.createElement('input');
-  bgUpload.type = 'file';
-  bgUpload.accept = 'image/*';
-  bgUpload.style.display = 'none';
+  const bgUpload = document.createElement("input");
+  bgUpload.type = "file";
+  bgUpload.accept = "image/*";
+  bgUpload.style.display = "none";
   document.body.appendChild(bgUpload);
 
   uploadBtn.onclick = () => {
@@ -291,8 +307,8 @@ function fitPreview() {
   };
 
   resetBtn.onclick = () => {
-    localStorage.removeItem('customBg');
-    preview.contentWindow.location.reload();
+    localStorage.removeItem("customBg");
+    reloadPreview();
   };
 
   bgUpload.onchange = e => {
@@ -304,8 +320,8 @@ function fitPreview() {
 
     reader.onload = event => {
       try {
-        localStorage.setItem('customBg', event.target.result);
-        preview.contentWindow.location.reload();
+        localStorage.setItem("customBg", event.target.result);
+        reloadPreview();
       } catch (err) {
         alert("Image too large! Try a smaller file.");
       }
