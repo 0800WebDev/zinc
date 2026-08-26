@@ -245,24 +245,26 @@ function fitPreview() {
     const html = doc.documentElement;
     const body = doc.body;
 
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+
+    html.style.margin = "0";
+    body.style.margin = "0";
+
     const pageWidth = Math.max(
       html.scrollWidth,
-      body.scrollWidth,
-      html.offsetWidth,
-      body.offsetWidth
+      body.scrollWidth
     );
 
     const pageHeight = Math.max(
       html.scrollHeight,
-      body.scrollHeight,
-      html.offsetHeight,
-      body.offsetHeight
+      body.scrollHeight
     );
 
-    const scaleX = iframe.clientWidth / pageWidth;
-    const scaleY = iframe.clientHeight / pageHeight;
-
-    const scale = Math.min(scaleX, scaleY);
+    const scale = Math.min(
+      iframe.clientWidth / pageWidth,
+      iframe.clientHeight / pageHeight
+    );
 
     html.style.transform = `scale(${scale})`;
     html.style.transformOrigin = "top left";
