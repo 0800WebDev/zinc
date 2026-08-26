@@ -155,6 +155,7 @@ function proxy() {
                 <hr>
             </div>
   `
+      fitPreview();
     }
 
       function extensions() {
@@ -234,24 +235,41 @@ function applyChanges() {
     //theme
 
 
-const iframe = document.getElementById("bg-preview");
+function fitPreview() {
+  const iframe = document.getElementById("bg-preview");
 
-iframe.onload = () => {
-  const doc = iframe.contentDocument;
-  const html = doc.documentElement;
+  if (!iframe) return;
 
-  const pageWidth = html.scrollWidth;
-  const pageHeight = html.scrollHeight;
+  iframe.onload = () => {
+    const doc = iframe.contentDocument;
+    const html = doc.documentElement;
+    const body = doc.body;
 
-  const scaleX = iframe.clientWidth / pageWidth;
-  const scaleY = iframe.clientHeight / pageHeight;
+    const pageWidth = Math.max(
+      html.scrollWidth,
+      body.scrollWidth,
+      html.offsetWidth,
+      body.offsetWidth
+    );
 
-  const scale = Math.min(scaleX, scaleY);
+    const pageHeight = Math.max(
+      html.scrollHeight,
+      body.scrollHeight,
+      html.offsetHeight,
+      body.offsetHeight
+    );
 
-  html.style.transform = `scale(${scale})`;
-  html.style.transformOrigin = "top left";
-  html.style.width = `${100 / scale}%`;
-};
+    const scaleX = iframe.clientWidth / pageWidth;
+    const scaleY = iframe.clientHeight / pageHeight;
+
+    const scale = Math.min(scaleX, scaleY);
+
+    html.style.transform = `scale(${scale})`;
+    html.style.transformOrigin = "top left";
+    html.style.width = `${100 / scale}%`;
+    html.style.height = `${100 / scale}%`;
+  };
+}
     
     
 const uploadBtn = document.getElementById('uploadBtn');
