@@ -159,6 +159,9 @@ function applyChanges() {
 
   localStorage.setItem("pageTitle", title);
   localStorage.setItem("pageFavicon", favicon);
+
+  document.getElementById("titleInput").value = "";
+  document.getElementById("faviconInput").value = "";
 }
 
 
