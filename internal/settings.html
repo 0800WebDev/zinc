@@ -278,6 +278,7 @@ function fitPreview() {
     function upload() {
   const uploadBtn = document.getElementById('uploadBtn');
   const resetBtn = document.getElementById('resetBtn');
+  const preview = document.getElementById('bg-preview');
 
   const bgUpload = document.createElement('input');
   bgUpload.type = 'file';
@@ -291,6 +292,7 @@ function fitPreview() {
 
   resetBtn.onclick = () => {
     localStorage.removeItem('customBg');
+    preview.contentWindow.location.reload();
   };
 
   bgUpload.onchange = e => {
@@ -303,6 +305,7 @@ function fitPreview() {
     reader.onload = event => {
       try {
         localStorage.setItem('customBg', event.target.result);
+        preview.contentWindow.location.reload();
       } catch (err) {
         alert("Image too large! Try a smaller file.");
       }
@@ -310,7 +313,6 @@ function fitPreview() {
 
     reader.readAsDataURL(file);
   };
-      document.getElementById("bg-preview").contentWindow.location.reload();
     }
   </script>
   </body>
