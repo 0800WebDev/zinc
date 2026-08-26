@@ -234,19 +234,21 @@ function applyChanges() {
 
 const iframe = document.getElementById("preview");
 
-
-    iframe.onload = () => {
+iframe.onload = () => {
   const doc = iframe.contentDocument;
-  const body = doc.body;
   const html = doc.documentElement;
 
-  const pageWidth = Math.max(body.scrollWidth, html.scrollWidth);
-  const pageHeight = Math.max(body.scrollHeight, html.scrollHeight);
+  const pageWidth = html.scrollWidth;
+  const pageHeight = html.scrollHeight;
 
   const scaleX = iframe.clientWidth / pageWidth;
   const scaleY = iframe.clientHeight / pageHeight;
 
-  html.style.zoom = Math.min(scaleX, scaleY);
+  const scale = Math.min(scaleX, scaleY);
+
+  html.style.transform = `scale(${scale})`;
+  html.style.transformOrigin = "top left";
+  html.style.width = `${100 / scale}%`;
 };
     
 const uploadBtn = document.getElementById('uploadBtn');
