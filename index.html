@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="https://google.com/favicon.ico" type="image/png">
+ <!--   <link rel="icon" href="https://google.com/favicon.ico" type="image/png"> -->
+    <link rel="icon" href="zinc.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="a lightweight, static proxy browser with many features designed for a simple and flexible browsing experience.">
 <meta name="keywords" content="zinc, zinc browser, web proxy, browser, static proxy, web browser, scramjet, privacy browser, school, unblocker, school proxy, ubg">
@@ -12,7 +13,20 @@
 <meta name="google-site-verification" content="Ow9BnhH-kBrfEmLu70Kz_fn9oZhUVvhZzlTfRvrlRY8" />   
     <title>Zinc Browser</title>
     <script>
-document.title = "Google";
+const title = localStorage.getItem("pageTitle") || "Google";
+const favicon = localStorage.getItem("pageFavicon") || "https://google.com/favicon.ico";
+
+window.parent.document.title = title;
+
+let link = window.parent.document.querySelector("link[rel~='icon']");
+
+if (!link) {
+  link = window.parent.document.createElement("link");
+  link.rel = "icon";
+  window.parent.document.head.appendChild(link);
+}
+
+link.href = favicon;
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js" defer></script>
