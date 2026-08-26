@@ -78,8 +78,7 @@
 
       #bg-preview {
   pointer-events: none;
-    width: 400px;
-  height: 300px;
+
 }
     </style>
   </head>
@@ -237,29 +236,22 @@ function applyChanges() {
 
 const iframe = document.getElementById("bg-preview");
 
-function fitPreview() {
+iframe.onload = () => {
   const doc = iframe.contentDocument;
-  if (!doc) return;
-
   const html = doc.documentElement;
 
   const pageWidth = html.scrollWidth;
   const pageHeight = html.scrollHeight;
 
-  const scale = Math.min(
-    iframe.clientWidth / pageWidth,
-    iframe.clientHeight / pageHeight
-  );
+  const scaleX = iframe.clientWidth / pageWidth;
+  const scaleY = iframe.clientHeight / pageHeight;
+
+  const scale = Math.min(scaleX, scaleY);
 
   html.style.transform = `scale(${scale})`;
   html.style.transformOrigin = "top left";
   html.style.width = `${100 / scale}%`;
-}
-
-iframe.onload = fitPreview;
-
-new ResizeObserver(fitPreview).observe(iframe);
-
+};
     
     
 const uploadBtn = document.getElementById('uploadBtn');
