@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://zinc-browser.vercel.app/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <style>
+      body {
+        background: black;
+      }
+      #menu {
+    position: fixed;
+    left: 0;
+    top: 0vh;
+    background: black;
+    border: 1px solid #444;
+    border-radius: 0px;
+    min-width: 170px;
+    z-index: 1000;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    
+      }
+      #menu button {
+            display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 17px 10px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+        border-radius: 8px;
+      }
+      #menu button:hover {
+    background: #333;
+}
+      hr {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid;
+    flex-shrink: 0;
+}
+  #content {
+    position: fixed;
+    height: 100dvh;
+    width: calc(100vw - 170px);
+    background: black;
+    color: white;
+    bottom: 0px;
+    right: 0px;
+  }
+
+      .settings-content {
+    margin: 0 auto;
+    width: 60%;
+      }
+      .settings-button {
+        color: black !important;
+        width: 100%
+      }
+    </style>
+  </head>
+  <body>
+<div id="menu">
+ 
+
+        <button onclick="general()"><i class="fa-solid fa-gear"></i>General</button>
+<button onclick="proxy()"><i class="fa-solid fa-globe"></i> Proxy</button>
+<button onclick="theme()"><i class="fa-solid fa-palette"></i> Theme</button>
+ <button onclick="extensions()">
+    <i class="fa-solid fa-puzzle-piece"></i> Extensions</button>
+
+  
+</div>
+
+<div id="content">
+</div>
+    
+  <script>
+function general() {
+  document.getElementById("content").innerHTML = `
+  <div class="settings-header">
+                <h2><i class="fa-solid fa-gear"></i>General</h2>
+            </div>
+            <div class="settings-content">
+               
+                <div class="section-title"> Tab title</div>
+                <div class="custom-input-group">
+                    <input type="text" id="titleInput" placeholder="Google Classroom">
+                </div>
+<br>
+<div class="section-title">Favicon</div>
+                <div class="custom-input-group">
+                    <input type="text" id="faviconInput" placeholder="favicon.ico">
+                </div>
+                <br>
+                <div class="custom-input-group" style=" display: flex; justify-content: center; text-align: center;">
+<button onclick="applyChanges()" class="settings-button">Apply</button>
+                </div>
+            </div>
+  `
+}
+general()
+
+function proxy() {
+  document.getElementById("content").innerHTML = `
+    <div class="settings-header">
+                <h2><i class="fa-solid fa-globe"></i>Proxy</h2>
+            </div>
+  `
+}
+
+    function theme() {
+  document.getElementById("content").innerHTML = `
+    <div class="settings-header">
+                <h2><i class="fa-solid fa-palette"></i>Theme</h2>
+            </div>
+  `
+    }
+
+      function extensions() {
+  document.getElementById("content").innerHTML = `
+    <div class="settings-header">
+                <h2><i class="fa-solid fa-puzzle-piece"></i>Extensions</h2>
+            </div>
+  `
+      }
+
+
+
+
+
+
+
+
+
+    
+
+function applyChanges() {
+  const title = document.getElementById("titleInput").value;
+  const favicon = document.getElementById("faviconInput").value;
+
+  window.parent.document.title = title;
+
+  let link = window.parent.document.querySelector("link[rel~='icon']");
+  if (!link) {
+    link = window.parent.document.createElement("link");
+    link.rel = "icon";
+    window.parent.document.head.appendChild(link);
+  }
+
+  link.href = favicon;
+
+  localStorage.setItem("pageTitle", title);
+  localStorage.setItem("pageFavicon", favicon);
+}
+
+
+    function setTabPreset(tab) {
+      const TabPreset = tab;
+      if (TabPreset === "zinc") {
+      document.getElementById("titleInput").value = "Zinc";
+      document.getElementById("faviconInput").value = "/zinc.png";
+
+      }
+    }
+    
+  </script>
+  </body>
+</html>
