@@ -64,6 +64,12 @@
         color: black !important;
         width: 100%
       }
+    
+    #tab-preset {
+      height: 10px;
+      width: 10px;
+    }
+    
     </style>
   </head>
   <body>
@@ -99,6 +105,8 @@ function general() {
                 <div class="custom-input-group">
                     <input type="text" id="faviconInput" placeholder="favicon.ico">
                 </div>
+                <br>
+                <img id="tab-preset" src="/zinc.png" onclick="setTabPreset("zinc")">
                 <br>
                 <div class="custom-input-group" style=" display: flex; justify-content: center; text-align: center;">
 <button onclick="applyChanges()" class="settings-button">Apply</button>
