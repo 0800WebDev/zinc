@@ -17,7 +17,7 @@
     top: 0vh;
     background: black;
     border: 1px solid #444;
-    border-radius: 0px;
+    border-radius: 8px;
     min-width: 170px;
     z-index: 1000;
     height: 100vh;
@@ -167,8 +167,23 @@ function applyChanges() {
       if (TabPreset === "zinc") {
       document.getElementById("titleInput").value = "Zinc";
       document.getElementById("faviconInput").value = "/zinc.png";
-
+      } else if (TabPreset === "google") {
+      document.getElementById("titleInput").value = "Google";
+      document.getElementById("faviconInput").value = "https://google.com/favicon.ico";
+      } else if (TabPreset === "classroom") {
+      document.getElementById("titleInput").value = "Google Classroom";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/classroom/favicon.png";
+      } else if (TabPreset === "docs") {
+      document.getElementById("titleInput").value = "Google Docs";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/docs/documents/images/docs-favicon-2026-v2.ico";
+      } else if (TabPreset === "drive") {
+      document.getElementById("titleInput").value = "Google Drive";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/images/branding/productlogos/drive_2026/v2/ico/drive_2026_256dp.ico";
+      } else if (TabPreset === "newTab") {
+      document.getElementById("titleInput").value = "New Tab";
+      document.getElementById("faviconInput").value = "https://raw.githubusercontent.com/chromium/chromium/main/chrome/app/theme/default_100_percent/common/favicon_ntp.png";
       }
+      applyChanges()
     }
     
   </script>
