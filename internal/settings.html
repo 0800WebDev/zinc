@@ -123,7 +123,7 @@ function general() {
 <br>
                 <br>
                 <div class="custom-input-group" style=" display: flex; justify-content: center; text-align: center;">
-<button onclick="applyChanges()" class="settings-button">Apply</button>
+<button onclick="applyChanges()" class="settings-button" id="applyButton">Apply</button>
                 </div>
             </div>
   `
@@ -205,6 +205,13 @@ function applyChanges() {
   localStorage.setItem("pageFavicon", favicon);
 
   
+const applyBtn = document.getElementById("applyButton");
+
+applyBtn.textContent = "Saved!";
+
+setTimeout(() => {
+  applyBtn.textContent = "Apply";
+}, 1000);
   }
 
 
