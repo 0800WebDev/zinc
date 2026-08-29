@@ -323,27 +323,19 @@ async function getExtensionFile(extensionId, filename) {
 
 
 async function buildExtensionPage(extensionId, filename) {
-
     const extension = await getExtension(extensionId);
 
     if (!extension) return null;
+
+    if (extension.enabled === false) {
+        return null;
+    }
 
     let html = extension.files[filename]?.data;
 
     if (!html) return null;
 
-
-
-
-
-
-
-    
-
-
-
-
-const runtime = `
+    const runtime = `
 window.zinc = {
 
     tabs: {
@@ -386,31 +378,14 @@ window.zinc = {
 };
 `;
 
-html = html.replace(
-    "</head>",
-    `<script>${runtime}<\/script></head>`
-);
+    html = html.replace(
+        "</head>",
+        `<script>${runtime}<\/script></head>`
+    );
 
-
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-    // Replace CSS files
     html = html.replace(
         /<link\s+[^>]*href=["']([^"']+)["'][^>]*>/gi,
         (match, path) => {
-
             const file = extension.files[path];
 
             if (!file) return match;
@@ -419,12 +394,9 @@ html = html.replace(
         }
     );
 
-
-    // Replace JavaScript files
     html = html.replace(
         /<script\s+src=["']([^"']+)["']\s*><\/script>/gi,
         (match, path) => {
-
             const file = extension.files[path];
 
             if (!file) return match;
@@ -433,12 +405,9 @@ html = html.replace(
         }
     );
 
-
-    // Replace images
     html = html.replace(
         /src=["']([^"']+)["']/gi,
         (match, path) => {
-
             const file = extension.files[path];
 
             if (!file || !file.type.startsWith("image/")) {
@@ -448,7 +417,6 @@ html = html.replace(
             return `src="${file.data}"`;
         }
     );
-
 
     return html;
 }
@@ -488,7 +456,26 @@ async function setExtensionEnabled(id, enabled) {
 
 
 
+async function uninstallExtension(id) {
+    const db = await openDB();
 
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
+
+        store.delete(id);
+
+        tx.oncomplete = resolve;
+
+        tx.onerror = () => {
+            reject(tx.error || new Error("Failed to remove extension"));
+        };
+
+        tx.onabort = () => {
+            reject(tx.error || new Error("Transaction aborted"));
+        };
+    });
+}
 
 
 
