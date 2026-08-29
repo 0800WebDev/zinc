@@ -117,229 +117,163 @@ async function processFile(path, file, extension) {
 }
 
 async function importExtension(files) {
-
     if (!files || !files.length) {
         throw new Error("No file selected");
     }
 
     const selectedFile = files[0];
 
+    if (!selectedFile.name.toLowerCase().endsWith(".zip")) {
+        throw new Error("Please select a ZIP file");
+    }
+
+    if (typeof JSZip === "undefined") {
+        throw new Error("JSZip failed to load");
+    }
+
+    const zip = await JSZip.loadAsync(selectedFile);
+
     const extension = {
         id: "",
         manifest: null,
-        files: {}
+        files: {},
+        enabled: true
     };
 
-    if (selectedFile.name.toLowerCase().endsWith(".zip")) {
+    const entries = Object.values(zip.files);
 
-        if (typeof JSZip === "undefined") {
-            throw new Error("JSZip failed to load");
-        }
+    let manifestEntry = null;
 
-        const zip = await JSZip.loadAsync(selectedFile);
+    for (const entry of entries) {
+        if (entry.dir) continue;
 
-        const entries = Object.values(zip.files);
+        let path = entry.name.replace(/^\/+/, "");
 
-        let manifestEntry = null;
+        const parts = path.split("/");
 
-        for (const entry of entries) {
+        if (parts.length > 1) {
+            const possibleManifest = entries.find(file =>
+                !file.dir &&
+                file.name.replace(/^\/+/, "") === "manifest.json"
+            );
 
-            if (entry.dir) continue;
-
-            let path = entry.name.replace(/^\/+/, "");
-
-            const parts = path.split("/");
-
-            if (
-                parts.length > 1 &&
-                !entries.some(
-                    file =>
-                        !file.dir &&
-                        file.name.replace(/^\/+/, "") === "manifest.json"
-                )
-            ) {
+            if (!possibleManifest) {
                 path = parts.slice(1).join("/");
             }
-
-            if (!path) continue;
-
-            const data = await entry.async("blob");
-
-            let type = data.type;
-
-            if (!type) {
-                const ext = path.split(".").pop().toLowerCase();
-
-                const mimeTypes = {
-                    html: "text/html",
-                    htm: "text/html",
-                    css: "text/css",
-                    js: "text/javascript",
-                    mjs: "text/javascript",
-                    json: "application/json",
-                    txt: "text/plain",
-                    xml: "application/xml",
-                    svg: "image/svg+xml",
-                    png: "image/png",
-                    jpg: "image/jpeg",
-                    jpeg: "image/jpeg",
-                    gif: "image/gif",
-                    webp: "image/webp",
-                    ico: "image/x-icon",
-                    bmp: "image/bmp",
-                    avif: "image/avif",
-                    woff: "font/woff",
-                    woff2: "font/woff2",
-                    ttf: "font/ttf",
-                    otf: "font/otf"
-                };
-
-                type = mimeTypes[ext] || "application/octet-stream";
-            }
-
-            const isText =
-                type.startsWith("text/") ||
-                [
-                    "application/javascript",
-                    "text/javascript",
-                    "application/json",
-                    "application/xml"
-                ].includes(type) ||
-                /\.(html?|css|js|mjs|json|txt|xml)$/i.test(path);
-
-            if (isText) {
-
-                extension.files[path] = {
-                    type,
-                    data: await data.text()
-                };
-
-            } else {
-
-                extension.files[path] = {
-                    type,
-                    data: await new Promise((resolve, reject) => {
-
-                        const reader = new FileReader();
-
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = () => reject(reader.error);
-
-                        reader.readAsDataURL(data);
-
-                    })
-                };
-            }
-
-            if (path === "manifest.json") {
-                manifestEntry = extension.files[path];
-            }
         }
 
-        if (manifestEntry) {
-            try {
-                extension.manifest = JSON.parse(manifestEntry.data);
-                extension.id = extension.manifest.id;
-            } catch {
-                throw new Error("Invalid manifest.json");
-            }
+        if (!path) continue;
+
+        const blob = await entry.async("blob");
+        const type = getFileType(path, blob);
+
+        const isText =
+            type.startsWith("text/") ||
+            [
+                "application/javascript",
+                "text/javascript",
+                "application/json",
+                "application/xml"
+            ].includes(type) ||
+            /\.(html?|css|js|mjs|json|txt|xml)$/i.test(path);
+
+        if (isText) {
+            extension.files[path] = {
+                type,
+                data: await blob.text()
+            };
+        } else {
+            extension.files[path] = {
+                type,
+                data: await blobToBase64(blob)
+            };
         }
 
-    } else {
-
-        for (const file of files) {
-
-            let path = file.webkitRelativePath
-                .split("/")
-                .slice(1)
-                .join("/");
-
-            if (!path) {
-                path = file.name;
-            }
-
-            if (path === "manifest.json") {
-
-                try {
-                    extension.manifest = JSON.parse(
-                        await file.text()
-                    );
-
-                    extension.id = extension.manifest.id;
-
-                } catch {
-                    throw new Error("Invalid manifest.json");
-                }
-            }
-
-            if (file.type.startsWith("image/")) {
-
-                extension.files[path] = {
-                    type: file.type,
-                    data: await fileToBase64(file)
-                };
-
-            } else {
-
-                extension.files[path] = {
-                    type: file.type || "text/plain",
-                    data: await fileToText(file)
-                };
-
-            }
+        if (path === "manifest.json") {
+            manifestEntry = extension.files[path];
         }
     }
 
-    if (!extension.manifest) {
-        throw new Error("manifest.json not found");
+    if (!manifestEntry) {
+        throw new Error("manifest.json not found in ZIP");
     }
 
-    if (!extension.id) {
-        throw new Error("Extension id missing");
+    try {
+        extension.manifest = JSON.parse(manifestEntry.data);
+    } catch (err) {
+        console.error("Manifest parse error:", err);
+        throw new Error("Invalid manifest.json");
     }
+
+    if (!extension.manifest.id) {
+        throw new Error("Extension id missing from manifest.json");
+    }
+
+    extension.id = extension.manifest.id;
 
     const db = await openDB();
 
-    const tx = db.transaction(STORE_NAME, "readwrite");
+    await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
 
-    tx.objectStore(STORE_NAME).put(extension);
+        const request = store.put(extension);
 
-    console.log("Stored extension:", extension);
+        request.onsuccess = () => {
+            console.log("Extension stored:", extension.id);
+        };
 
-    return new Promise((resolve, reject) => {
+        request.onerror = () => {
+            reject(request.error);
+        };
 
         tx.oncomplete = () => {
-            console.log("Installed:", extension.manifest.name);
-            resolve(extension);
+            resolve();
         };
 
         tx.onerror = () => {
             reject(tx.error);
         };
 
+        tx.onabort = () => {
+            reject(tx.error || new Error("Database transaction aborted"));
+        };
     });
+
+    console.log("Installed extension:", extension.manifest.name, extension);
+
+    return extension;
 }
 
 document.addEventListener("change", async e => {
-
     if (e.target.id !== "folderPicker") return;
 
-    try {
+    const files = e.target.files;
 
-        await importExtension(e.target.files);
-
-        alert("Extension installed!");
-
-    } catch (err) {
-
-        console.error(err);
-
-        alert(err.message);
-
+    if (!files || files.length === 0) {
+        return;
     }
 
-});
+    console.log("Extension ZIP selected:", files[0].name);
 
+    try {
+        const extension = await importExtension(files);
+
+        console.log("Extension successfully installed:", extension);
+
+        alert(`Extension installed: ${extension.manifest.name}`);
+
+        e.target.value = "";
+
+        if (typeof renderExtensions === "function") {
+            await renderExtensions();
+        }
+
+    } catch (err) {
+        console.error("Extension installation failed:", err);
+        alert(`Extension installation failed:\n\n${err.message}`);
+    }
+});
 
 
 
