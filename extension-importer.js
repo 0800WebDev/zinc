@@ -132,6 +132,7 @@ async function importExtension(files) {
     }
 
     const zip = await JSZip.loadAsync(selectedFile);
+    const entries = Object.values(zip.files);
 
     const extension = {
         id: "",
@@ -140,26 +141,40 @@ async function importExtension(files) {
         enabled: true
     };
 
-    const entries = Object.values(zip.files);
+    let manifestPath = null;
 
-    let manifestEntry = null;
+    for (const entry of entries) {
+        if (entry.dir) continue;
+
+        const path = entry.name.replace(/^\/+/, "");
+
+        if (path === "manifest.json") {
+            manifestPath = path;
+            break;
+        }
+
+        if (path.endsWith("/manifest.json")) {
+            manifestPath = path;
+            break;
+        }
+    }
+
+    if (!manifestPath) {
+        throw new Error("manifest.json not found");
+    }
+
+    const root = manifestPath.slice(
+        0,
+        manifestPath.lastIndexOf("manifest.json")
+    );
 
     for (const entry of entries) {
         if (entry.dir) continue;
 
         let path = entry.name.replace(/^\/+/, "");
 
-        const parts = path.split("/");
-
-        if (parts.length > 1) {
-            const possibleManifest = entries.find(file =>
-                !file.dir &&
-                file.name.replace(/^\/+/, "") === "manifest.json"
-            );
-
-            if (!possibleManifest) {
-                path = parts.slice(1).join("/");
-            }
+        if (root && path.startsWith(root)) {
+            path = path.slice(root.length);
         }
 
         if (!path) continue;
@@ -188,25 +203,23 @@ async function importExtension(files) {
                 data: await blobToBase64(blob)
             };
         }
-
-        if (path === "manifest.json") {
-            manifestEntry = extension.files[path];
-        }
     }
 
-    if (!manifestEntry) {
-        throw new Error("manifest.json not found in ZIP");
+    const manifestFile = extension.files["manifest.json"];
+
+    if (!manifestFile) {
+        throw new Error("manifest.json could not be loaded");
     }
 
     try {
-        extension.manifest = JSON.parse(manifestEntry.data);
+        extension.manifest = JSON.parse(manifestFile.data);
     } catch (err) {
-        console.error("Manifest parse error:", err);
+        console.error("Manifest:", manifestFile.data);
         throw new Error("Invalid manifest.json");
     }
 
     if (!extension.manifest.id) {
-        throw new Error("Extension id missing from manifest.json");
+        throw new Error("Extension id missing");
     }
 
     extension.id = extension.manifest.id;
@@ -217,22 +230,12 @@ async function importExtension(files) {
         const tx = db.transaction(STORE_NAME, "readwrite");
         const store = tx.objectStore(STORE_NAME);
 
-        const request = store.put(extension);
+        store.put(extension);
 
-        request.onsuccess = () => {
-            console.log("Extension stored:", extension.id);
-        };
-
-        request.onerror = () => {
-            reject(request.error);
-        };
-
-        tx.oncomplete = () => {
-            resolve();
-        };
+        tx.oncomplete = resolve;
 
         tx.onerror = () => {
-            reject(tx.error);
+            reject(tx.error || new Error("Database transaction failed"));
         };
 
         tx.onabort = () => {
@@ -240,7 +243,9 @@ async function importExtension(files) {
         };
     });
 
-    console.log("Installed extension:", extension.manifest.name, extension);
+    console.log("Installed extension:", extension.manifest.name);
+    console.log("Extension ID:", extension.id);
+    console.log("Files:", Object.keys(extension.files));
 
     return extension;
 }
@@ -248,30 +253,20 @@ async function importExtension(files) {
 document.addEventListener("change", async e => {
     if (e.target.id !== "folderPicker") return;
 
-    const files = e.target.files;
-
-    if (!files || files.length === 0) {
-        return;
-    }
-
-    console.log("Extension ZIP selected:", files[0].name);
-
     try {
-        const extension = await importExtension(files);
-
-        console.log("Extension successfully installed:", extension);
+        const extension = await importExtension(e.target.files);
 
         alert(`Extension installed: ${extension.manifest.name}`);
 
         e.target.value = "";
 
-        if (typeof renderExtensions === "function") {
-            await renderExtensions();
+        if (window.parent && typeof window.parent.renderExtensions === "function") {
+            window.parent.renderExtensions();
         }
 
     } catch (err) {
         console.error("Extension installation failed:", err);
-        alert(`Extension installation failed:\n\n${err.message}`);
+        alert(err.message);
     }
 });
 
