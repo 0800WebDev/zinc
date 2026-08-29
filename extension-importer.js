@@ -118,70 +118,130 @@ async function processFile(path, file, extension) {
 
 async function importExtension(files) {
 
+    if (!files || !files.length) {
+        throw new Error("No file selected");
+    }
+
+    const selectedFile = files[0];
+
     const extension = {
         id: "",
         manifest: null,
         files: {}
     };
 
-    const firstFile = files[0];
+    if (selectedFile.name.toLowerCase().endsWith(".zip")) {
 
-    if (!firstFile) {
-        throw new Error("No files selected");
-    }
+        if (typeof JSZip === "undefined") {
+            throw new Error("JSZip failed to load");
+        }
 
-    if (
-        firstFile.name.toLowerCase().endsWith(".zip") &&
-        files.length === 1
-    ) {
-
-        const zip = await JSZip.loadAsync(firstFile);
+        const zip = await JSZip.loadAsync(selectedFile);
 
         const entries = Object.values(zip.files);
+
+        let manifestEntry = null;
 
         for (const entry of entries) {
 
             if (entry.dir) continue;
 
-            let path = entry.name;
-
-            path = path.replace(/^\/+/, "");
+            let path = entry.name.replace(/^\/+/, "");
 
             const parts = path.split("/");
 
-            if (parts.length > 1) {
-
-                const firstFolder = parts[0];
-
-                const hasManifestAtRoot = entries.some(
-                    item =>
-                        !item.dir &&
-                        item.name === "manifest.json"
-                );
-
-                if (!hasManifestAtRoot) {
-                    path = parts.slice(1).join("/");
-                }
-
+            if (
+                parts.length > 1 &&
+                !entries.some(
+                    file =>
+                        !file.dir &&
+                        file.name.replace(/^\/+/, "") === "manifest.json"
+                )
+            ) {
+                path = parts.slice(1).join("/");
             }
 
             if (!path) continue;
 
-            const blob = await entry.async("blob");
+            const data = await entry.async("blob");
 
-            await processFile(path, blob, extension);
+            let type = data.type;
+
+            if (!type) {
+                const ext = path.split(".").pop().toLowerCase();
+
+                const mimeTypes = {
+                    html: "text/html",
+                    htm: "text/html",
+                    css: "text/css",
+                    js: "text/javascript",
+                    mjs: "text/javascript",
+                    json: "application/json",
+                    txt: "text/plain",
+                    xml: "application/xml",
+                    svg: "image/svg+xml",
+                    png: "image/png",
+                    jpg: "image/jpeg",
+                    jpeg: "image/jpeg",
+                    gif: "image/gif",
+                    webp: "image/webp",
+                    ico: "image/x-icon",
+                    bmp: "image/bmp",
+                    avif: "image/avif",
+                    woff: "font/woff",
+                    woff2: "font/woff2",
+                    ttf: "font/ttf",
+                    otf: "font/otf"
+                };
+
+                type = mimeTypes[ext] || "application/octet-stream";
+            }
+
+            const isText =
+                type.startsWith("text/") ||
+                [
+                    "application/javascript",
+                    "text/javascript",
+                    "application/json",
+                    "application/xml"
+                ].includes(type) ||
+                /\.(html?|css|js|mjs|json|txt|xml)$/i.test(path);
+
+            if (isText) {
+
+                extension.files[path] = {
+                    type,
+                    data: await data.text()
+                };
+
+            } else {
+
+                extension.files[path] = {
+                    type,
+                    data: await new Promise((resolve, reject) => {
+
+                        const reader = new FileReader();
+
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(reader.error);
+
+                        reader.readAsDataURL(data);
+
+                    })
+                };
+            }
 
             if (path === "manifest.json") {
+                manifestEntry = extension.files[path];
+            }
+        }
 
-                const manifestText = await blob.text();
-
-                try {
-                    extension.manifest = JSON.parse(manifestText);
-                } catch {
-                    throw new Error("Invalid manifest.json");
-                }
-
+        if (manifestEntry) {
+            try {
+                extension.manifest = JSON.parse(manifestEntry.data);
                 extension.id = extension.manifest.id;
+            } catch {
+                throw new Error("Invalid manifest.json");
             }
         }
 
@@ -189,17 +249,14 @@ async function importExtension(files) {
 
         for (const file of files) {
 
-            let path = file.webkitRelativePath;
+            let path = file.webkitRelativePath
+                .split("/")
+                .slice(1)
+                .join("/");
 
-            if (path) {
-                path = path.split("/").slice(1).join("/");
-            } else {
+            if (!path) {
                 path = file.name;
             }
-
-            if (!path) continue;
-
-            await processFile(path, file, extension);
 
             if (path === "manifest.json") {
 
@@ -207,11 +264,28 @@ async function importExtension(files) {
                     extension.manifest = JSON.parse(
                         await file.text()
                     );
+
+                    extension.id = extension.manifest.id;
+
                 } catch {
                     throw new Error("Invalid manifest.json");
                 }
+            }
 
-                extension.id = extension.manifest.id;
+            if (file.type.startsWith("image/")) {
+
+                extension.files[path] = {
+                    type: file.type,
+                    data: await fileToBase64(file)
+                };
+
+            } else {
+
+                extension.files[path] = {
+                    type: file.type || "text/plain",
+                    data: await fileToText(file)
+                };
+
             }
         }
     }
@@ -235,11 +309,7 @@ async function importExtension(files) {
     return new Promise((resolve, reject) => {
 
         tx.oncomplete = () => {
-            console.log(
-                "Installed:",
-                extension.manifest.name
-            );
-
+            console.log("Installed:", extension.manifest.name);
             resolve(extension);
         };
 
