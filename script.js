@@ -1876,7 +1876,14 @@ loadBackgroundScripts();
 
 
 //show extensions in toolbar
+const extensionChannel = new BroadcastChannel("zinc-extensions");
 
+extensionChannel.onmessage = async (event) => {
+    if (event.data?.type === "extensions-changed") {
+        await renderExtensions();
+    }
+};
+    
 async function renderExtensions() {
 
     const toolbar = document.getElementById("extension-toolbar");
