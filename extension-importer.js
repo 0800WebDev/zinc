@@ -320,25 +320,25 @@ async function importExtension(files) {
     });
 }
 
-document
-    .getElementById("folderPicker")
-    .addEventListener("change", async e => {
+document.addEventListener("change", async e => {
 
-        try {
+    if (e.target.id !== "folderPicker") return;
 
-            await importExtension(e.target.files);
+    try {
 
-            alert("Extension installed!");
+        await importExtension(e.target.files);
 
-        } catch (err) {
+        alert("Extension installed!");
 
-            console.error(err);
+    } catch (err) {
 
-            alert(err.message);
+        console.error(err);
 
-        }
+        alert(err.message);
 
-    });
+    }
+
+});
 
 
 
@@ -556,3 +556,12 @@ async function setExtensionEnabled(id, enabled) {
     });
 
 }
+
+
+
+
+
+
+
+
+
