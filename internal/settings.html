@@ -365,5 +365,43 @@ function reloadPreview() {
   </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="extension-importer.js"></script>
+    <script>
+      const picker = document.getElementById("folderPicker");
+
+console.log("Picker:", picker);
+
+picker.addEventListener("change", async function(e) {
+
+    console.log("ZIP selected:", e.target.files);
+
+    if (!e.target.files || !e.target.files.length) {
+        console.log("No file selected");
+        return;
+    }
+
+    const file = e.target.files[0];
+
+    console.log("File:", file.name);
+    console.log("Type:", file.type);
+    console.log("Size:", file.size);
+
+    try {
+
+        await importExtension(e.target.files);
+
+        console.log("Extension installed!");
+
+        alert("Extension installed!");
+
+    } catch (err) {
+
+        console.error("Extension import failed:", err);
+
+        alert(err.message);
+
+    }
+
+});
+    </script>
   </body>
 </html>
