@@ -1,5 +1,12 @@
 const DB_NAME = "ZincExtensions";
 const STORE_NAME = "extensions";
+const extensionChannel = new BroadcastChannel("zinc-extensions");
+
+function notifyExtensionsChanged() {
+    extensionChannel.postMessage({
+        type: "extensions-changed"
+    });
+}
 
 async function openDB() {
     return new Promise((resolve, reject) => {
@@ -242,7 +249,9 @@ async function importExtension(files) {
             reject(tx.error || new Error("Database transaction aborted"));
         };
     });
-
+    
+notifyExtensionsChanged();
+    
     console.log("Installed extension:", extension.manifest.name);
     console.log("Extension ID:", extension.id);
     console.log("Files:", Object.keys(extension.files));
@@ -428,7 +437,6 @@ window.zinc = {
 
 
 async function setExtensionEnabled(id, enabled) {
-
     const db = await openDB();
 
     const tx = db.transaction(STORE_NAME, "readwrite");
@@ -437,21 +445,19 @@ async function setExtensionEnabled(id, enabled) {
     const req = store.get(id);
 
     req.onsuccess = () => {
-
         const extension = req.result;
 
         if (!extension) return;
 
         extension.enabled = enabled;
-
         store.put(extension);
-
     };
 
-    return new Promise(resolve => {
+    await new Promise(resolve => {
         tx.oncomplete = resolve;
     });
 
+    notifyExtensionsChanged();
 }
 
 
@@ -459,7 +465,7 @@ async function setExtensionEnabled(id, enabled) {
 async function uninstallExtension(id) {
     const db = await openDB();
 
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, "readwrite");
         const store = tx.objectStore(STORE_NAME);
 
@@ -475,6 +481,8 @@ async function uninstallExtension(id) {
             reject(tx.error || new Error("Transaction aborted"));
         };
     });
+
+    notifyExtensionsChanged();
 }
 
 
