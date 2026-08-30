@@ -85,15 +85,15 @@
         color: white;
         display: block;
       }
-      .transport-buttons {
+.transport-buttons {
   display: flex;
   width: 100%;
   gap: 10px;
 }
 
 .transport-buttons .settings-button {
-  flex: 1;
-  width: 50%;
+  flex: 1 1 0;
+  width: auto;
 }
     </style>
   </head>
@@ -158,14 +158,11 @@ function proxy() {
                 <h2><i class="fa-solid fa-globe"></i>Proxy</h2>
             </div>
              <div class="settings-content">
-                <div class="section-title">proxy transport</div>
-                <div class="custom-input-group">
-                <div class="custom-input-group" style=" display: flex; justify-content: left; text-align: left;">
-               <div class="transport-buttons">
-    <button id="epoxy-btn"  class="settings-button">Epoxy</button>
-    <button id="libcurl-btn"  class="settings-button">libcurl</button>
-</div>
-</div>
+                <div class="section-title">Proxy transport</div>
+
+<div class="transport-buttons">
+  <button id="epoxy-btn" class="settings-button">Epoxy</button>
+  <button id="libcurl-btn" class="settings-button">libcurl</button>
 </div>
 <div class="custom-input-group">
 <p>Epoxy is faster while Libcurl works on stricter networks.</p>
