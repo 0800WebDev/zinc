@@ -147,6 +147,16 @@ function proxy() {
     <div class="settings-header">
                 <h2><i class="fa-solid fa-globe"></i>Proxy</h2>
             </div>
+             <div class="settings-content">
+               
+                <div class="section-title">proxy transport</div>
+                <div class="custom-input-group" style=" display: flex; justify-content: left; text-align: left;">
+                <select id="transport-select">
+    <option value="epoxy">Epoxy (default)</option>
+    <option value="libcurl">libcurl</option>
+</select>
+<p>Epoxy is faster while Libcurl works on stricter networks.</p>
+                </div>
   `
 }
 
