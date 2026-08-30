@@ -96,18 +96,7 @@
 .theme-buttons button {
   flex: 1;
 }
-      #folderPicker {
-    display: none;
-}
-      #folderPicker + .settings-button {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px;
-    color: black !important;
-    text-align: center;
-    cursor: pointer;
-}
+
     </style>
   </head>
   <body>
@@ -221,10 +210,10 @@ function proxy() {
             <div class="settings-content">
                
                 <div class="section-title">Import extension</div>
-                <div class="custom-input-group">
-                   <input id="folderPicker" type="file" accept=".zip">
-                   <label for="folderPicker" class="settings-button">Upload Extension Zip</label>
-                </div>
+               <div class="custom-input-group">
+    <button id="extensionUploadBtn" class="settings-button">Upload Extension Zip</button>
+    <input id="folderPicker" type="file" accept=".zip" style="display: none;">
+</div>
                 <br>
                  <div class="section-title">links</div>
                 <div class="custom-input-group" style="flex-direction: column">
@@ -234,6 +223,12 @@ function proxy() {
                 <br>
                 </div>
   `
+        const folderPicker = document.getElementById("folderPicker");
+const extensionUploadBtn = document.getElementById("extensionUploadBtn");
+
+extensionUploadBtn.onclick = () => {
+    folderPicker.click();
+};
       }
 
 
