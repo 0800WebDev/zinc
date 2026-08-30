@@ -85,14 +85,16 @@
         color: white;
         display: block;
       }
-.transport-buttons {
-  display: flex !important;
-  width: 100% !important;
+.transport-buttons,
+.theme-buttons {
+  display: flex;
+  width: 100%;
   gap: 10px;
 }
 
-.transport-buttons .settings-button {
-  flex: 1 !important;
+.transport-buttons .settings-button,
+.theme-buttons button {
+  flex: 1;
 }
     </style>
   </head>
@@ -183,9 +185,12 @@ function proxy() {
             <div class="settings-content">
                
                 <div class="section-title">Background image</div>
-                <div class="custom-input-group" style=" display: flex; justify-content: left; text-align: left;">
-                <button style="color: black;" id="uploadBtn">Upload</button> <button style="color: black;" id="resetBtn">Reset</button>
-                </div>
+<div class="custom-input-group">
+  <div class="theme-buttons">
+    <button style="color: black;" id="uploadBtn">Upload</button>
+    <button style="color: black;" id="resetBtn">Reset</button>
+  </div>
+</div>
                 <br>
                 <div class="section-title">Preview</div>
                 <iframe src="/NT.html" id="bg-preview"></iframe>
