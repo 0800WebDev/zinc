@@ -1,9 +1,9 @@
 const DB_NAME = "ZincExtensions";
 const STORE_NAME = "extensions";
-const extensionChannel = new BroadcastChannel("zinc-extensions");
+const extensionBroadcastChannel = new BroadcastChannel("zinc-extensions");
 
 function notifyExtensionsChanged() {
-    extensionChannel.postMessage({
+    extensionBroadcastChannel.postMessage({
         type: "extensions-changed"
     });
 }
