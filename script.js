@@ -516,13 +516,25 @@ async function getSharedConnection() {
     if (sharedConnectionReady) return sharedConnection;
 
     const basePath = getBasePath();
-    const wispUrl = startupWisp || localStorage.getItem("proxServer") || DEFAULT_WISP;
-    
-    sharedConnection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
+    const wispUrl = localStorage.getItem("proxServer") ?? DEFAULT_WISP;
+    const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+    const transportUrls = {
+        epoxy: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+        libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
+    };
+
+    const transportUrl = transportUrls[transport] ?? transportUrls.epoxy;
+
+    sharedConnection = new BareMux.BareMuxConnection(
+        basePath + "bareworker.js"
+    );
+
     await sharedConnection.setTransport(
-        "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+        transportUrl,
         [{ wisp: wispUrl }]
     );
+
     sharedConnectionReady = true;
     return sharedConnection;
 }
