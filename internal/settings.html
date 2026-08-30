@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="https://zinc-browser.vercel.app/style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <meta charset="UTF-8">
@@ -151,13 +151,14 @@ function proxy() {
                
                 <div class="section-title">proxy transport</div>
                 <div class="custom-input-group" style=" display: flex; justify-content: left; text-align: left;">
-                <select id="transport-select">
-    <option value="epoxy">Epoxy (default)</option>
-    <option value="libcurl">libcurl</option>
-</select>
+               <div class="transport-buttons">
+    <button id="epoxy-btn">Epoxy</button>
+    <button id="libcurl-btn">libcurl</button>
+</div> <br>
 <p>Epoxy is faster while Libcurl works on stricter networks.</p>
                 </div>
   `
+  transport()
 }
 
     function theme() {
@@ -372,6 +373,34 @@ function reloadPreview() {
     reader.readAsDataURL(file);
   };
     }
+
+
+
+
+
+
+
+
+    //proxy
+function transport() {
+    const epoxyBtn = document.getElementById("epoxy-btn");
+const libcurlBtn = document.getElementById("libcurl-btn");
+
+const currentTransport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+epoxyBtn.classList.toggle("active", currentTransport === "epoxy");
+libcurlBtn.classList.toggle("active", currentTransport === "libcurl");
+
+epoxyBtn.onclick = () => {
+    localStorage.setItem("proxyTransport", "epoxy");
+    location.reload();
+};
+
+libcurlBtn.onclick = () => {
+    localStorage.setItem("proxyTransport", "libcurl");
+    location.reload();
+};
+}
   </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="/extension-importer.js"></script>
