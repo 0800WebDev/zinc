@@ -614,7 +614,7 @@ async function initializeBrowser() {
                 
                             
                         
-                <button id="wisp-settings-btn" title="Proxy Settings"><i class="fa-solid fa-gear"></i></button>
+                <button id="wisp-settings-btn" title="Proxy Settings"><i class="fa-solid fa-server"></i></button>
      
                      <div class="dropdown">
     <button id="tools-btn" title="Tools">
@@ -631,7 +631,7 @@ async function initializeBrowser() {
             <i class="fa-solid fa-code"></i> DevTools
         </button>
 
-        <button id="wisp-settings-btn-menu" title="Proxy Settings">
+        <button onclick='createTab(true); handleSubmit("zinc://settings"); document.getElementById("tools-menu").style.display = "none";' title="Settings">
             <i class="fa-solid fa-gear"></i>Settings
         </button>
 <hr>
@@ -781,8 +781,7 @@ window.addEventListener("blur", () => {
     document.getElementById('home-btn-nav').onclick = () => window.location.href = '../index.html';
     document.getElementById('devtools-btn').onclick = toggleDevTools;
     document.getElementById('wisp-settings-btn').onclick = openSettings;
-    document.getElementById('wisp-settings-btn-menu').onclick = openSettings;
-
+    
     document.getElementById("bookmark-btn").onclick = () => {
     const tab = getActiveTab();
 
