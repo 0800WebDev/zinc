@@ -552,45 +552,55 @@ function openAboutBlank() {
         return;
     }
 
-    const tabUrl = tab.url || "";
-
-    if (
-        !tabUrl ||
-        tabUrl.includes("NT.html") ||
-        tabUrl.startsWith("zinc://") ||
-        tabUrl.startsWith("view-source:")
-    ) {
-        notify("warning", "Cannot open page", "This page cannot be opened in about:blank.");
-        return;
-    }
-
-    let proxiedUrl;
+    let originalUrl = null;
 
     try {
-        proxiedUrl = frame.contentWindow.location.href;
-    } catch {
-        proxiedUrl = frame.src;
-    }
+        let url = frame.contentWindow.location.href;
 
-    if (!proxiedUrl || proxiedUrl === "about:blank") {
-        notify("error", "No URL", "Could not get the current proxied URL.");
-        return;
-    }
+        if (url.includes("/scramjet/")) {
+            url = url.split("/scramjet/")[1];
+
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const decoded = decodeURIComponent(url);
+
+                    if (decoded === url) break;
+
+                    url = decoded;
+                } catch {
+                    break;
+                }
+            }
+        }
+
+        if (/^https?:\/\//i.test(url)) {
+            originalUrl = url;
+        }
+    } catch {}
 
     const currentPage =
         window.location.origin +
         window.location.pathname;
 
-    const targetUrl =
-        currentPage +
-        "?url=" +
-        encodeURIComponent(proxiedUrl) +
-        "&fullscreen=true";
+    let targetUrl = currentPage;
+
+    if (originalUrl) {
+        targetUrl +=
+            "?url=" +
+            encodeURIComponent(originalUrl) +
+            "&fullscreen=true";
+    } else {
+        targetUrl += "";
+    }
 
     const win = window.open("about:blank", "_blank");
 
     if (!win) {
-        notify("error", "Popup blocked", "Allow popups for Zinc to open this page.");
+        notify(
+            "error",
+            "Popup blocked",
+            "Allow popups for Zinc to open this page."
+        );
         return;
     }
 
