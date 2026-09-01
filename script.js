@@ -543,6 +543,82 @@ async function getSharedConnection() {
 
 
 
+function openAboutBlank() {
+    const tab = getActiveTab();
+    const frame = tab?.frame?.frame;
+
+    if (!frame) {
+        notify("error", "No active page", "There is no active proxied page.");
+        return;
+    }
+
+    let proxiedUrl;
+
+    try {
+        proxiedUrl = frame.contentWindow.location.href;
+    } catch {
+        proxiedUrl = frame.src;
+    }
+
+    if (!proxiedUrl || proxiedUrl === "about:blank") {
+        notify("error", "No URL", "Could not get the current proxied URL.");
+        return;
+    }
+
+    const currentPage =
+        window.location.origin +
+        window.location.pathname;
+
+    const targetUrl =
+        currentPage +
+        "?url=" +
+        encodeURIComponent(proxiedUrl) +
+        "&fullscreen=true";
+
+    const win = window.open("about:blank", "_blank");
+
+    if (!win) {
+        notify("error", "Popup blocked", "Allow popups for Zinc to open this page.");
+        return;
+    }
+
+    win.document.open();
+    win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Zinc</title>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+iframe {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+</head>
+<body>
+<iframe src="${targetUrl.replace(/"/g, "&quot;")}" allowfullscreen></iframe>
+</body>
+</html>
+    `);
+    win.document.close();
+}
+
+
+
+
+
 
 
 function generateCurrentPageQR() {
@@ -649,6 +725,9 @@ async function initializeBrowser() {
 <hr>
 <button onclick="document.querySelector('iframe').requestFullscreen()" title="fullscreen">
     <i class="fa-solid fa-expand"></i> Fullscreen 
+</button>
+<button onclick="openAboutBlank()">
+    <i class="fa-solid fa-up-right-from-square"></i> Open in about:blank
 </button>
 <button onclick="viewSourceNav()">
 <i class="fa-solid fa-code"></i> View Source
