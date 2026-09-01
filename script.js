@@ -991,6 +991,37 @@ window.addEventListener("message", event => {
 
     
 
+window.addEventListener("message", event => {
+    if (event.data?.type === "zinc-about-blank") {
+        const tab = createTab(true);
+        tab.url = "about:blank";
+        tab.title = "about:blank";
+        tab.favicon = null;
+
+        const frame = tab.frame.frame;
+
+        frame.srcdoc = "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
+
+        window.__aboutBlankTabs ??= {};
+        window.__aboutBlankTabs[event.data.id] = tab;
+
+        updateAddressBar();
+        updateTabsUI();
+    }
+
+    if (event.data?.type === "zinc-about-blank-write") {
+        const tab = window.__aboutBlankTabs?.[event.data.id];
+        if (!tab?.frame?.frame) return;
+
+        tab.frame.frame.srcdoc = event.data.html;
+
+        updateAddressBar();
+        updateTabsUI();
+    }
+});
+    
+    
+
 
     
 }
@@ -1074,12 +1105,29 @@ function setupNewTabInterception(tab) {
 const zincOpen = (url) => {
     if (!url) return;
 
-    if (String(url).trim().toLowerCase() === "about:blank") {
+    if (String(url).toLowerCase() === "about:blank") {
+        const id = crypto.randomUUID();
+
         window.parent.postMessage({
-            type: "zinc-new-tab",
-            url: "about:blank"
+            type: "zinc-about-blank",
+            id
         }, "*");
-        return;
+
+        return {
+            document: {
+                write(html) {
+                    window.parent.postMessage({
+                        type: "zinc-about-blank-write",
+                        id,
+                        html
+                    }, "*");
+                },
+                close() {}
+            },
+            location: {
+                href: "about:blank"
+            }
+        };
     }
 
     try {
@@ -1092,10 +1140,9 @@ const zincOpen = (url) => {
     }, "*");
 };
 
-                window.open = function(url) {
-                    zincOpen(url);
-                    return null;
-                };
+window.open = function(url) {
+    return zincOpen(url);
+};
 
                 document.addEventListener("click", function(e) {
                     const link = e.target.closest("a");
