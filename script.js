@@ -992,28 +992,38 @@ window.addEventListener("message", event => {
     
 
 window.addEventListener("message", event => {
-    if (event.data?.type === "zinc-about-blank") {
+    const data = event.data;
+
+    if (!data) return;
+
+    if (data.type === "zinc-about-blank") {
         const tab = createTab(true);
+
         tab.url = "about:blank";
         tab.title = "about:blank";
         tab.favicon = null;
+        tab.loading = false;
 
         const frame = tab.frame.frame;
 
         frame.srcdoc = "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
 
         window.__aboutBlankTabs ??= {};
-        window.__aboutBlankTabs[event.data.id] = tab;
+        window.__aboutBlankTabs[data.id] = tab;
 
         updateAddressBar();
         updateTabsUI();
     }
 
-    if (event.data?.type === "zinc-about-blank-write") {
-        const tab = window.__aboutBlankTabs?.[event.data.id];
+    if (data.type === "zinc-about-blank-write") {
+        const tab = window.__aboutBlankTabs?.[data.id];
+
         if (!tab?.frame?.frame) return;
 
-        tab.frame.frame.srcdoc = event.data.html;
+        tab.frame.frame.srcdoc = data.html;
+
+        tab.loading = false;
+        tab.url = "about:blank";
 
         updateAddressBar();
         updateTabsUI();
@@ -1105,26 +1115,47 @@ function setupNewTabInterception(tab) {
 const zincOpen = (url) => {
     if (!url || String(url).toLowerCase() === "about:blank") {
         const id = crypto.randomUUID();
+        let html = "";
 
         window.parent.postMessage({
             type: "zinc-about-blank",
             id
         }, "*");
 
+        const update = () => {
+            window.parent.postMessage({
+                type: "zinc-about-blank-write",
+                id,
+                html
+            }, "*");
+        };
+
         return {
             document: {
-                write(html) {
-                    window.parent.postMessage({
-                        type: "zinc-about-blank-write",
-                        id,
-                        html
-                    }, "*");
+                open() {
+                    html = "";
                 },
-                close() {}
+
+                write(content) {
+                    html += String(content);
+                    update();
+                },
+
+                writeln(content) {
+                    html += String(content) + "\n";
+                    update();
+                },
+
+                close() {
+                    update();
+                }
             },
+
             location: {
                 href: "about:blank"
-            }
+            },
+
+            closed: false
         };
     }
 
@@ -1139,6 +1170,12 @@ const zincOpen = (url) => {
 
     return null;
 };
+
+
+
+
+
+
 
 window.open = function(url) {
     return zincOpen(url);
