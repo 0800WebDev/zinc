@@ -547,8 +547,20 @@ function openAboutBlank() {
     const tab = getActiveTab();
     const frame = tab?.frame?.frame;
 
-    if (!frame) {
-        notify("error", "No active page", "There is no active proxied page.");
+    if (!tab || !frame) {
+        notify("error", "No active page", "There is no active page.");
+        return;
+    }
+
+    const tabUrl = tab.url || "";
+
+    if (
+        !tabUrl ||
+        tabUrl.includes("NT.html") ||
+        tabUrl.startsWith("zinc://") ||
+        tabUrl.startsWith("view-source:")
+    ) {
+        notify("warning", "Cannot open page", "This page cannot be opened in about:blank.");
         return;
     }
 
