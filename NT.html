@@ -237,20 +237,20 @@
         <div class="shortcut-icon"><img src="https://images.seeklogo.com/logo-png/46/1/chatgpt-logo-png_seeklogo-465219.png" alt="Chatgpt shortcut"></div>
         <span class="shortcut-label">ChatGPT</span>
       </a>
+        <div id="customShortcuts" style="display: contents;"></div>
       <a class="shortcut" href="/internal/games.html">
         <div class="shortcut-icon"><img src="https://pgis3.vercel.app/assets/games.png" alt="PGIS 3 games shortcut"></div>
         <span class="shortcut-label">Games</span>
       </a>
-      <div id="customShortcuts" style="display: contents;"></div>
 
-      <div class="shortcut" id="uploadBtn">
+      <!--<div class="shortcut" id="uploadBtn">
         <div class="shortcut-icon"><i class="fa-solid fa-image"></i></div>
         <span class="shortcut-label">Set BG</span>
       </div>
       <div class="shortcut" id="resetBtn">
         <div class="shortcut-icon"><i class="fa-solid fa-rotate-left"></i></div>
         <span class="shortcut-label">Reset BG</span>
-      </div>
+      </div> -->
       <div class="shortcut" id="addShortcut">
         <div class="shortcut-icon"><i class="fa-solid fa-plus"></i></div>
         <span class="shortcut-label">Add</span>
@@ -349,17 +349,39 @@
     };
 
     function renderCustom() {
-      const container = $('#customShortcuts');
-      container.innerHTML = '';
-      const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
-      shortcuts.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'shortcut';
-        div.dataset.url = s.url;
-        div.innerHTML = `<div class="shortcut-icon"><i class="fa-solid fa-link"></i></div><span class="shortcut-label">${s.name}</span>`;
-        container.appendChild(div);
-      });
-    }
+  const container = $('#customShortcuts');
+  container.innerHTML = '';
+  const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
+
+  shortcuts.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'shortcut';
+    div.dataset.url = s.url;
+
+    const icon = document.createElement('img');
+    icon.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(s.url).hostname)}&sz=64`;
+    icon.alt = `${s.name} shortcut`;
+
+    icon.onerror = () => {
+      icon.remove();
+      const fallback = document.createElement('i');
+      fallback.className = 'fa-solid fa-link';
+      div.querySelector('.shortcut-icon').appendChild(fallback);
+    };
+
+    const iconContainer = document.createElement('div');
+    iconContainer.className = 'shortcut-icon';
+    iconContainer.appendChild(icon);
+
+    const label = document.createElement('span');
+    label.className = 'shortcut-label';
+    label.textContent = s.name;
+
+    div.appendChild(iconContainer);
+    div.appendChild(label);
+    container.appendChild(div);
+  });
+}
 
     const quotes = ["Gaming Paradise", "Made by 0800", "Bro just do your work", "Best Browser awarded by me", "One of the best proxies out there.", "check out PGIS", "like nexus but better", "The best proxy"];
     $('#quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
