@@ -547,64 +547,56 @@ function openAboutBlank() {
     const tab = getActiveTab();
     const frame = tab?.frame?.frame;
 
-    if (!tab || !frame) {
-        notify("error", "No active page", "There is no active page.");
-        return;
-    }
+    if (!tab || !frame) return;
 
-    let originalUrl = null;
+    const tabUrl = tab.url || "";
 
-    try {
-        let url = frame.contentWindow.location.href;
+    let targetUrl = window.location.origin + window.location.pathname;
 
-        if (url.includes("/scramjet/")) {
-            url = url.split("/scramjet/")[1];
+    const isNormalProxiedUrl =
+        /^https?:\/\//i.test(tabUrl) &&
+        !tabUrl.includes("/internal/") &&
+        !tabUrl.includes("NT.html") &&
+        !tabUrl.startsWith("view-source:") &&
+        !tabUrl.startsWith("zinc://") &&
+        !tabUrl.startsWith("extension://");
+
+    if (isNormalProxiedUrl) {
+        let proxiedUrl = "";
+
+        try {
+            proxiedUrl = frame.contentWindow.location.href;
+        } catch {
+            proxiedUrl = "";
+        }
+
+        if (proxiedUrl.includes("/scramjet/")) {
+            proxiedUrl = proxiedUrl.split("/scramjet/")[1];
 
             for (let i = 0; i < 5; i++) {
-                try {
-                    const decoded = decodeURIComponent(url);
+                const decoded = decodeURIComponent(proxiedUrl);
 
-                    if (decoded === url) break;
+                if (decoded === proxiedUrl) break;
 
-                    url = decoded;
-                } catch {
-                    break;
-                }
+                proxiedUrl = decoded;
             }
         }
 
-        if (/^https?:\/\//i.test(url)) {
-            originalUrl = url;
+        if (/^https?:\/\//i.test(proxiedUrl)) {
+            targetUrl +=
+                "?url=" +
+                encodeURIComponent(proxiedUrl) +
+                "&fullscreen=true";
         }
-    } catch {}
-
-    const currentPage =
-        window.location.origin +
-        window.location.pathname;
-
-    let targetUrl = currentPage;
-
-    if (originalUrl) {
-        targetUrl +=
-            "?url=" +
-            encodeURIComponent(originalUrl) +
-            "&fullscreen=true";
-    } else {
-        targetUrl += "";
     }
 
     const win = window.open("about:blank", "_blank");
 
     if (!win) {
-        notify(
-            "error",
-            "Popup blocked",
-            "Allow popups for Zinc to open this page."
-        );
+        notify("error", "Popup blocked", "Allow popups for Zinc to open this page.");
         return;
     }
 
-    win.document.open();
     win.document.write(`
 <!DOCTYPE html>
 <html>
@@ -613,10 +605,9 @@ function openAboutBlank() {
 <title>Zinc</title>
 <style>
 html, body {
+    margin: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
     overflow: hidden;
 }
 
@@ -630,10 +621,11 @@ iframe {
 </style>
 </head>
 <body>
-<iframe src="${targetUrl.replace(/"/g, "&quot;")}" allowfullscreen></iframe>
+<iframe src="${targetUrl.replace(/"/g, "&quot;")}"></iframe>
 </body>
 </html>
     `);
+
     win.document.close();
 }
 
