@@ -1112,74 +1112,71 @@ function setupNewTabInterception(tab) {
 
         script.textContent = `
             (() => {
-const zincOpen = (url) => {
-    if (!url || String(url).toLowerCase() === "about:blank") {
-        const id = crypto.randomUUID();
-        let html = "";
+                const zincOpen = (url) => {
+                    if (!url || String(url).toLowerCase() === "about:blank") {
+                        const id = crypto.randomUUID();
 
-        window.parent.postMessage({
-            type: "zinc-about-blank",
-            id
-        }, "*");
+                        window.parent.postMessage({
+                            type: "zinc-about-blank",
+                            id
+                        }, "*");
 
-        const update = () => {
-            window.parent.postMessage({
-                type: "zinc-about-blank-write",
-                id,
-                html
-            }, "*");
-        };
+                        let html = "";
 
-        return {
-            document: {
-                open() {
-                    html = "";
-                },
+                        return {
+                            document: {
+                                open() {
+                                    html = "";
+                                },
 
-                write(content) {
-                    html += String(content);
-                    update();
-                },
+                                write(content) {
+                                    html += String(content);
 
-                writeln(content) {
-                    html += String(content) + "\n";
-                    update();
-                },
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
 
-                close() {
-                    update();
-                }
-            },
+                                writeln(content) {
+                                    html += String(content) + "\\n";
 
-            location: {
-                href: "about:blank"
-            },
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
 
-            closed: false
-        };
-    }
+                                close() {
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                }
+                            },
 
-    try {
-        url = new URL(url, location.href).href;
-    } catch {}
+                            location: {
+                                href: "about:blank"
+                            }
+                        };
+                    }
 
-    window.parent.postMessage({
-        type: "zinc-new-tab",
-        url
-    }, "*");
+                    try {
+                        url = new URL(url, location.href).href;
+                    } catch {}
 
-    return null;
-};
+                    window.parent.postMessage({
+                        type: "zinc-new-tab",
+                        url
+                    }, "*");
 
+                    return null;
+                };
 
-
-
-
-
-
-window.open = function(url) {
-    return zincOpen(url);
-};
+                window.open = zincOpen;
 
                 document.addEventListener("click", function(e) {
                     const link = e.target.closest("a");
