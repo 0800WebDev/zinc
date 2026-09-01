@@ -1032,6 +1032,29 @@ async function viewSourceNav() {
 // =====================================================
 
 
+function openBlankPage(tab) {
+    if (!tab?.frame?.frame) return;
+
+    tab.url = "about:blank";
+    tab.title = "about:blank";
+    tab.favicon = null;
+    tab.loading = false;
+
+    const frame = tab.frame.frame;
+
+    frame.srcdoc = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body></body>
+</html>`;
+
+    updateAddressBar();
+    updateTabsUI();
+    showIframeLoading(false);
+}
 
 
 function setupNewTabInterception(tab) {
@@ -1048,18 +1071,26 @@ function setupNewTabInterception(tab) {
 
         script.textContent = `
             (() => {
-                const zincOpen = (url) => {
-                    if (!url) return;
+const zincOpen = (url) => {
+    if (!url) return;
 
-                    try {
-                        url = new URL(url, location.href).href;
-                    } catch {}
+    if (String(url).trim().toLowerCase() === "about:blank") {
+        window.parent.postMessage({
+            type: "zinc-new-tab",
+            url: "about:blank"
+        }, "*");
+        return;
+    }
 
-                    window.parent.postMessage({
-                        type: "zinc-new-tab",
-                        url
-                    }, "*");
-                };
+    try {
+        url = new URL(url, location.href).href;
+    } catch {}
+
+    window.parent.postMessage({
+        type: "zinc-new-tab",
+        url
+    }, "*");
+};
 
                 window.open = function(url) {
                     zincOpen(url);
@@ -1468,6 +1499,12 @@ async function handleSubmit(url) {
 
 
 
+    
+if (input.trim().toLowerCase() === "about:blank") {
+    openBlankPage(tab);
+    return;
+}
+    
 
 
 if (input.startsWith("view-source:")) {
