@@ -1103,9 +1103,7 @@ function setupNewTabInterception(tab) {
         script.textContent = `
             (() => {
 const zincOpen = (url) => {
-    if (!url) return;
-
-    if (String(url).toLowerCase() === "about:blank") {
+    if (!url || String(url).toLowerCase() === "about:blank") {
         const id = crypto.randomUUID();
 
         window.parent.postMessage({
@@ -1138,6 +1136,8 @@ const zincOpen = (url) => {
         type: "zinc-new-tab",
         url
     }, "*");
+
+    return null;
 };
 
 window.open = function(url) {
