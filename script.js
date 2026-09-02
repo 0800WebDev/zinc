@@ -48,6 +48,10 @@ const WISP_SERVERS = [
         group: "Other",
         name: "classroom.lat",
         url: "wss://wisp.classroom.lat/"
+    },
+    {
+        group: "Other",
+        url: "wss://example.com/"
     }
 ];
 
