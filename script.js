@@ -1714,9 +1714,9 @@ for (const [groupName, servers] of Object.entries(groups)) {
         item.innerHTML = `
             <div class="wisp-option-header">
                 <div class="wisp-option-name">
-                    ${server.name}
-                    ${isActive ? '<i class="fa-solid fa-check" style="margin-left:8px; font-size: 0.7em; color: var(--accent);"></i>' : ''}
-                </div>
+    ${server.name ? server.name : ''}
+    ${isActive ? '<i class="fa-solid fa-check" style="margin-left:8px; font-size: 0.7em; color: var(--accent);"></i>' : ''}
+</div>
                 <div class="server-status">
                     <span class="ping-text">...</span>
                     <div class="status-indicator"></div>
