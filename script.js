@@ -1715,20 +1715,34 @@ for (const [groupName, servers] of Object.entries(groups)) {
             ? `<button class="delete-wisp-btn" onclick="event.stopPropagation(); deleteCustomWisp('${server.url}')"><i class="fa-solid fa-trash"></i></button>`
             : '';
 
-        item.innerHTML = `
-            <div class="wisp-option-header">
-                <div class="wisp-option-name">
-    ${server.name ? server.name : ''}
-    ${isActive ? '<i class="fa-solid fa-check" style="margin-left:8px; font-size: 0.7em; color: var(--accent);"></i>' : ''}
-</div>
-                <div class="server-status">
-                    <span class="ping-text">...</span>
-                    <div class="status-indicator"></div>
-                    ${deleteBtn}
-                </div>
-            </div>
-            <div class="wisp-option-url">${server.url}</div>
-        `;
+item.innerHTML = `
+    ${server.name ? `
+    <div class="wisp-option-header">
+        <div class="wisp-option-name">
+            ${server.name}
+            ${isActive ? '<i class="fa-solid fa-check" style="margin-left:8px; font-size: 0.7em; color: var(--accent);"></i>' : ''}
+        </div>
+        <div class="server-status">
+            <span class="ping-text">...</span>
+            <div class="status-indicator"></div>
+            ${deleteBtn}
+        </div>
+    </div>
+    ` : `
+    <div class="wisp-option-header">
+        <div class="wisp-option-url">${server.url}</div>
+        <div class="server-status">
+            <span class="ping-text">...</span>
+            <div class="status-indicator"></div>
+            ${deleteBtn}
+        </div>
+    </div>
+    `}
+    
+    ${server.name ? `
+    <div class="wisp-option-url">${server.url}</div>
+    ` : ''}
+`;
 
         item.onclick = () => setWisp(server.url);
         list.appendChild(item);
