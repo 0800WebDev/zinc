@@ -1,9 +1,14 @@
 // =====================================================
 // CONFIGURATION - Gets from config.js
 // =====================================================
-const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.onrender.com/";
+const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp-ldpzz.faable.link/";
 
 const WISP_SERVERS = [
+    {
+        group: "PGIS Wisp",
+        name: "Main",
+        url: "wss://pgis-wisp-ldpzz.faable.link/"
+    },
     {
         group: "PGIS Wisp",
         name: "1. Frankfurt (EU Central)",
