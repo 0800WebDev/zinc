@@ -30,12 +30,12 @@ const WISP_SERVERS = [
         url: "wss://pgis-wisp-4.onrender.com/"
     },
     {
-        group: "Public",
+        group: "Other",
         name: "MercuryWorkshop",
         url: "wss://wisp.mercurywork.shop/"
     },
     {
-        group: "Public",
+        group: "Other",
         name: "TOMP Bare Server (best for youtube)",
         url: "wss://bare-server.fly.dev/wisp/"
     },
