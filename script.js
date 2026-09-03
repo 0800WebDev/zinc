@@ -1823,44 +1823,48 @@ window.deleteCustomWisp = function (urlToDelete) {
 async function checkServerHealth(url, element) {
     const dot = element.querySelector('.status-indicator');
     const text = element.querySelector('.ping-text');
+
+    dot.classList.remove('status-success', 'status-error');
+    text.textContent = "...";
+
     const start = Date.now();
 
-    const markOffline = () => {
+    try {
+        const ws = new WebSocket(url);
+
+        const timeout = setTimeout(() => {
+            if (ws.readyState !== WebSocket.OPEN) {
+                try { ws.close(); } catch {}
+                markOffline();
+            }
+        }, 2000);
+
+        function markOffline() {
+            clearTimeout(timeout);
+            dot.classList.remove('status-success');
+            dot.classList.add('status-error');
+            text.textContent = "Offline";
+        }
+
+        ws.onopen = () => {
+            clearTimeout(timeout);
+
+            const latency = Date.now() - start;
+
+            dot.classList.remove('status-error');
+            dot.classList.add('status-success');
+            text.textContent = `${latency}ms`;
+
+            ws.close();
+        };
+
+        ws.onerror = () => {
+            markOffline();
+        };
+
+    } catch {
         dot.classList.add('status-error');
         text.textContent = "Offline";
-    };
-
-    try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 2000);
-        
-        await fetch(url.replace('wss://', 'https://').replace('/wisp/', '/health') || url, {
-            method: 'HEAD',
-            signal: controller.signal,
-            mode: 'no-cors'
-        });
-        
-        clearTimeout(timeout);
-        dot.classList.add('status-success');
-        text.textContent = `${Date.now() - start}ms`;
-    } catch {
-        // Fallback: quick WebSocket test
-        try {
-            const wsTest = new WebSocket(url);
-            wsTest.onopen = () => {
-                dot.classList.add('status-success');
-                text.textContent = `${Date.now() - start}ms`;
-                wsTest.close();
-            };
-            wsTest.onerror = markOffline;
-            
-            setTimeout(() => {
-                if (wsTest.readyState !== WebSocket.OPEN) {
-                    wsTest.close();
-                    markOffline();
-                }
-            }, 1000);
-        } catch { markOffline(); }
     }
 }
 
