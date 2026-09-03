@@ -1828,6 +1828,16 @@ async function checkServerHealth(url, element) {
     text.textContent = "...";
 
     const start = Date.now();
+    let finished = false;
+
+    function markOffline() {
+        if (finished) return;
+        finished = true;
+
+        dot.classList.remove('status-success');
+        dot.classList.add('status-error');
+        text.textContent = "Offline";
+    }
 
     try {
         const ws = new WebSocket(url);
@@ -1837,16 +1847,12 @@ async function checkServerHealth(url, element) {
                 try { ws.close(); } catch {}
                 markOffline();
             }
-        }, 2000);
-
-        function markOffline() {
-            clearTimeout(timeout);
-            dot.classList.remove('status-success');
-            dot.classList.add('status-error');
-            text.textContent = "Offline";
-        }
+        }, 5000);
 
         ws.onopen = () => {
+            if (finished) return;
+
+            finished = true;
             clearTimeout(timeout);
 
             const latency = Date.now() - start;
@@ -1855,16 +1861,23 @@ async function checkServerHealth(url, element) {
             dot.classList.add('status-success');
             text.textContent = `${latency}ms`;
 
-            ws.close();
+            try { ws.close(); } catch {}
         };
 
         ws.onerror = () => {
+            clearTimeout(timeout);
             markOffline();
         };
 
+        ws.onclose = () => {
+            if (!finished) {
+                clearTimeout(timeout);
+                markOffline();
+            }
+        };
+
     } catch {
-        dot.classList.add('status-error');
-        text.textContent = "Offline";
+        markOffline();
     }
 }
 
