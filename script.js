@@ -33,6 +33,11 @@ const WISP_SERVERS = [
         group: "PGIS Wisp",
         url: "wss://pgis-wisp.bonto.run/"
     },
+    
+    {
+        group: "PGIS Wisp",
+        url: "wss://pgis-wisp.getvoroa.com"
+    },
     {
         group: "Other",
         name: "MercuryWorkshop",
