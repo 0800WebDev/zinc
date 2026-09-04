@@ -45,11 +45,6 @@ const WISP_SERVERS = [
     },
     {
         group: "Other",
-        name: "TOMP Bare Server (best for youtube)",
-        url: "wss://bare-server.fly.dev/wisp/"
-    },
-    {
-        group: "Other",
         name: "PGIS proxy",
         url: "wss://homework--spmspy0800.replit.app/wisp/"
     },
