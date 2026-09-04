@@ -30,6 +30,10 @@ const WISP_SERVERS = [
         url: "wss://pgis-wisp-4.onrender.com/"
     },
     {
+        group: "PGIS Wisp",
+        url: "wss://pgis-wisp.bonto.run/"
+    },
+    {
         group: "Other",
         name: "MercuryWorkshop",
         url: "wss://wisp.mercurywork.shop/"
