@@ -1,13 +1,13 @@
 // =====================================================
 // CONFIGURATION - Gets from config.js
 // =====================================================
-const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.hostless.app";
+const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.joytree.site/";
 
 const WISP_SERVERS = [
     {
         group: "PGIS Wisp",
         name: "Main",
-        url: "wss://pgis-wisp.hostless.app"
+        url: "wss://pgis-wisp.joytree.site/"
     },
     {
         group: "PGIS Wisp",
