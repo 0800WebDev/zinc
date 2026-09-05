@@ -52,11 +52,35 @@ const WISP_SERVERS = [
         group: "Other",
         name: "PGIS proxy",
         url: "wss://homework--spmspy0800.replit.app/wisp/"
-    }
-//    {
-//        group: "Other",
-//        url: "wss://example.com/"
-//    }
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://petezahgames.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://petezahgames.net/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://petezahgames.xyz/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://petezahgames.io/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://petezahgames.dev/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://gointospace.app/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://places.vjason.com/wisp/"
+    },
 ];
 
 
