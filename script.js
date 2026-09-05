@@ -81,6 +81,47 @@ const WISP_SERVERS = [
         group: "Space",
         url: "wss://places.vjason.com/wisp/"
     },
+    {
+        group: "Space",
+        url: "wss://space.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://space.asirargentina.com.ar/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://space.colegioitalocomposto.cl/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://tungtung.best/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://triplet.bumon.ar/wisp/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunaron.top/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.colegioitalocomposto.cl/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.kkmsilvia.com/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.asirargentina.com.ar/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://learn.whotel.pt/w/"
+    },
+    
 ];
 
 
