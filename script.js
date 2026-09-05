@@ -102,6 +102,30 @@ const WISP_SERVERS = [
         url: "wss://triplet.bumon.ar/wisp/"
     },
     {
+        group: "TungTung",
+        url: "wss://tungtung.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://tungtung.asirargentina.com.ar/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.hadtea.com/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.colegioitalocomposto.cl/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.asirargentina.com.ar/wisp/"
+    },
+    {
         group: "Lunar",
         url: "wss://lunaron.top/w/"
     },
@@ -119,7 +143,19 @@ const WISP_SERVERS = [
     },
     {
         group: "Lunar",
-        url: "wss://learn.whotel.pt/w/"
+        url: "wss://lunar.globalscholarpress.com/w/"
+    },
+    {
+        group: "Utopia",
+        url: "wss://utopia.colegioitalocomposto.cl/wisp/"
+    },
+    {
+        group: "Utopia",
+        url: "wss://utopia.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "Utopia",
+        url: "wss://utopia.asirargentina.com.ar/wisp/"
     },
     
 ];
