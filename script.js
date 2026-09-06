@@ -1870,7 +1870,7 @@ for (const [groupName, servers] of Object.entries(groups)) {
         checkServerHealth(server.url, item);
     });
 }
-
+}
 function saveCustomWisp() {
     const input = document.getElementById('custom-wisp-input');
     const url = input.value.trim();
