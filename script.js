@@ -1804,8 +1804,12 @@ function openSettings() {
     document.getElementById('close-wisp-modal').onclick = () => modal.classList.add('hidden');
     document.getElementById('save-custom-wisp').onclick = saveCustomWisp;
 
-    modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+    };
+
     renderServerList();
+    initializeAutoswitchSetting();
 }
 
 function renderServerList() {
@@ -1867,29 +1871,7 @@ item.innerHTML = `
     });
 }
 
-    // Add Autoswitch Toggle
-    const isAutoswitch = localStorage.getItem('wispAutoswitch') !== 'false';
-    const toggleContainer = document.createElement('div');
-    toggleContainer.className = 'wisp-option';
-    toggleContainer.style.cssText = 'margin-top: 10px; cursor: default;';
-    toggleContainer.innerHTML = `
-        <div class="wisp-option-header" style="justify-content: space-between;">
-            <div class="wisp-option-name"><i class="fa-solid fa-rotate" style="margin-right:8px"></i> Auto-switch on failure</div>
-            <div class="toggle-switch ${isAutoswitch ? 'active' : ''}" id="autoswitch-toggle">
-                <div class="toggle-knob"></div>
-            </div>
-        </div>
-    `;
 
-    toggleContainer.onclick = () => {
-        const newState = !isAutoswitch;
-        localStorage.setItem('wispAutoswitch', newState);
-        document.getElementById('autoswitch-toggle').classList.toggle('active', newState);
-
-        navigator.serviceWorker.controller?.postMessage({ type: 'config', autoswitch: newState });
-        notify('success', 'Settings Saved', `Autoswitch ${newState ? 'Enabled' : 'Disabled'}`);
-        location.reload();
-    };
 
     list.appendChild(toggleContainer);
 }
@@ -2037,6 +2019,43 @@ async function checkHashParameters() {
         history.replaceState(null, null, location.pathname);
     }
 }
+
+
+
+function initializeAutoswitchSetting() {
+    const toggle = document.getElementById('autoswitch-toggle');
+    const container = document.getElementById('autoswitch-setting');
+
+    if (!toggle || !container) return;
+
+    const updateToggle = () => {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        toggle.classList.toggle('active', enabled);
+    };
+
+    updateToggle();
+
+    container.addEventListener('click', () => {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        const newState = !enabled;
+
+        localStorage.setItem('wispAutoswitch', newState);
+        toggle.classList.toggle('active', newState);
+
+        navigator.serviceWorker.controller?.postMessage({
+            type: 'config',
+            autoswitch: newState,
+            servers: getAllWispServers()
+        });
+
+        notify(
+            'success',
+            'Settings Saved',
+            `Auto-switch ${newState ? 'Enabled' : 'Disabled'}`
+        );
+    });
+}
+
 
 // =====================================================
 // MAIN INITIALIZATION
