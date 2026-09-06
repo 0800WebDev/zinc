@@ -1808,8 +1808,8 @@ function openSettings() {
         if (e.target === modal) modal.classList.add('hidden');
     };
 
-    renderServerList();
-    initializeAutoswitchSetting();
+renderServerList();
+initializeAutoswitchSetting();
 }
 
 function renderServerList() {
@@ -2003,24 +2003,19 @@ function initializeAutoswitchSetting() {
 
     if (!toggle) return;
 
-    const updateToggle = () => {
-        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
-        toggle.classList.toggle('active', enabled);
-    };
+    const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+    toggle.classList.toggle('active', enabled);
 
-    updateToggle();
+    toggle.onclick = () => {
+        const currentState = localStorage.getItem('wispAutoswitch') !== 'false';
+        const newState = !currentState;
 
-    toggle.addEventListener('click', () => {
-        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
-        const newState = !enabled;
-
-        localStorage.setItem('wispAutoswitch', newState);
+        localStorage.setItem('wispAutoswitch', String(newState));
         toggle.classList.toggle('active', newState);
 
         navigator.serviceWorker.controller?.postMessage({
             type: 'config',
-            autoswitch: newState,
-            servers: getAllWispServers()
+            autoswitch: newState
         });
 
         notify(
@@ -2028,9 +2023,8 @@ function initializeAutoswitchSetting() {
             'Settings Saved',
             `Auto-switch ${newState ? 'Enabled' : 'Disabled'}`
         );
-    });
+    };
 }
-
 
 // =====================================================
 // UTILITIES
