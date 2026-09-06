@@ -1996,11 +1996,11 @@ async function checkServerHealth(url, element) {
 }
 
 async function setWisp(url) {
-    const oldUrl = localStorage.getItem('proxServer');
+    const oldUrl = localStorage.getItem("proxServer");
 
     if (oldUrl === url) return;
 
-    localStorage.setItem('proxServer', url);
+    localStorage.setItem("proxServer", url);
 
     if (typeof trackWispServer === "function") {
         trackWispServer(url);
@@ -2008,16 +2008,15 @@ async function setWisp(url) {
 
     const serverName =
         [...WISP_SERVERS, ...getStoredWisps()]
-            .find(s => s.url === url)?.name ?? 'Custom Server';
+            .find(s => s.url === url)?.name ?? "Custom Server";
 
     notify(
-        'info',
-        'Proxy Changed',
+        "info",
+        "Proxy Changed",
         `Switching to ${serverName}...`
     );
 
     try {
-        const basePath = getBasePath();
         const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
 
         const transportUrls = {
@@ -2025,8 +2024,10 @@ async function setWisp(url) {
             libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
         };
 
-        const transportUrl = transportUrls[transport] ?? transportUrls.epoxy;
+        const transportUrl =
+            transportUrls[transport] ?? transportUrls.epoxy;
 
+        // Update the existing BareMux connection.
         if (sharedConnection) {
             await sharedConnection.setTransport(
                 transportUrl,
@@ -2036,56 +2037,47 @@ async function setWisp(url) {
             await getSharedConnection();
         }
 
+        // Update the service worker too.
         navigator.serviceWorker.controller?.postMessage({
-            type: 'config',
+            type: "config",
             wispurl: url
         });
 
-        const tabsToReload = tabs.map(tab => ({
-            tab,
-            url: tab.url
-        }));
-
-        for (const { tab, url: tabUrl } of tabsToReload) {
+        for (const tab of tabs) {
             if (!tab?.frame?.frame) continue;
 
-            if (
-                !tabUrl ||
-                tabUrl === "NT.html" ||
-                tabUrl.startsWith("zinc://") ||
-                tabUrl.startsWith("extension://") ||
-                tabUrl.startsWith("view-source:")
-            ) {
-                continue;
-            }
-
-            tab.loading = true;
-            tab.loadStartTime = Date.now();
-
             try {
-                tab.frame.go(tabUrl);
+                const frameWindow = tab.frame.frame.contentWindow;
+
+                if (frameWindow) {
+                    frameWindow.location.reload();
+                } else {
+                    tab.frame.frame.contentWindow.location.reload();
+                }
             } catch (error) {
-                console.error(`Failed to reload tab ${tab.id}:`, error);
+                console.warn(
+                    `Could not reload Scramjet tab ${tab.id}:`,
+                    error
+                );
             }
         }
 
         updateTabsUI();
         updateAddressBar();
+        renderServerList();
 
         notify(
-            'success',
-            'Proxy Changed',
+            "success",
+            "Proxy Changed",
             `Now using ${serverName}`
         );
-
-        renderServerList();
 
     } catch (error) {
         console.error("Failed to switch Wisp:", error);
 
         notify(
-            'error',
-            'Proxy Change Failed',
+            "error",
+            "Proxy Change Failed",
             error.message
         );
     }
