@@ -2011,26 +2011,75 @@ async function setWisp(url) {
             .find(s => s.url === url)?.name ?? 'Custom Server';
 
     notify(
-        'success',
+        'info',
         'Proxy Changed',
         `Switching to ${serverName}...`
     );
 
     try {
-        await switchWispConnection(url);
+        const basePath = getBasePath();
+        const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+        const transportUrls = {
+            epoxy: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+            libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
+        };
+
+        const transportUrl = transportUrls[transport] ?? transportUrls.epoxy;
+
+        if (sharedConnection) {
+            await sharedConnection.setTransport(
+                transportUrl,
+                [{ wisp: url }]
+            );
+        } else {
+            await getSharedConnection();
+        }
 
         navigator.serviceWorker.controller?.postMessage({
             type: 'config',
             wispurl: url
         });
 
-        renderServerList();
+        const tabsToReload = tabs.map(tab => ({
+            tab,
+            url: tab.url
+        }));
+
+        for (const { tab, url: tabUrl } of tabsToReload) {
+            if (!tab?.frame?.frame) continue;
+
+            if (
+                !tabUrl ||
+                tabUrl === "NT.html" ||
+                tabUrl.startsWith("zinc://") ||
+                tabUrl.startsWith("extension://") ||
+                tabUrl.startsWith("view-source:")
+            ) {
+                continue;
+            }
+
+            tab.loading = true;
+            tab.loadStartTime = Date.now();
+
+            try {
+                tab.frame.go(tabUrl);
+            } catch (error) {
+                console.error(`Failed to reload tab ${tab.id}:`, error);
+            }
+        }
+
+        updateTabsUI();
+        updateAddressBar();
 
         notify(
             'success',
             'Proxy Changed',
             `Now using ${serverName}`
         );
+
+        renderServerList();
+
     } catch (error) {
         console.error("Failed to switch Wisp:", error);
 
