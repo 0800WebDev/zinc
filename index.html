@@ -68,14 +68,33 @@ link.href = favicon;
             
             <div class="settings-footer">
                 <br>
-                <div class="section-title"><i class="fa-solid fa-plus-circle"></i> Custom Server</div>
-                <div class="custom-input-group">
-                    <input type="text" id="custom-wisp-input" placeholder="wss://your-wisp-server.com/wisp/">
-                    <button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <br>
-            Lower ping = faster browsing
-            </div>
+              <div class="settings-footer">
+    <div class="settings-footer-option" id="autoswitch-setting">
+        <div class="settings-footer-label">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Auto-switch on error</span>
+        </div>
+
+        <div class="toggle-switch" id="autoswitch-toggle">
+            <div class="toggle-knob"></div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="section-title">
+        <i class="fa-solid fa-plus-circle"></i> Custom Server
+    </div>
+
+    <div class="custom-input-group">
+        <input type="text" id="custom-wisp-input" placeholder="wss://your-wisp-server.com/wisp/">
+        <button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button>
+    </div>
+
+    <br>
+
+    Lower ping = faster browsing
+</div>
                 
             <!--    <div class="settings-header">
                 <h2><i class="fa-solid fa-user"></i> User Settings</h2>
