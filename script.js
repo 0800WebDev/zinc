@@ -666,7 +666,27 @@ async function getSharedConnection() {
 }
 
 
+async function switchWispConnection(url) {
+    const basePath = getBasePath();
+    const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
 
+    const transportUrls = {
+        epoxy: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+        libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
+    };
+
+    const transportUrl = transportUrls[transport] ?? transportUrls.epoxy;
+
+    if (!sharedConnection) {
+        await getSharedConnection();
+        return;
+    }
+
+    await sharedConnection.setTransport(
+        transportUrl,
+        [{ wisp: url }]
+    );
+}
 
 
 function openAboutBlank() {
@@ -1975,21 +1995,51 @@ async function checkServerHealth(url, element) {
     }
 }
 
-function setWisp(url) {
+async function setWisp(url) {
     const oldUrl = localStorage.getItem('proxServer');
+
+    if (oldUrl === url) return;
+
     localStorage.setItem('proxServer', url);
 
     if (typeof trackWispServer === "function") {
         trackWispServer(url);
     }
 
-    if (oldUrl !== url) {
-        const serverName = [...WISP_SERVERS, ...getStoredWisps()].find(s => s.url === url)?.name ?? 'Custom Server';
-        notify('success', 'Proxy Changed', `Switching to ${serverName}...`);
-    }
+    const serverName =
+        [...WISP_SERVERS, ...getStoredWisps()]
+            .find(s => s.url === url)?.name ?? 'Custom Server';
 
-    navigator.serviceWorker.controller?.postMessage({ type: 'config', wispurl: url });
-    setTimeout(() => location.reload(), 600);
+    notify(
+        'success',
+        'Proxy Changed',
+        `Switching to ${serverName}...`
+    );
+
+    try {
+        await switchWispConnection(url);
+
+        navigator.serviceWorker.controller?.postMessage({
+            type: 'config',
+            wispurl: url
+        });
+
+        renderServerList();
+
+        notify(
+            'success',
+            'Proxy Changed',
+            `Now using ${serverName}`
+        );
+    } catch (error) {
+        console.error("Failed to switch Wisp:", error);
+
+        notify(
+            'error',
+            'Proxy Change Failed',
+            error.message
+        );
+    }
 }
 
 
