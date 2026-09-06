@@ -59,19 +59,43 @@ const WISP_SERVERS = [
     },
     {
         group: "PeteZah Games",
-        url: "wss://petezahgames.net/wisp/"
+        url: "wss://3658729.ritebooks.com/wisp/"
     },
     {
         group: "PeteZah Games",
-        url: "wss://petezahgames.xyz/wisp/"
+        url: "wss://info.videnom.com/wisp/"
     },
     {
         group: "PeteZah Games",
-        url: "wss://petezahgames.io/wisp/"
+        url: "wss://sciencepark.cc/wisp/"
     },
     {
         group: "PeteZah Games",
-        url: "wss://petezahgames.dev/wisp/"
+        url: "wss://sciencenews.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://homeworkhelp.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://businessschool.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://crypto-college.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://fulcrumtheatreinc.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://info.hotelsunrisegrand.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://info.shop1stoponline.com/wisp/"
     },
     {
         group: "Space",
@@ -144,19 +168,7 @@ const WISP_SERVERS = [
     {
         group: "Lunar",
         url: "wss://lunar.globalscholarpress.com/w/"
-    },
-    {
-        group: "Utopia",
-        url: "wss://utopia.colegioitalocomposto.cl/wisp/"
-    },
-    {
-        group: "Utopia",
-        url: "wss://utopia.kkmsilvia.com/wisp/"
-    },
-    {
-        group: "Utopia",
-        url: "wss://utopia.asirargentina.com.ar/wisp/"
-    },
+    }
     
 ];
 
