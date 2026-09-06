@@ -2003,14 +2003,19 @@ function initializeAutoswitchSetting() {
 
     if (!toggle) return;
 
-    const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
-    toggle.classList.toggle('active', enabled);
+    const updateToggle = () => {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        toggle.classList.toggle('active', enabled);
+    };
 
-    toggle.onclick = () => {
-        const currentState = localStorage.getItem('wispAutoswitch') !== 'false';
-        const newState = !currentState;
+    updateToggle();
+
+    toggle.onclick = function () {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        const newState = !enabled;
 
         localStorage.setItem('wispAutoswitch', String(newState));
+
         toggle.classList.toggle('active', newState);
 
         navigator.serviceWorker.controller?.postMessage({
