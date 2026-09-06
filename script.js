@@ -1996,6 +1996,42 @@ function setWisp(url) {
     navigator.serviceWorker.controller?.postMessage({ type: 'config', wispurl: url });
     setTimeout(() => location.reload(), 600);
 }
+
+
+function initializeAutoswitchSetting() {
+    const toggle = document.getElementById('autoswitch-toggle');
+
+    if (!toggle) return;
+
+    const updateToggle = () => {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        toggle.classList.toggle('active', enabled);
+    };
+
+    updateToggle();
+
+    toggle.addEventListener('click', () => {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        const newState = !enabled;
+
+        localStorage.setItem('wispAutoswitch', newState);
+        toggle.classList.toggle('active', newState);
+
+        navigator.serviceWorker.controller?.postMessage({
+            type: 'config',
+            autoswitch: newState,
+            servers: getAllWispServers()
+        });
+
+        notify(
+            'success',
+            'Settings Saved',
+            `Auto-switch ${newState ? 'Enabled' : 'Disabled'}`
+        );
+    });
+}
+
+
 // =====================================================
 // UTILITIES
 // =====================================================
@@ -2022,39 +2058,7 @@ async function checkHashParameters() {
 
 
 
-function initializeAutoswitchSetting() {
-    const toggle = document.getElementById('autoswitch-toggle');
-    const container = document.getElementById('autoswitch-setting');
 
-    if (!toggle || !container) return;
-
-    const updateToggle = () => {
-        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
-        toggle.classList.toggle('active', enabled);
-    };
-
-    updateToggle();
-
-    container.addEventListener('click', () => {
-        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
-        const newState = !enabled;
-
-        localStorage.setItem('wispAutoswitch', newState);
-        toggle.classList.toggle('active', newState);
-
-        navigator.serviceWorker.controller?.postMessage({
-            type: 'config',
-            autoswitch: newState,
-            servers: getAllWispServers()
-        });
-
-        notify(
-            'success',
-            'Settings Saved',
-            `Auto-switch ${newState ? 'Enabled' : 'Disabled'}`
-        );
-    });
-}
 
 
 // =====================================================
