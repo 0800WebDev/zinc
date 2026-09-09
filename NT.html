@@ -384,15 +384,30 @@
       }
     };
 
-    function renderCustom() {
+function renderCustom() {
   const container = $('#customShortcuts');
   container.innerHTML = '';
   const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
 
-  shortcuts.forEach(s => {
+  shortcuts.forEach((s, index) => {
     const div = document.createElement('div');
-    div.className = 'shortcut';
+    div.className = 'shortcut custom-shortcut';
     div.dataset.url = s.url;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-shortcut';
+    deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    deleteBtn.title = 'Delete shortcut';
+
+    deleteBtn.onclick = e => {
+      e.stopPropagation();
+
+      const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
+      shortcuts.splice(index, 1);
+      localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
+
+      renderCustom();
+    };
 
     const icon = document.createElement('img');
     icon.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(s.url).hostname)}&sz=64`;
@@ -413,6 +428,7 @@
     label.className = 'shortcut-label';
     label.textContent = s.name;
 
+    div.appendChild(deleteBtn);
     div.appendChild(iconContainer);
     div.appendChild(label);
     container.appendChild(div);
