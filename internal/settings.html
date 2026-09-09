@@ -175,9 +175,17 @@ function proxy() {
 <p>Epoxy is faster while Libcurl works on stricter networks.</p>
 
                 </div>
+
+<div class="section-title">Loading</div>
+<div class="custom-input-group">
+    <button id="autoskip-toggle" class="settings-button">Auto-skip: Off</button>
+</div>
+<br>
+                
                 </div>
   `
-  transport()
+  transport();
+  initializeAutoskip();
 }
 
     function theme() {
@@ -429,6 +437,29 @@ libcurlBtn.onclick = () => {
     localStorage.setItem("proxyTransport", "libcurl");
     location.reload();
 };
+}
+    function initializeAutoskip() {
+    const toggle = document.getElementById("autoskip-toggle");
+
+    if (!toggle) return;
+
+    const updateToggle = () => {
+        const enabled = localStorage.getItem("autoSkip") === "true";
+
+        toggle.textContent = `Auto-skip: ${enabled ? "On" : "Off"}`;
+        toggle.classList.toggle("active", enabled);
+    };
+
+    updateToggle();
+
+    toggle.onclick = () => {
+        const enabled = localStorage.getItem("autoSkip") === "true";
+        const newState = !enabled;
+
+        localStorage.setItem("autoSkip", String(newState));
+
+        updateToggle();
+    };
 }
   </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
