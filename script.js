@@ -1065,13 +1065,16 @@ window.addEventListener("blur", () => {
 };
     
     // Skip button logic
-    elements.skipBtn.onclick = () => {
-        const tab = getActiveTab();
-        if (tab) {
-            tab.loading = false;
-            showIframeLoading(false);
-        }
-    };
+function skipLoading() {
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    tab.loading = false;
+    showIframeLoading(false);
+}
+
+elements.skipBtn.onclick = skipLoading;
 
     // Address bar events
     elements.addrBar.onkeyup = (e) => e.key === 'Enter' && handleSubmit();
@@ -1595,11 +1598,19 @@ const tab = {
         updateLoadingBar(tab, 10);
 
         if (tab.skipTimeout) clearTimeout(tab.skipTimeout);
-        tab.skipTimeout = setTimeout(() => {
-            if (tab.loading && tab.id === activeTabId) {
-                document.getElementById('skip-btn')?.style.setProperty('display', 'inline-block');
-            }
-        }, 200);
+tab.skipTimeout = setTimeout(() => {
+    if (!tab.loading || tab.id !== activeTabId) return;
+
+    const skipBtn = document.getElementById("skip-btn");
+
+    if (!skipBtn) return;
+
+    skipBtn.style.display = "inline-block";
+
+    if (localStorage.getItem("autoSkip") === "true") {
+        skipLoading();
+    }
+}, 3000);
     });
 
 frame.frame.addEventListener('load', () => {
