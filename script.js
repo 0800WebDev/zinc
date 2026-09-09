@@ -255,21 +255,53 @@ async function pingWispServer(url, timeout = 2000) {
 async function findBestWispServer(servers, currentUrl) {
     if (!servers || servers.length === 0) return currentUrl;
 
-    // Ping all servers in parallel (faster than sequential)
-    const results = await Promise.all(
-        servers.map(s => pingWispServer(s.url, 2000))
-    );
+    const currentServer = servers.find(s => s.url === currentUrl);
+    const currentGroup = currentServer?.group;
 
-    // Filter to only working servers and sort by latency
-    const working = results
-        .filter(r => r.success)
-        .sort((a, b) => a.latency - b.latency);
+    const groups = [];
 
-    if (working.length > 0) {
-        return working[0].url;
+    if (currentGroup) {
+        groups.push(currentGroup);
     }
 
-    // If none working, return current or first
+    if (!groups.includes("PGIS Wisp")) {
+        groups.push("PGIS Wisp");
+    }
+
+    if (!groups.includes("Other")) {
+        groups.push("Other");
+    }
+
+    for (const group of groups) {
+        const groupServers = servers.filter(s => s.group === group);
+
+        if (groupServers.length === 0) continue;
+
+        console.log(
+            `Checking ${groupServers.length} servers in group "${group}"...`
+        );
+
+        const results = await Promise.all(
+            groupServers.map(s => pingWispServer(s.url, 2000))
+        );
+
+        const working = results
+            .filter(r => r.success)
+            .sort((a, b) => a.latency - b.latency);
+
+        if (working.length > 0) {
+            console.log(
+                `Best server in "${group}":`,
+                working[0].url,
+                working[0].latency + "ms"
+            );
+
+            return working[0].url;
+        }
+
+        console.log(`No working servers found in "${group}".`);
+    }
+
     return currentUrl || servers[0]?.url;
 }
 
