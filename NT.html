@@ -155,6 +155,42 @@
     .shortcut-icon img { width: 24px; height: 24px; border-radius: 4px; }
     .shortcut-label {color: #FAFAFA; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; text-align: center; }
 
+
+.custom-shortcut {
+    position: relative;
+}
+
+.delete-shortcut {
+    position: absolute;
+    top: -4px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: #222;
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 2;
+}
+
+.custom-shortcut:hover .delete-shortcut {
+    opacity: 1;
+}
+
+.delete-shortcut:hover {
+    transform: scale(1.15);
+    background: #444;
+}
+
+
+      
     .quote {color: white; margin-top: 30px; font-size: 0.9rem; font-style: italic; opacity: 0.7; }
 
     .loader {
