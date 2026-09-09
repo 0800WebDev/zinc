@@ -1063,19 +1063,13 @@ window.addEventListener("blur", () => {
         tab.url
     );
 };
+
+
     
-    // Skip button logic
-function skipLoading() {
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    tab.loading = false;
-    showIframeLoading(false);
-}
-
 elements.skipBtn.onclick = skipLoading;
 
+
+    
     // Address bar events
     elements.addrBar.onkeyup = (e) => e.key === 'Enter' && handleSubmit();
     elements.addrBar.onfocus = () => elements.addrBar.select();
@@ -1247,6 +1241,16 @@ async function viewSourceNav() {
     } catch (error) {
         console.error("[viewSourceNav] Failed to parse URL:", url, error);
     }
+}
+
+
+function skipLoading() {
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    tab.loading = false;
+    showIframeLoading(false);
 }
 
 // =====================================================
