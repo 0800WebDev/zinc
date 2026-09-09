@@ -1610,7 +1610,7 @@ tab.skipTimeout = setTimeout(() => {
     if (localStorage.getItem("autoSkip") === "true") {
         skipLoading();
     }
-}, 3000);
+}, 200);
     });
 
 frame.frame.addEventListener('load', () => {
