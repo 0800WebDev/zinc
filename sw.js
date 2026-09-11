@@ -94,7 +94,8 @@ self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
 let wispConfig = {
     wispurl: null,
     servers: [],
-    autoswitch: true
+    autoswitch: true,
+    youtubeTomp: false
 };
 
 // Server health tracking for autoswitching
@@ -204,20 +205,23 @@ function switchToServer(url, latency = null) {
 
 // Proactively check server health and switch if needed
 async function proactiveServerCheck() {
-    if (!wispConfig.autoswitch || !wispConfig.servers || wispConfig.servers.length === 0) return;
+    if (
+        !wispConfig.autoswitch ||
+        wispConfig.youtubeTomp ||
+        !wispConfig.servers ||
+        wispConfig.servers.length === 0
+    ) return;
 
     const currentUrl = wispConfig.wispurl;
-    
-    // Ping all servers to get current health status
+
     const results = await Promise.all(
         wispConfig.servers.map(s => pingServer(s.url))
     );
 
-    // Update health tracking
     results.forEach(r => updateServerHealth(r.url, r.success));
 
-    // If current server is bad and we have a better option, switch
     const currentHealth = serverHealth.get(currentUrl);
+
     if (currentHealth && currentHealth.consecutiveFailures > 0) {
         const bestWorking = results
             .filter(r => r.success && r.url !== currentUrl)
@@ -259,8 +263,10 @@ self.addEventListener("message", ({ data }) => {
         if (wispConfig.wispurl && resolveConfigReady) {
             resolveConfigReady();
             resolveConfigReady = null;
-        }
-    } else if (data.type === "ping") {
+        } } else if (data.type === "youtubeTomp") {
+    wispConfig.youtubeTomp = data.enabled === true;
+    console.log("SW: YouTube TOMP lock:", wispConfig.youtubeTomp);
+} else if (data.type === "ping") {
         pingServer(wispConfig.wispurl).then(result => {
             self.clients.matchAll().then(clients => {
                 clients.forEach(client => {
@@ -339,8 +345,13 @@ scramjet.addEventListener("request", async (e) => {
         updateServerHealth(wispConfig.wispurl, false);
 
         // Check if we should switch to a different server
-        if (wispConfig.autoswitch && wispConfig.servers && wispConfig.servers.length > 1) {
-            const currentHealth = serverHealth.get(wispConfig.wispurl);
+if (
+    wispConfig.autoswitch &&
+    !wispConfig.youtubeTomp &&
+    wispConfig.servers &&
+    wispConfig.servers.length > 1
+) {
+    const currentHealth = serverHealth.get(wispConfig.wispurl);
             
             // Only switch if server has been unstable for a while
             if (currentHealth && currentHealth.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
