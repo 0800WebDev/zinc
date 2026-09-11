@@ -175,7 +175,54 @@ const WISP_SERVERS = [
 
 
 
+const TOMP_WISP = "wss://bare-server.fly.dev/wisp/";
 
+function isYouTubeUrl(url) {
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+
+        return (
+            hostname === "youtube.com" ||
+            hostname.endsWith(".youtube.com") ||
+            hostname === "youtu.be"
+        );
+    } catch {
+        return false;
+    }
+}
+
+async function switchToTompForYouTube() {
+    const autoswitch = localStorage.getItem("wispAutoswitch") !== "false";
+
+    if (!autoswitch) return false;
+
+    const currentUrl = localStorage.getItem("proxServer") || DEFAULT_WISP;
+
+    if (currentUrl === TOMP_WISP) return false;
+
+    console.log("YouTube load failed, switching to TOMP Bare Server...");
+
+    try {
+        await switchWispConnection(TOMP_WISP);
+
+        localStorage.setItem("proxServer", TOMP_WISP);
+
+        if (typeof trackWispServer === "function") {
+            trackWispServer(TOMP_WISP);
+        }
+
+        notify(
+            "info",
+            "Auto-switched",
+            "Using TOMP Bare Server for YouTube"
+        );
+
+        return true;
+    } catch (error) {
+        console.error("Failed to switch to TOMP:", error);
+        return false;
+    }
+}
 
 
 const URL_PARAMS = new URLSearchParams(window.location.search);
@@ -2041,10 +2088,18 @@ if (input.startsWith("zinc://")) {
             : `https://search.brave.com/search?q=${encodeURIComponent(input)}`;
     }
 
-    tab.loading = true;
-    showIframeLoading(true, input);
-    updateLoadingBar(tab, 10);
-    tab.frame.go(input);
+tab.loading = true;
+showIframeLoading(true, input);
+updateLoadingBar(tab, 10);
+
+const youtube = isYouTubeUrl(input);
+const originalWisp = localStorage.getItem("proxServer") || DEFAULT_WISP;
+
+tab.youtubeFallback = youtube;
+tab.youtubeFallbackUsed = false;
+tab.youtubeFallbackWisp = originalWisp;
+
+tab.frame.go(input);
 }
 
 function updateLoadingBar(tab, percent) {
