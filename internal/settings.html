@@ -422,33 +422,24 @@ function fitPreview() {
     body.style.margin = "0";
     html.style.overflow = "hidden";
     body.style.overflow = "hidden";
-
     html.style.transform = "none";
-    html.style.width = "100%";
-    html.style.height = "100%";
 
     requestAnimationFrame(() => {
       const pageWidth = Math.max(
         html.scrollWidth,
-        html.offsetWidth,
-        body.scrollWidth,
-        body.offsetWidth
+        body.scrollWidth
       );
 
       const pageHeight = Math.max(
         html.scrollHeight,
-        html.offsetHeight,
-        body.scrollHeight,
-        body.offsetHeight
+        body.scrollHeight
       );
 
-      const scaleX = iframe.clientWidth / pageWidth;
-      const scaleY = iframe.clientHeight / pageHeight;
+      const scale = Math.min(
+        iframe.clientWidth / pageWidth,
+        iframe.clientHeight / pageHeight
+      );
 
-      const scale = Math.min(scaleX, scaleY);
-
-      html.style.width = `${100 / scale}%`;
-      html.style.height = `${100 / scale}%`;
       html.style.transform = `scale(${scale})`;
       html.style.transformOrigin = "top left";
     });
