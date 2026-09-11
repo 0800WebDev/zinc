@@ -418,26 +418,40 @@ function fitPreview() {
     const html = doc.documentElement;
     const body = doc.body;
 
-    html.style.overflow = "hidden";
-    body.style.overflow = "hidden";
     html.style.margin = "0";
     body.style.margin = "0";
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
 
-    html.style.width = "100vw";
-    html.style.height = "100vh";
+    html.style.transform = "none";
+    html.style.width = "100%";
+    html.style.height = "100%";
 
-    const pageWidth = window.innerWidth;
-    const pageHeight = window.innerHeight;
+    requestAnimationFrame(() => {
+      const pageWidth = Math.max(
+        html.scrollWidth,
+        html.offsetWidth,
+        body.scrollWidth,
+        body.offsetWidth
+      );
 
-    const scale = Math.min(
-      iframe.clientWidth / pageWidth,
-      iframe.clientHeight / pageHeight
-    );
+      const pageHeight = Math.max(
+        html.scrollHeight,
+        html.offsetHeight,
+        body.scrollHeight,
+        body.offsetHeight
+      );
 
-    html.style.transform = `scale(${scale})`;
-    html.style.transformOrigin = "top left";
-    html.style.width = `${100 / scale}vw`;
-    html.style.height = `${100 / scale}vh`;
+      const scaleX = iframe.clientWidth / pageWidth;
+      const scaleY = iframe.clientHeight / pageHeight;
+
+      const scale = Math.min(scaleX, scaleY);
+
+      html.style.width = `${100 / scale}%`;
+      html.style.height = `${100 / scale}%`;
+      html.style.transform = `scale(${scale})`;
+      html.style.transformOrigin = "top left";
+    });
   };
 }
 
