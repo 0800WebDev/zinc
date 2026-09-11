@@ -212,7 +212,7 @@ const faviconInput = document.getElementById("faviconInput");
 titleInput.value = localStorage.getItem("pageTitle") || "";
 faviconInput.value = localStorage.getItem("pageFavicon") || "";
 
-  
+initializeCloseProtectionSetting();
 }
 general()
 
@@ -338,9 +338,52 @@ extensionUploadBtn.onclick = () => {
 
 
 
-//tab cloak
+//general
 
+function initializeCloseProtectionSetting() {
+    const automaticBtn = document.getElementById("close-protection-automatic");
+    const enabledBtn = document.getElementById("close-protection-enabled");
+    const disabledBtn = document.getElementById("close-protection-disabled");
+    const description = document.getElementById("close-protection-description");
 
+    if (!automaticBtn || !enabledBtn || !disabledBtn) return;
+
+    const update = () => {
+        const mode = localStorage.getItem("closeProtection") || "automatic";
+
+        automaticBtn.classList.toggle("active", mode === "automatic");
+        enabledBtn.classList.toggle("active", mode === "enabled");
+        disabledBtn.classList.toggle("active", mode === "disabled");
+
+        if (mode === "automatic") {
+            description.textContent =
+                "Automatically enables close protection when a supported school extension is detected.";
+        } else if (mode === "enabled") {
+            description.textContent =
+                "Close protection is always enabled.";
+        } else {
+            description.textContent =
+                "Close protection is completely disabled.";
+        }
+    };
+
+    automaticBtn.onclick = () => {
+        localStorage.setItem("closeProtection", "automatic");
+        update();
+    };
+
+    enabledBtn.onclick = () => {
+        localStorage.setItem("closeProtection", "enabled");
+        update();
+    };
+
+    disabledBtn.onclick = () => {
+        localStorage.setItem("closeProtection", "disabled");
+        update();
+    };
+
+    update();
+}
     
 
 function applyChanges() {
