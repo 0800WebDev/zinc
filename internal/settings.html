@@ -76,11 +76,13 @@
         border-top: 1px solid #444;
     }
 
-      #bg-preview {
+#bg-preview {
   pointer-events: none;
   overflow: hidden;
-      border: none;
-        width: 100%;
+  border: none;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
 }
       a {
         color: white;
@@ -410,8 +412,6 @@ function fitPreview() {
 
   if (!iframe) return;
 
-  iframe.style.height = `${iframe.clientWidth * (window.innerHeight / window.innerWidth)}px`;
-
   iframe.onload = () => {
     const doc = iframe.contentDocument;
     const html = doc.documentElement;
@@ -444,8 +444,6 @@ function fitPreview() {
     html.style.height = `${100 / scale}%`;
   };
 }
-
-window.addEventListener("resize", fitPreview);
 
 
 function reloadPreview() {
