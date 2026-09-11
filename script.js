@@ -1374,6 +1374,85 @@ function skipLoading() {
 // =====================================================
 
 
+
+function openDataUrl(input) {
+    const tab = getActiveTab();
+    if (!tab) return;
+
+    try {
+        const match = input.match(/^data:([^,]*),(.*)$/s);
+
+        if (!match) {
+            notify("error", "Invalid data URL", "Could not parse the data URL");
+            return;
+        }
+
+        const metadata = match[1];
+        const data = match[2];
+
+        const parts = metadata.split(";");
+        let mimeType = parts.shift() || "text/plain";
+
+        const isBase64 = parts.includes("base64");
+
+        let content;
+
+        if (isBase64) {
+            const binary = atob(data);
+            const bytes = new Uint8Array(binary.length);
+
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+
+            content = new Blob([bytes], {
+                type: mimeType
+            });
+        } else {
+            content = new Blob(
+                [decodeURIComponent(data)],
+                { type: mimeType }
+            );
+        }
+
+        const blobUrl = URL.createObjectURL(content);
+
+        tab.url = input;
+        tab.title = "Data URL";
+        tab.favicon = null;
+        tab.loading = true;
+
+        updateAddressBar();
+        updateTabsUI();
+        showIframeLoading(true, input);
+
+        tab.frame.frame.src = blobUrl;
+
+        tab.frame.frame.addEventListener("load", () => {
+            tab.loading = false;
+            showIframeLoading(false);
+            updateTabsUI();
+
+            setTimeout(() => {
+                URL.revokeObjectURL(blobUrl);
+            }, 60000);
+        }, { once: true });
+
+    } catch (error) {
+        console.error("Data URL failed:", error);
+
+        notify(
+            "error",
+            "Data URL",
+            "Could not open the data URL"
+        );
+    }
+}
+
+
+
+
+
 function openBlankPage(tab) {
     if (!tab?.frame?.frame) return;
 
@@ -1888,6 +1967,11 @@ async function handleSubmit(url) {
     if (!input) return;
 
 
+    
+if (input.trim().toLowerCase().startsWith("data:")) {
+    openDataUrl(input.trim());
+    return;
+}
 
     
 if (input.trim().toLowerCase() === "about:blank") {
@@ -1901,12 +1985,6 @@ if (input.startsWith("view-source:")) {
     await openViewSource(input);
     return;
 }
-
-
-
-    
-
-    
 
     
 if (input.startsWith("extension://")) {
