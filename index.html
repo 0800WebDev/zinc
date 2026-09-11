@@ -35,6 +35,58 @@ link.href = favicon;
         import * as BareMux from "https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
         window.BareMux = BareMux;
     </script>
+<style id="custom-user-css"></style>
+
+<script>
+function applyCustomCSS() {
+    const css = localStorage.getItem("customCSS") || "";
+    const output = document.getElementById("custom-user-css");
+
+    if (!output) return;
+
+    output.textContent = "";
+
+    if (!css.trim()) return;
+
+    const temp = document.createElement("style");
+    temp.textContent = css;
+    document.head.appendChild(temp);
+
+    try {
+        const rules = Array.from(temp.sheet.cssRules);
+
+        for (const rule of rules) {
+            processCSSRule(rule);
+        }
+
+        output.textContent = rules.map(rule => rule.cssText).join("\n");
+    } catch {
+        output.textContent = css;
+    }
+
+    temp.remove();
+}
+
+function processCSSRule(rule) {
+    if (rule.style) {
+        for (const property of Array.from(rule.style)) {
+            rule.style.setProperty(
+                property,
+                rule.style.getPropertyValue(property),
+                "important"
+            );
+        }
+    }
+
+    if (rule.cssRules) {
+        for (const childRule of rule.cssRules) {
+            processCSSRule(childRule);
+        }
+    }
+}
+
+applyCustomCSS();
+</script>
     <link rel="stylesheet" href="style.css">
     <script src="./script.js" defer></script>
     <style>
