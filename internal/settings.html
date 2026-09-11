@@ -420,19 +420,14 @@ function fitPreview() {
 
     html.style.overflow = "hidden";
     body.style.overflow = "hidden";
-
     html.style.margin = "0";
     body.style.margin = "0";
 
-    const pageWidth = Math.max(
-      html.scrollWidth,
-      body.scrollWidth
-    );
+    html.style.width = "100vw";
+    html.style.height = "100vh";
 
-    const pageHeight = Math.max(
-      html.scrollHeight,
-      body.scrollHeight
-    );
+    const pageWidth = window.innerWidth;
+    const pageHeight = window.innerHeight;
 
     const scale = Math.min(
       iframe.clientWidth / pageWidth,
@@ -441,11 +436,10 @@ function fitPreview() {
 
     html.style.transform = `scale(${scale})`;
     html.style.transformOrigin = "top left";
-    html.style.width = `${100 / scale}%`;
-    html.style.height = `${100 / scale}%`;
+    html.style.width = `${100 / scale}vw`;
+    html.style.height = `${100 / scale}vh`;
   };
 }
-
 
 function reloadPreview() {
   const oldPreview = document.getElementById("bg-preview");
