@@ -99,7 +99,21 @@
       #folderPicker {
     display: none !important;
 }
+      
+#custom-css-input {
+    background: #111;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    outline: none;
+}
 
+#custom-css-input:focus {
+    border-color: #666;
+}
     </style>
   </head>
   <body>
@@ -188,30 +202,61 @@ function proxy() {
   initializeAutoskip();
 }
 
-    function theme() {
+function theme() {
   document.getElementById("content").innerHTML = `
     <div class="settings-header">
-                <h2><i class="fa-solid fa-palette"></i>Theme</h2>
-            </div>
+      <h2><i class="fa-solid fa-palette"></i>Theme</h2>
+    </div>
 
-            <div class="settings-content">
-               
-                <div class="section-title">Background image</div>
-<div class="custom-input-group">
-  <div class="theme-buttons">
-    <button style="color: black;" id="uploadBtn">Upload</button>
-    <button style="color: black;" id="resetBtn">Reset</button>
-  </div>
-</div>
-                <br>
-                <div class="section-title">Preview</div>
-                <iframe src="/NT.html" id="bg-preview"></iframe>
-                <hr>
-            </div>
-  `
-      fitPreview();
-      upload();
-    }
+    <div class="settings-content">
+
+      <div class="section-title">Background image</div>
+
+      <div class="custom-input-group">
+        <div class="theme-buttons">
+          <button style="color: black;" id="uploadBtn">Upload</button>
+          <button style="color: black;" id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="section-title">Preview</div>
+
+      <iframe src="/NT.html" id="bg-preview"></iframe>
+
+      <hr>
+
+      <div class="section-title">Custom CSS</div>
+
+      <div class="custom-input-group">
+        <textarea
+          id="custom-css-input"
+          placeholder="body {
+  background: red;
+}
+
+#app {
+  border-radius: 20px;
+}"
+          style="width: 100%; min-height: 300px; resize: vertical; box-sizing: border-box; font-family: monospace;"
+        ></textarea>
+      </div>
+
+      <br>
+
+      <div class="custom-input-group">
+        <button id="apply-css-button" class="settings-button">Apply CSS</button>
+        <button id="reset-css-button" class="settings-button">Reset CSS</button>
+      </div>
+
+    </div>
+  `;
+
+  fitPreview();
+  upload();
+  initializeCustomCSS();
+}
 
       function extensions() {
   document.getElementById("content").innerHTML = `
@@ -316,7 +361,49 @@ setTimeout(() => {
 
     //theme
 
+function initializeCustomCSS() {
+    const textarea = document.getElementById("custom-css-input");
+    const applyButton = document.getElementById("apply-css-button");
+    const resetButton = document.getElementById("reset-css-button");
 
+    if (!textarea) return;
+
+    textarea.value = localStorage.getItem("customCSS") || "";
+
+    function applyCSS() {
+        const css = textarea.value;
+
+        localStorage.setItem("customCSS", css);
+
+        if (window.parent && window.parent !== window) {
+            window.parent.applyCustomCSS();
+        }
+
+        applyButton.textContent = "Saved!";
+
+        setTimeout(() => {
+            applyButton.textContent = "Apply CSS";
+        }, 1000);
+    }
+
+    applyButton.onclick = applyCSS;
+
+    resetButton.onclick = () => {
+        localStorage.removeItem("customCSS");
+        textarea.value = "";
+
+        if (window.parent && window.parent !== window) {
+            window.parent.applyCustomCSS();
+        }
+
+        resetButton.textContent = "Reset!";
+
+        setTimeout(() => {
+            resetButton.textContent = "Reset CSS";
+        }, 1000);
+    };
+}
+    
 function fitPreview() {
   const iframe = document.getElementById("bg-preview");
 
