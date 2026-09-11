@@ -126,6 +126,16 @@
 #custom-css-input:focus {
     border-color: #666;
 }
+      select-button {
+        border: white;
+        color: white;
+        background: black;
+      }
+      select-button.active {
+        border: none;
+        color: black;
+        background: white;
+      }
     </style>
   </head>
   <body>
@@ -193,8 +203,8 @@ function proxy() {
 
 <div class="custom-input-group">
   <div class="transport-buttons">
-    <button id="epoxy-btn" class="settings-button">Epoxy</button>
-    <button id="libcurl-btn" class="settings-button">libcurl</button>
+    <button id="epoxy-btn" class="settings-button select-button">Epoxy</button>
+    <button id="libcurl-btn" class="settings-button select-button">libcurl</button>
   </div>
 </div>
 <div class="custom-input-group">
