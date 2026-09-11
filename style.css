@@ -297,8 +297,8 @@ input.bar::placeholder {
     height: 100%;
     border: none;
     position: absolute;
+    background: white;
 }
-
 .iframe-container iframe.hidden {
     display: none;
 }
