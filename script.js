@@ -200,8 +200,14 @@ async function switchToTompForYouTube() {
 
     if (currentUrl === TOMP_WISP) return false;
 
-    console.log("switching to TOMP Bare Server (youtube)...");
+    console.log("Switching to TOMP Bare Server (youtube)...");
+
     try {
+        navigator.serviceWorker.controller?.postMessage({
+            type: "youtubeTomp",
+            enabled: true
+        });
+
         await switchWispConnection(TOMP_WISP);
 
         localStorage.setItem("proxServer", TOMP_WISP);
@@ -210,15 +216,21 @@ async function switchToTompForYouTube() {
             trackWispServer(TOMP_WISP);
         }
 
-notify(
-    "info",
-    "Auto-switched",
-    "Using TOMP Bare Server for YouTube"
-);
+        notify(
+            "info",
+            "Auto-switched",
+            "Using TOMP Bare Server for YouTube"
+        );
 
         return true;
     } catch (error) {
         console.error("Failed to switch to TOMP:", error);
+
+        navigator.serviceWorker.controller?.postMessage({
+            type: "youtubeTomp",
+            enabled: false
+        });
+
         return false;
     }
 }
@@ -2095,6 +2107,11 @@ const youtube = isYouTubeUrl(input);
 
 if (youtube && localStorage.getItem("wispAutoswitch") !== "false") {
     await switchToTompForYouTube();
+} else {
+    navigator.serviceWorker.controller?.postMessage({
+        type: "youtubeTomp",
+        enabled: false
+    });
 }
 
 tab.frame.go(input);
