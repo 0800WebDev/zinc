@@ -540,6 +540,122 @@ async function openExtensionUrl(url) {
 
 
 
+
+
+
+
+const CLOSE_PROTECTION_EXTENSIONS = {
+    "Securly (5th ID)": "chrome-extension://kfiocjonplkilcjfgabfngiddebalkod/fonts/Metropolis.css",
+    "Securly (4th ID)": "chrome-extension://lcgajdcbmhepmlpemkkpgagieehmjp/fonts/Metropolis.css",
+    "Securly (3rd ID)": "chrome-extension://ckecmkbnoanpgplccmnoikfmpcdladkc/fonts/Metropolis.css",
+    "Securly (2nd ID)": "chrome-extension://joflmkccibkooplaeoinecjbmdebglab/fonts/Metropolis.css",
+    "Securly (1st ID)": "chrome-extension://iheobagjkfklnlikgihanlhcddjoihkg/fonts/Metropolis.css",
+    "GoGuardian": "chrome-extension://haldlgldplgnggkjaafhelgiaglafanh/icons/enabled-dark-128.png",
+    "LANSchool": "chrome-extension://baleiojnjpgeojohhhfbichcodgljmnj/blocked.html",
+    "Linewize": "chrome-extension://ddfbkhpmcdbciejenfcolaaiebnjcbfc/background/assets/pages/default-blocked.html",
+    "Blocksi": "chrome-extension://ghlpmldmjjhmdgmneoaibbegkjjbonbk/images/icons/yt-denied.png",
+    "FortiGuard": "chrome-extension://igbgpehnbmhgdgjbhkkpedommgmfbeao/youtube_injection.js",
+    "Cisco Security (2nd ID)": "chrome-extension://jgnjaoilojahgagddnkeankieagghabk/_locales/ja/messages.json",
+    "Cisco Umbrella (1st ID)": "chrome-extension://jcdhmojfecjfmbdpchihbeilohgnbdci/blocked.html",
+    "ContentKeeper": "chrome-extension://jdogphakondfdmcanpapfahkdomaicfa/img/ckauth19x.png",
+    "CK-Authenticator G3": "chrome-extension://odoanpnonilogofggaohhkdkdgbhdljp/img/ckauth19x.png",
+    "Securly Classroom (2nd ID)": "chrome-extension://hkobaiihndnbfhbkmjjfbdimfbdcppdh/notfound.html",
+    "Securly Classroom (1st ID)": "chrome-extension://jfbecfmiegcjddenjhlbhlikcbfmnafd/notfound.html",
+    "Hapara (3rd ID)": "chrome-extension://hpamladjhjimikgajbgjmcopoejbpnfp/blocked.html",
+    "Hapara (2nd ID)": "chrome-extension://kbohafcopfpigkjdimdcdgenlhkmhbnc/blocked.html",
+    "Hapara (1st ID)": "chrome-extension://aceopacgaepdcelohobicpffbbejnfac/blocked.html",
+    "iboss": "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html",
+    "Lightspeed Digital Insight Agent": "chrome-extension://njdniclgegijdcdliklgieicanpmcngj/js/speed_test.js",
+    "Lightspeed Filter Agent (2nd ID)": "chrome-extension://ehnniokiiebpinnfegpkdlcamgdcaaje/blocked.png",
+    "Lightspeed Filter Agent (1st ID)": "chrome-extension://adkcpkpghahmbopkjchobieckeoaoeem/blocked-image-search.png",
+    "Lightspeed Classroom": "chrome-extension://kkbmdgjggcdajckdlbngdjonpchpaiea/assets/icon-classroom-128.png",
+    "InterCLASS Filtering Service": "chrome-extension://jbddgjglgkkneonnineaohdhabjbgopi/pages/message-page.html",
+    "InterSafe GatewayConnection Agent": "chrome-extension://ecjoghccnjlodjlmkgmnbnkdcbnjgden/resources/options.js",
+    "LoiLo Web Filters": "chrome-extension://pabjlbjcgldndnpjnokjakbdofjgnfia/image/allow_icon/shield_green_128x128.png",
+    "Gopher Buddy": "chrome-extension://cgbbbjmgdpnifijconhamggjehlamcif/images/gopher-buddy_128x128_color.png",
+    "LanSchool Web Helper": "chrome-extension://honjcnefekfnompampcpmcdadibmjhlk/blocked.html",
+    "IMTLazarus": "chrome-extension://cgigopjakkeclhggchgnhmpmhghcbnaf/models/model.json",
+    "Impero Backdrop": "chrome-extension://jjpmjccpemllnmgiaojaocgnakpmfgjg/licenses.html",
+    "Mobile Guardian": "chrome-extension://fgmafhdohjkdhfaacgbgclmfgkgokgmb/block.html",
+    "NetSupport School Student": "chrome-extension://gcjpefhffmcgplgklffgbebganmhffje/_locales/lt/messages.json",
+    "classroom.cloud Student": "chrome-extension://mpkdoimpgkhjcicmhmlmgboelebflpla/_locales/lt/messages.json",
+    "Lockdown Browser": "chrome-extension://fogjeanjfbiombghnmkmmophfeccjdki/manifest.json",
+    "Linewize Filter": "chrome-extension://ifinpabiejbjobcphhaomiifjibpkjlf/chat/assets/imgs/pendo.png",
+    "Borderless Classroom Student (2nd ID)": "chrome-extension://apchgbgnimojffnkddiigiekiooeieno/pages/blockPage.html",
+    "Borderless Classroom Student (1st ID)": "chrome-extension://kdpgkligilplaanoablcpjahjjeghcl/pages/blockPage.html",
+    "LockDown Browser AP Classroom Edition": "chrome-extension://djpknfecbncogekjnjppojlaipeobkmo/assets/images/icon_128.png",
+    "Lugus School": "chrome-extension://eoobggamkobbcpiojefejfglbfcacgca/assets/images/icon_128.png",
+    "no-direct-ip": "chrome-extension://hacaeeoapmdgmhifjcgbblcobgnmceff/icons/block.png"
+};
+
+async function checkCloseProtectionExtension(url) {
+    try {
+        const response = await fetch(url);
+
+        if (response.ok) {
+            return true;
+        }
+    } catch {}
+
+    try {
+        const response = await fetch(url, {
+            method: "HEAD"
+        });
+
+        if (response.ok) {
+            return true;
+        }
+    } catch {}
+
+    return false;
+}
+
+async function detectCloseProtectionExtension() {
+    const results = await Promise.all(
+        Object.values(CLOSE_PROTECTION_EXTENSIONS).map(
+            checkCloseProtectionExtension
+        )
+    );
+
+    return results.some(Boolean);
+}
+
+async function shouldUseCloseProtection() {
+    const mode = localStorage.getItem("closeProtection") || "automatic";
+
+    if (mode === "enabled") {
+        return true;
+    }
+
+    if (mode === "disabled") {
+        return false;
+    }
+
+    return await detectCloseProtectionExtension();
+}
+
+async function initializeCloseProtection() {
+    const enabled = await shouldUseCloseProtection();
+
+    if (!enabled) {
+        return;
+    }
+
+    window.addEventListener("beforeunload", (event) => {
+        event.preventDefault();
+        event.returnValue = "";
+    });
+}
+
+
+
+
+
+
+
+
+
+
 //bookmarks
 
 
@@ -2198,6 +2314,7 @@ async function checkHashParameters() {
 // =====================================================
 document.addEventListener('DOMContentLoaded', async function () {
     try {
+        await initializeCloseProtection();
         // Proactively find the best server before initializing
         await initializeWithBestServer();
         
