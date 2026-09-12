@@ -1371,12 +1371,13 @@ window.addEventListener("message", event => {
     if (!data) return;
 
     if (data.type === "zinc-about-blank") {
-        const tab = createTab(true);
+const tab = createTab(true);
 
-        tab.url = "about:blank";
-        tab.title = "about:blank";
-        tab.favicon = null;
-        tab.loading = false;
+tab.url = "about:blank";
+tab.title = "about:blank";
+tab.favicon = null;
+tab.loading = false;
+tab.aboutBlankBase = data.baseUrl || "";
 
         const frame = tab.frame.frame;
 
@@ -1407,8 +1408,19 @@ ${baseUrl ? `<base href="${baseUrl.replace(/"/g, "&quot;")}">` : ""}
 
         if (!tab?.frame?.frame) return;
 
-        tab.frame.frame.srcdoc = data.html;
+let html = data.html;
 
+if (tab.aboutBlankBase) {
+    const baseTag = `<base href="${tab.aboutBlankBase.replace(/"/g, "&quot;")}">`;
+
+    if (/<head\b[^>]*>/i.test(html)) {
+        html = html.replace(/<head\b[^>]*>/i, match => `${match}${baseTag}`);
+    } else {
+        html = `<head>${baseTag}</head>${html}`;
+    }
+}
+
+tab.frame.frame.srcdoc = html;
         tab.loading = false;
         tab.url = "about:blank";
 
@@ -1592,11 +1604,11 @@ function setupNewTabInterception(tab) {
 if (!url || String(url).toLowerCase() === "about:blank") {
     const id = crypto.randomUUID();
 
-    window.parent.postMessage({
-        type: "zinc-about-blank",
-        id,
-        baseUrl: location.href
-    }, "*");
+window.parent.postMessage({
+    type: "zinc-about-blank",
+    id,
+    baseUrl: location.href
+}, "*");
 
     let html = "";
 
