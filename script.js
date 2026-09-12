@@ -1697,152 +1697,7 @@ function rewriteAboutBlankHTML(html, frame, baseUrl) {
 
 
 
-function setupNewTabInterception(tab) {
-    const frame = tab?.frame?.frame;
-    if (!frame) return;
 
-    try {
-        const win = frame.contentWindow;
-        const doc = frame.contentDocument;
-
-        if (!win || !doc) return;
-
-        const interceptionBase = tab.aboutBlankBase || "";
-
-        const script = doc.createElement("script");
-
-        script.textContent = `
-            (() => {
-                const zincBase =
-                    ${JSON.stringify(interceptionBase)} || location.href;
-
-               const zincOpen = (url) => {
-    if (url == null) return null;
-
-    url = String(url);
-
-    if (url.toLowerCase() === "about:blank") {
-                    if (!url || String(url).toLowerCase() === "about:blank") {
-                        const id = crypto.randomUUID();
-
-                        window.parent.postMessage({
-                            type: "zinc-about-blank",
-                            id,
-                            baseUrl: zincBase
-                        }, "*");
-
-                        let html = "";
-
-                        return {
-                            document: {
-                                open() {
-                                    html = "";
-                                },
-
-                                write(content) {
-                                    html += String(content);
-
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
-                                },
-
-                                writeln(content) {
-                                    html += String(content) + "\\n";
-
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
-                                },
-
-                                close() {
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
-                                }
-                            },
-
-                            location: {
-                                href: "about:blank"
-                            }
-                        };
-                    }
-
- try {
-    url = new URL(url, zincBase).href;
-} catch {
-    return null;
-}
-
-window.parent.postMessage({
-    type: "zinc-new-tab",
-    url
-}, "*");
-
-return null;
-                };
-
-                window.open = zincOpen;
-
-                document.addEventListener("click", function(e) {
-                    const link = e.target.closest("a");
-
-                    if (!link) return;
-
-                    if (
-                        link.target === "_blank" ||
-                        link.target === "_new"
-                    ) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-
-                        zincOpen(link.href);
-                    }
-                }, true);
-
-                document.addEventListener("submit", function(e) {
-                    const form = e.target;
-
-                    if (
-                        form.target !== "_blank" &&
-                        form.target !== "_new"
-                    ) {
-                        return;
-                    }
-
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-
-                    const formData = new FormData(form);
-                    const method = (form.method || "get").toLowerCase();
-
-                    let url = form.action || zincBase;
-
-                    if (method === "get") {
-                        const params = new URLSearchParams(formData);
-
-                        if (params.toString()) {
-                            url += (url.includes("?") ? "&" : "?") + params.toString();
-                        }
-                    }
-
-                    zincOpen(url);
-                }, true);
-            })();
-        `;
-
-        doc.documentElement.appendChild(script);
-        script.remove();
-    } catch (e) {
-        console.warn("New-tab interception failed:", e);
-    }
-}
 
 
 
@@ -1979,6 +1834,141 @@ function updateInternalUrl(tab) {
     return false;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+function installScramjetWindowOpenHook(tab) {
+    const frame = tab?.frame;
+    if (!frame) return;
+
+    try {
+        const frameWindow = frame.frame.contentWindow;
+
+        if (!frameWindow) return;
+
+        const client =
+            frameWindow.document?.[Symbol.for("scramjet.client")] ||
+            frameWindow[Symbol.for("scramjet.client")];
+
+        if (!client || typeof client.Proxy !== "function") {
+            console.warn("Scramjet client not available yet");
+            return;
+        }
+
+        client.Proxy("window.open", {
+            apply(ctx) {
+                let url = ctx.args[0];
+
+                if (url == null || String(url).toLowerCase() === "about:blank") {
+                    const id = crypto.randomUUID();
+
+                    let baseUrl = "";
+
+                    try {
+                        baseUrl = client.url.href;
+                    } catch {
+                        baseUrl = frameWindow.location.href;
+                    }
+
+                    frameWindow.parent.postMessage({
+                        type: "zinc-about-blank",
+                        id,
+                        baseUrl
+                    }, "*");
+
+                    let html = "";
+
+                    const blankWindow = {
+                        document: {
+                            open() {
+                                html = "";
+                            },
+
+                            write(content) {
+                                html += String(content);
+
+                                frameWindow.parent.postMessage({
+                                    type: "zinc-about-blank-write",
+                                    id,
+                                    html
+                                }, "*");
+                            },
+
+                            writeln(content) {
+                                html += String(content) + "\n";
+
+                                frameWindow.parent.postMessage({
+                                    type: "zinc-about-blank-write",
+                                    id,
+                                    html
+                                }, "*");
+                            },
+
+                            close() {
+                                frameWindow.parent.postMessage({
+                                    type: "zinc-about-blank-write",
+                                    id,
+                                    html
+                                }, "*");
+                            }
+                        },
+
+                        location: {
+                            href: "about:blank"
+                        },
+
+                        closed: false,
+
+                        close() {
+                            this.closed = true;
+                        }
+                    };
+
+                    ctx.return(blankWindow);
+                    return;
+                }
+
+                try {
+                    const resolved = new URL(
+                        String(url),
+                        client.url.href
+                    ).href;
+
+                    frameWindow.parent.postMessage({
+                        type: "zinc-new-tab",
+                        url: resolved
+                    }, "*");
+
+                    ctx.return(null);
+                } catch {
+                    ctx.return(null);
+                }
+            }
+        });
+
+        console.log("Zinc: Scramjet window.open hook installed");
+    } catch (error) {
+        console.error(
+            "Failed to install Scramjet window.open hook:",
+            error
+        );
+    }
+}
+
+
+
+
+
+
+
 function createTab(makeActive = true) {
     const frame = sharedScramjet.createFrame();
 
@@ -2061,16 +2051,7 @@ tab.skipTimeout = setTimeout(() => {
 frame.frame.addEventListener('load', () => {
     tab.loading = false;
 
-    try {
-        const currentUrl = frame.frame.contentWindow.location.href;
 
-        if (
-            currentUrl !== "about:blank" &&
-            !currentUrl.includes("NT.html")
-        ) {
-            setupNewTabInterception(tab);
-        }
-    } catch {}
     clearTimeout(tab.skipTimeout);
     clearTimeout(tab.loadTimeout);
 
