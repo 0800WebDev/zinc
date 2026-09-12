@@ -766,10 +766,35 @@ function renderBookmarks() {
 
     bookmarks.forEach(bookmark => {
         const button = document.createElement("button");
-
         button.className = "bookmark-button";
-        button.textContent = bookmark.title;
         button.title = bookmark.url;
+
+        let hostname = "";
+
+        try {
+            hostname = new URL(bookmark.url).hostname;
+        } catch {}
+
+        if (hostname) {
+            const img = document.createElement("img");
+
+            img.src = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+            img.className = "bookmark-favicon";
+            img.width = 16;
+            img.height = 16;
+            img.alt = "";
+
+            img.onerror = () => {
+                img.remove();
+            };
+
+            button.appendChild(img);
+        }
+
+        const text = document.createElement("span");
+        text.textContent = bookmark.title;
+
+        button.appendChild(text);
 
         button.onclick = () => {
             handleSubmit(bookmark.url);
