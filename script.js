@@ -1759,7 +1759,7 @@ function setupNewTabInterception(tab) {
                         window.parent.postMessage({
                             type: "zinc-about-blank",
                             id,
-                            baseUrl: location.href
+                           baseUrl: document.baseURI || location.href
                         }, "*");
 
                         let html = "";
