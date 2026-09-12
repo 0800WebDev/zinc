@@ -1533,6 +1533,11 @@ window.addEventListener("message", event => {
 
     if (!data) return;
 
+window.addEventListener("message", event => {
+    const data = event.data;
+
+    if (!data) return;
+
     if (data.type === "zinc-about-blank") {
         const tab = createTab(true);
 
@@ -1545,8 +1550,17 @@ window.addEventListener("message", event => {
 
         const frame = tab.frame.frame;
 
-        frame.srcdoc =
-            "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
+        frame.srcdoc = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>about:blank</title>
+    <base href="${String(tab.aboutBlankBase).replace(/"/g, "&quot;")}">
+</head>
+<body></body>
+</html>
+`;
 
         window.__aboutBlankTabs ??= {};
         window.__aboutBlankTabs[data.id] = tab;
@@ -1560,13 +1574,29 @@ window.addEventListener("message", event => {
 
         if (!tab?.frame?.frame) return;
 
-        const rewrittenHTML = rewriteAboutBlankHTML(
-            data.html,
-            tab.frame,
-            tab.aboutBlankBase
-        );
+        const frame = tab.frame.frame;
 
-        tab.frame.frame.srcdoc = rewrittenHTML;
+        const base = tab.aboutBlankBase || "";
+
+        let html = data.html || "";
+
+        if (base) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+
+            let baseElement = doc.querySelector("base");
+
+            if (!baseElement) {
+                baseElement = doc.createElement("base");
+                doc.head.prepend(baseElement);
+            }
+
+            baseElement.href = base;
+
+            html = "<!DOCTYPE html>" + doc.documentElement.outerHTML;
+        }
+
+        frame.srcdoc = html;
 
         tab.loading = false;
         tab.url = "about:blank";
