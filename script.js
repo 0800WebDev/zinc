@@ -1980,7 +1980,6 @@ function updateInternalUrl(tab) {
 
 function createTab(makeActive = true) {
     const frame = sharedScramjet.createFrame();
-const frame = sharedScramjet.createFrame();
 
 const tab = {
     id: nextTabId++,
