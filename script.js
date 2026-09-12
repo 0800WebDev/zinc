@@ -1377,10 +1377,19 @@ window.addEventListener("message", event => {
         tab.title = "about:blank";
         tab.favicon = null;
         tab.loading = false;
+        tab.aboutBlankBase = data.baseUrl || "";
 
         const frame = tab.frame.frame;
 
-        frame.srcdoc = "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
+        frame.srcdoc = `
+<!DOCTYPE html>
+<html>
+<head>
+<title>about:blank</title>
+</head>
+<body></body>
+</html>
+        `;
 
         window.__aboutBlankTabs ??= {};
         window.__aboutBlankTabs[data.id] = tab;
@@ -1394,7 +1403,15 @@ window.addEventListener("message", event => {
 
         if (!tab?.frame?.frame) return;
 
-        tab.frame.frame.srcdoc = data.html;
+        const frame = tab.frame.frame;
+
+        const rewrittenHTML = rewriteAboutBlankHTML(
+            data.html,
+            tab.frame,
+            tab.aboutBlankBase
+        );
+
+        frame.srcdoc = rewrittenHTML;
 
         tab.loading = false;
         tab.url = "about:blank";
@@ -1559,6 +1576,127 @@ function openBlankPage(tab) {
     updateTabsUI();
     showIframeLoading(false);
 }
+function getAboutBlankProxyUrl(frame, url, baseUrl) {
+    if (!url || !baseUrl || !frame) return url;
+
+    try {
+        const resolved = new URL(url, baseUrl);
+
+        if (
+            resolved.protocol !== "http:" &&
+            resolved.protocol !== "https:"
+        ) {
+            return resolved.href;
+        }
+
+        const prefix = new URL(
+            frame.prefix,
+            window.location.href
+        ).href;
+
+        const encoder =
+            frame.context?.interface?.codecEncode ||
+            encodeURIComponent;
+
+        return prefix + encoder(resolved.href);
+    } catch {
+        return url;
+    }
+}
+
+function rewriteAboutBlankHTML(html, frame, baseUrl) {
+    if (!html || !baseUrl || !frame) return html;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const attributes = [
+        ["iframe", "src"],
+        ["frame", "src"],
+        ["img", "src"],
+        ["script", "src"],
+        ["audio", "src"],
+        ["video", "src"],
+        ["source", "src"],
+        ["track", "src"],
+        ["embed", "src"],
+        ["input", "src"],
+        ["object", "data"],
+        ["link", "href"],
+        ["a", "href"],
+        ["area", "href"],
+        ["form", "action"]
+    ];
+
+    for (const [selector, attribute] of attributes) {
+        doc.querySelectorAll(`${selector}[${attribute}]`).forEach(element => {
+            const value = element.getAttribute(attribute);
+
+            if (!value) return;
+
+            const trimmed = value.trim();
+
+            if (
+                !trimmed ||
+                trimmed.startsWith("#") ||
+                trimmed.startsWith("data:") ||
+                trimmed.startsWith("blob:") ||
+                trimmed.startsWith("javascript:") ||
+                trimmed.startsWith("mailto:") ||
+                trimmed.startsWith("tel:") ||
+                trimmed.startsWith("about:")
+            ) {
+                return;
+            }
+
+            const proxied = getAboutBlankProxyUrl(
+                frame,
+                trimmed,
+                baseUrl
+            );
+
+            element.setAttribute(attribute, proxied);
+        });
+    }
+
+    doc.querySelectorAll("[srcset]").forEach(element => {
+        const srcset = element.getAttribute("srcset");
+
+        if (!srcset) return;
+
+        const rewritten = srcset
+            .split(",")
+            .map(part => {
+                const pieces = part.trim().split(/\s+/);
+
+                if (!pieces[0]) return part;
+
+                const url = pieces.shift();
+
+                const proxied = getAboutBlankProxyUrl(
+                    frame,
+                    url,
+                    baseUrl
+                );
+
+                return [proxied, ...pieces].join(" ");
+            })
+            .join(", ");
+
+        element.setAttribute("srcset", rewritten);
+    });
+
+    const existingBase = doc.querySelector("base");
+
+    if (existingBase) {
+        existingBase.remove();
+    }
+
+    return "<!DOCTYPE html>" + doc.documentElement.outerHTML;
+}
+
+
+
 
 
 function setupNewTabInterception(tab) {
@@ -1581,10 +1719,19 @@ function setupNewTabInterception(tab) {
 
                         window.parent.postMessage({
                             type: "zinc-about-blank",
-                            id
+                            id,
+                            baseUrl: location.href
                         }, "*");
 
                         let html = "";
+
+                        const sendHTML = () => {
+                            window.parent.postMessage({
+                                type: "zinc-about-blank-write",
+                                id,
+                                html
+                            }, "*");
+                        };
 
                         return {
                             document: {
@@ -1594,30 +1741,16 @@ function setupNewTabInterception(tab) {
 
                                 write(content) {
                                     html += String(content);
-
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
+                                    sendHTML();
                                 },
 
                                 writeln(content) {
                                     html += String(content) + "\\n";
-
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
+                                    sendHTML();
                                 },
 
                                 close() {
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
+                                    sendHTML();
                                 }
                             },
 
