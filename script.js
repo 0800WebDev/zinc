@@ -1371,30 +1371,16 @@ window.addEventListener("message", event => {
     if (!data) return;
 
     if (data.type === "zinc-about-blank") {
-const tab = createTab(true);
+        const tab = createTab(true);
 
-tab.url = "about:blank";
-tab.title = "about:blank";
-tab.favicon = null;
-tab.loading = false;
-tab.aboutBlankBase = data.baseUrl || "";
+        tab.url = "about:blank";
+        tab.title = "about:blank";
+        tab.favicon = null;
+        tab.loading = false;
 
         const frame = tab.frame.frame;
 
- let baseUrl = "";
-
-try {
-    baseUrl = data.baseUrl || "";
-} catch {}
-
-frame.srcdoc = `<!DOCTYPE html>
-<html>
-<head>
-<title>about:blank</title>
-${baseUrl ? `<base href="${baseUrl.replace(/"/g, "&quot;")}">` : ""}
-</head>
-<body></body>
-</html>`;
+        frame.srcdoc = "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
 
         window.__aboutBlankTabs ??= {};
         window.__aboutBlankTabs[data.id] = tab;
@@ -1408,19 +1394,8 @@ ${baseUrl ? `<base href="${baseUrl.replace(/"/g, "&quot;")}">` : ""}
 
         if (!tab?.frame?.frame) return;
 
-let html = data.html;
+        tab.frame.frame.srcdoc = data.html;
 
-if (tab.aboutBlankBase) {
-    const baseTag = `<base href="${tab.aboutBlankBase.replace(/"/g, "&quot;")}">`;
-
-    if (/<head\b[^>]*>/i.test(html)) {
-        html = html.replace(/<head\b[^>]*>/i, match => `${match}${baseTag}`);
-    } else {
-        html = `<head>${baseTag}</head>${html}`;
-    }
-}
-
-tab.frame.frame.srcdoc = html;
         tab.loading = false;
         tab.url = "about:blank";
 
@@ -1601,57 +1576,56 @@ function setupNewTabInterception(tab) {
         script.textContent = `
             (() => {
                 const zincOpen = (url) => {
-if (!url || String(url).toLowerCase() === "about:blank") {
-    const id = crypto.randomUUID();
+                    if (!url || String(url).toLowerCase() === "about:blank") {
+                        const id = crypto.randomUUID();
 
-window.parent.postMessage({
-    type: "zinc-about-blank",
-    id,
-    baseUrl: location.href
-}, "*");
+                        window.parent.postMessage({
+                            type: "zinc-about-blank",
+                            id
+                        }, "*");
 
-    let html = "";
+                        let html = "";
 
-    return {
-        document: {
-            open() {
-                html = "";
-            },
+                        return {
+                            document: {
+                                open() {
+                                    html = "";
+                                },
 
-            write(content) {
-                html += String(content);
+                                write(content) {
+                                    html += String(content);
 
-                window.parent.postMessage({
-                    type: "zinc-about-blank-write",
-                    id,
-                    html
-                }, "*");
-            },
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
 
-            writeln(content) {
-                html += String(content) + "\n";
+                                writeln(content) {
+                                    html += String(content) + "\\n";
 
-                window.parent.postMessage({
-                    type: "zinc-about-blank-write",
-                    id,
-                    html
-                }, "*");
-            },
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
 
-            close() {
-                window.parent.postMessage({
-                    type: "zinc-about-blank-write",
-                    id,
-                    html
-                }, "*");
-            }
-        },
+                                close() {
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                }
+                            },
 
-        location: {
-            href: "about:blank"
-        }
-    };
-}
+                            location: {
+                                href: "about:blank"
+                            }
+                        };
+                    }
 
                     try {
                         url = new URL(url, location.href).href;
