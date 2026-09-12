@@ -1363,6 +1363,169 @@ window.addEventListener("message", event => {
 
 
 
+function getAboutBlankBaseUrl(frame, baseUrl) {
+    if (!baseUrl || !frame) return baseUrl;
+
+    try {
+        const encoded = new URL(baseUrl);
+
+        const prefix = frame.context?.prefix;
+        const decoder =
+            frame.context?.interface?.codecDecode;
+
+        if (!prefix || !decoder) {
+            return baseUrl;
+        }
+
+        const prefixUrl = new URL(
+            prefix.href || prefix,
+            location.href
+        );
+
+        if (!encoded.href.startsWith(prefixUrl.href)) {
+            return baseUrl;
+        }
+
+        const encodedTarget = encoded.href.slice(prefixUrl.href.length);
+
+        return decoder(encodedTarget);
+    } catch {
+        return baseUrl;
+    }
+}
+
+function getAboutBlankProxyUrl(frame, url, baseUrl) {
+    if (!url || !baseUrl || !frame) return url;
+
+    try {
+        const originalBase = getAboutBlankBaseUrl(frame, baseUrl);
+        const resolved = new URL(url, originalBase);
+
+        if (
+            resolved.protocol !== "http:" &&
+            resolved.protocol !== "https:"
+        ) {
+            return resolved.href;
+        }
+
+        const prefix = frame.context?.prefix;
+
+        if (!prefix) {
+            return resolved.href;
+        }
+
+        const prefixUrl = new URL(
+            prefix.href || prefix,
+            location.href
+        );
+
+        const encoder =
+            frame.context?.interface?.codecEncode ||
+            encodeURIComponent;
+
+        return prefixUrl.href + encoder(resolved.href);
+    } catch {
+        return url;
+    }
+}
+
+function rewriteAboutBlankHTML(html, frame, baseUrl) {
+    if (!html || !baseUrl || !frame) return html;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const attributes = [
+        ["iframe", "src"],
+        ["frame", "src"],
+        ["img", "src"],
+        ["script", "src"],
+        ["audio", "src"],
+        ["video", "src"],
+        ["source", "src"],
+        ["track", "src"],
+        ["embed", "src"],
+        ["input", "src"],
+        ["object", "data"],
+        ["link", "href"]
+    ];
+
+    for (const [selector, attribute] of attributes) {
+        doc.querySelectorAll(`${selector}[${attribute}]`).forEach(element => {
+            const value = element.getAttribute(attribute);
+
+            if (!value) return;
+
+            const trimmed = value.trim();
+
+            if (
+                !trimmed ||
+                trimmed.startsWith("#") ||
+                trimmed.startsWith("data:") ||
+                trimmed.startsWith("blob:") ||
+                trimmed.startsWith("javascript:") ||
+                trimmed.startsWith("mailto:") ||
+                trimmed.startsWith("tel:") ||
+                trimmed.startsWith("about:")
+            ) {
+                return;
+            }
+
+            element.setAttribute(
+                attribute,
+                getAboutBlankProxyUrl(
+                    frame,
+                    trimmed,
+                    baseUrl
+                )
+            );
+        });
+    }
+
+    doc.querySelectorAll("[srcset]").forEach(element => {
+        const srcset = element.getAttribute("srcset");
+
+        if (!srcset) return;
+
+        const rewritten = srcset
+            .split(",")
+            .map(part => {
+                const pieces = part.trim().split(/\s+/);
+
+                if (!pieces[0]) return part;
+
+                const url = pieces.shift();
+
+                const trimmed = url.trim();
+
+                if (
+                    !trimmed ||
+                    trimmed.startsWith("data:") ||
+                    trimmed.startsWith("blob:") ||
+                    trimmed.startsWith("javascript:")
+                ) {
+                    return part;
+                }
+
+                const proxied = getAboutBlankProxyUrl(
+                    frame,
+                    trimmed,
+                    baseUrl
+                );
+
+                return [proxied, ...pieces].join(" ");
+            })
+            .join(", ");
+
+        element.setAttribute("srcset", rewritten);
+    });
+
+    return "<!DOCTYPE html>" + doc.documentElement.outerHTML;
+}
+
+
+
+    
     
 
 window.addEventListener("message", event => {
@@ -1370,33 +1533,32 @@ window.addEventListener("message", event => {
 
     if (!data) return;
 
-if (data.type === "zinc-about-blank") {
-    const tab = createTab(true);
+    if (data.type === "zinc-about-blank") {
+        const tab = createTab(true);
 
-    tab.url = "about:blank";
-    tab.title = "about:blank";
-    tab.favicon = null;
-    tab.loading = false;
-    tab.aboutBlankBase = data.baseUrl || "";
+        tab.url = "about:blank";
+        tab.title = "about:blank";
+        tab.favicon = null;
+        tab.loading = false;
 
-    const frame = tab.frame.frame;
+        tab.aboutBlankBase = data.baseUrl || "";
 
-    frame.srcdoc =
-        "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
+        const frame = tab.frame.frame;
 
-    window.__aboutBlankTabs ??= {};
-    window.__aboutBlankTabs[data.id] = tab;
+        frame.srcdoc =
+            "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
 
-    updateAddressBar();
-    updateTabsUI();
-}
+        window.__aboutBlankTabs ??= {};
+        window.__aboutBlankTabs[data.id] = tab;
+
+        updateAddressBar();
+        updateTabsUI();
+    }
 
     if (data.type === "zinc-about-blank-write") {
         const tab = window.__aboutBlankTabs?.[data.id];
 
         if (!tab?.frame?.frame) return;
-
-        const frame = tab.frame.frame;
 
         const rewrittenHTML = rewriteAboutBlankHTML(
             data.html,
@@ -1404,7 +1566,7 @@ if (data.type === "zinc-about-blank") {
             tab.aboutBlankBase
         );
 
-        frame.srcdoc = rewrittenHTML;
+        tab.frame.frame.srcdoc = rewrittenHTML;
 
         tab.loading = false;
         tab.url = "about:blank";
@@ -1412,6 +1574,7 @@ if (data.type === "zinc-about-blank") {
         updateAddressBar();
         updateTabsUI();
     }
+});
 });
     
     
@@ -1569,135 +1732,142 @@ function openBlankPage(tab) {
     updateTabsUI();
     showIframeLoading(false);
 }
-function getAboutBlankProxyUrl(frame, url, baseUrl) {
-    if (!url || !baseUrl || !frame) return url;
+
+
+function setupNewTabInterception(tab) {
+    const frame = tab?.frame?.frame;
+    if (!frame) return;
 
     try {
-        const resolved = new URL(url, baseUrl);
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument;
 
-        if (
-            resolved.protocol !== "http:" &&
-            resolved.protocol !== "https:"
-        ) {
-            return resolved.href;
-        }
+        if (!win || !doc) return;
 
-        const prefix = frame.context?.prefix;
+        const script = doc.createElement("script");
 
-        if (!prefix) {
-            console.warn("Scramjet frame prefix unavailable");
-            return resolved.href;
-        }
+        script.textContent = `
+            (() => {
+                const zincOpen = (url) => {
+                    if (!url || String(url).toLowerCase() === "about:blank") {
+                        const id = crypto.randomUUID();
 
-        const prefixUrl = new URL(prefix.href || prefix, location.href);
+                        window.parent.postMessage({
+                            type: "zinc-about-blank",
+                            id,
+                            baseUrl: location.href
+                        }, "*");
 
-        const encoder =
-            frame.context?.interface?.codecEncode ||
-            encodeURIComponent;
+                        let html = "";
 
-        return prefixUrl.href + encoder(resolved.href);
-    } catch (err) {
-        console.warn("about:blank URL rewrite failed:", err);
-        return url;
+                        return {
+                            document: {
+                                open() {
+                                    html = "";
+                                },
+
+                                write(content) {
+                                    html += String(content);
+
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
+
+                                writeln(content) {
+                                    html += String(content) + "\\n";
+
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
+
+                                close() {
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                }
+                            },
+
+                            location: {
+                                href: "about:blank"
+                            }
+                        };
+                    }
+
+                    try {
+                        url = new URL(url, location.href).href;
+                    } catch {}
+
+                    window.parent.postMessage({
+                        type: "zinc-new-tab",
+                        url
+                    }, "*");
+
+                    return null;
+                };
+
+                window.open = zincOpen;
+
+                document.addEventListener("click", function(e) {
+                    const link = e.target.closest("a");
+
+                    if (!link) return;
+
+                    if (
+                        link.target === "_blank" ||
+                        link.target === "_new"
+                    ) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+
+                        zincOpen(link.href);
+                    }
+                }, true);
+
+                document.addEventListener("submit", function(e) {
+                    const form = e.target;
+
+                    if (
+                        form.target !== "_blank" &&
+                        form.target !== "_new"
+                    ) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    const formData = new FormData(form);
+                    const method = (form.method || "get").toLowerCase();
+
+                    let url = form.action || location.href;
+
+                    if (method === "get") {
+                        const params = new URLSearchParams(formData);
+
+                        if (params.toString()) {
+                            url += (url.includes("?") ? "&" : "?") + params.toString();
+                        }
+                    }
+
+                    zincOpen(url);
+                }, true);
+            })();
+        `;
+
+        doc.documentElement.appendChild(script);
+        script.remove();
+    } catch (e) {
+        console.warn("New-tab interception failed:", e);
     }
 }
-
-function rewriteAboutBlankHTML(html, frame, baseUrl) {
-    if (!html || !baseUrl || !frame) return html;
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const attributes = [
-        ["iframe", "src"],
-        ["frame", "src"],
-        ["img", "src"],
-        ["script", "src"],
-        ["audio", "src"],
-        ["video", "src"],
-        ["source", "src"],
-        ["track", "src"],
-        ["embed", "src"],
-        ["input", "src"],
-        ["object", "data"],
-        ["link", "href"],
-        ["a", "href"],
-        ["area", "href"],
-        ["form", "action"]
-    ];
-
-    for (const [selector, attribute] of attributes) {
-        doc.querySelectorAll(`${selector}[${attribute}]`).forEach(element => {
-            const value = element.getAttribute(attribute);
-
-            if (!value) return;
-
-            const trimmed = value.trim();
-
-            if (
-                !trimmed ||
-                trimmed.startsWith("#") ||
-                trimmed.startsWith("data:") ||
-                trimmed.startsWith("blob:") ||
-                trimmed.startsWith("javascript:") ||
-                trimmed.startsWith("mailto:") ||
-                trimmed.startsWith("tel:") ||
-                trimmed.startsWith("about:")
-            ) {
-                return;
-            }
-
-            const proxied = getAboutBlankProxyUrl(
-                frame,
-                trimmed,
-                baseUrl
-            );
-
-            element.setAttribute(attribute, proxied);
-        });
-    }
-
-    doc.querySelectorAll("[srcset]").forEach(element => {
-        const srcset = element.getAttribute("srcset");
-
-        if (!srcset) return;
-
-        const rewritten = srcset
-            .split(",")
-            .map(part => {
-                const pieces = part.trim().split(/\s+/);
-
-                if (!pieces[0]) return part;
-
-                const url = pieces.shift();
-
-                const proxied = getAboutBlankProxyUrl(
-                    frame,
-                    url,
-                    baseUrl
-                );
-
-                return [proxied, ...pieces].join(" ");
-            })
-            .join(", ");
-
-        element.setAttribute("srcset", rewritten);
-    });
-
-    const existingBase = doc.querySelector("base");
-
-    if (existingBase) {
-        existingBase.remove();
-    }
-
-    return "<!DOCTYPE html>" + doc.documentElement.outerHTML;
-}
-
-
-
-
-
-
 
 
 
@@ -1834,144 +2004,8 @@ function updateInternalUrl(tab) {
     return false;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-function installScramjetWindowOpenHook(tab) {
-    const frame = tab?.frame;
-    if (!frame) return;
-
-    try {
-        const frameWindow = frame.frame.contentWindow;
-
-        if (!frameWindow) return;
-
-        const client =
-            frameWindow.document?.[Symbol.for("scramjet.client")] ||
-            frameWindow[Symbol.for("scramjet.client")];
-
-        if (!client || typeof client.Proxy !== "function") {
-            console.warn("Scramjet client not available yet");
-            return;
-        }
-
-        client.Proxy("window.open", {
-            apply(ctx) {
-                let url = ctx.args[0];
-
-                if (url == null || String(url).toLowerCase() === "about:blank") {
-                    const id = crypto.randomUUID();
-
-                    let baseUrl = "";
-
-                    try {
-                        baseUrl = client.url.href;
-                    } catch {
-                        baseUrl = frameWindow.location.href;
-                    }
-
-                    frameWindow.parent.postMessage({
-                        type: "zinc-about-blank",
-                        id,
-                        baseUrl
-                    }, "*");
-
-                    let html = "";
-
-                    const blankWindow = {
-                        document: {
-                            open() {
-                                html = "";
-                            },
-
-                            write(content) {
-                                html += String(content);
-
-                                frameWindow.parent.postMessage({
-                                    type: "zinc-about-blank-write",
-                                    id,
-                                    html
-                                }, "*");
-                            },
-
-                            writeln(content) {
-                                html += String(content) + "\n";
-
-                                frameWindow.parent.postMessage({
-                                    type: "zinc-about-blank-write",
-                                    id,
-                                    html
-                                }, "*");
-                            },
-
-                            close() {
-                                frameWindow.parent.postMessage({
-                                    type: "zinc-about-blank-write",
-                                    id,
-                                    html
-                                }, "*");
-                            }
-                        },
-
-                        location: {
-                            href: "about:blank"
-                        },
-
-                        closed: false,
-
-                        close() {
-                            this.closed = true;
-                        }
-                    };
-
-                    ctx.return(blankWindow);
-                    return;
-                }
-
-                try {
-                    const resolved = new URL(
-                        String(url),
-                        client.url.href
-                    ).href;
-
-                    frameWindow.parent.postMessage({
-                        type: "zinc-new-tab",
-                        url: resolved
-                    }, "*");
-
-                    ctx.return(null);
-                } catch {
-                    ctx.return(null);
-                }
-            }
-        });
-
-        console.log("Zinc: Scramjet window.open hook installed");
-    } catch (error) {
-        console.error(
-            "Failed to install Scramjet window.open hook:",
-            error
-        );
-    }
-}
-
-
-
-
-
-
-
 function createTab(makeActive = true) {
     const frame = sharedScramjet.createFrame();
-
 const tab = {
     id: nextTabId++,
     title: "New Tab",
@@ -1981,10 +2015,8 @@ const tab = {
     favicon: null,
     skipTimeout: null,
     loadTimeout: null,
-    loadStartTime: null,
-    aboutBlankBase: ""
+    loadStartTime: null
 };
-
     
     frame.frame.src = "NT.html";
 
@@ -2050,12 +2082,12 @@ tab.skipTimeout = setTimeout(() => {
 
 frame.frame.addEventListener('load', () => {
     tab.loading = false;
-
-
     clearTimeout(tab.skipTimeout);
     clearTimeout(tab.loadTimeout);
 
     hideIframeError();
+
+    setupNewTabInterception(tab);
 
     updateInternalUrl(tab);
 
