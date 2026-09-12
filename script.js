@@ -1575,7 +1575,6 @@ window.addEventListener("message", event => {
         updateTabsUI();
     }
 });
-});
     
     
 
