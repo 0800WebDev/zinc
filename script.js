@@ -1582,26 +1582,20 @@ function getAboutBlankProxyUrl(frame, url, baseUrl) {
             return resolved.href;
         }
 
-        const prefix =
-            frame.prefix ||
-            frame.context?.prefix?.href ||
-            "";
+        const prefix = frame.context?.prefix;
 
         if (!prefix) {
-            console.warn("Scramjet frame prefix unavailable:", frame);
+            console.warn("Scramjet frame prefix unavailable");
             return resolved.href;
         }
 
-        const absolutePrefix = new URL(
-            prefix,
-            window.location.href
-        ).href;
+        const prefixUrl = new URL(prefix.href || prefix, location.href);
 
         const encoder =
             frame.context?.interface?.codecEncode ||
             encodeURIComponent;
 
-        return absolutePrefix + encoder(resolved.href);
+        return prefixUrl.href + encoder(resolved.href);
     } catch (err) {
         console.warn("about:blank URL rewrite failed:", err);
         return url;
@@ -1722,7 +1716,12 @@ function setupNewTabInterception(tab) {
                 const zincBase =
                     ${JSON.stringify(interceptionBase)} || location.href;
 
-                const zincOpen = (url) => {
+               const zincOpen = (url) => {
+    if (url == null) return null;
+
+    url = String(url);
+
+    if (url.toLowerCase() === "about:blank") {
                     if (!url || String(url).toLowerCase() === "about:blank") {
                         const id = crypto.randomUUID();
 
@@ -1775,16 +1774,18 @@ function setupNewTabInterception(tab) {
                         };
                     }
 
-                    try {
-                        url = new URL(url, zincBase).href;
-                    } catch {}
+ try {
+    url = new URL(url, zincBase).href;
+} catch {
+    return null;
+}
 
-                    window.parent.postMessage({
-                        type: "zinc-new-tab",
-                        url
-                    }, "*");
+window.parent.postMessage({
+    type: "zinc-new-tab",
+    url
+}, "*");
 
-                    return null;
+return null;
                 };
 
                 window.open = zincOpen;
@@ -1994,7 +1995,6 @@ const tab = {
     aboutBlankBase: ""
 };
 
-setupNewTabInterception(tab);
     
     frame.frame.src = "NT.html";
 
@@ -2060,6 +2060,17 @@ tab.skipTimeout = setTimeout(() => {
 
 frame.frame.addEventListener('load', () => {
     tab.loading = false;
+
+    try {
+        const currentUrl = frame.frame.contentWindow.location.href;
+
+        if (
+            currentUrl !== "about:blank" &&
+            !currentUrl.includes("NT.html")
+        ) {
+            setupNewTabInterception(tab);
+        }
+    } catch {}
     clearTimeout(tab.skipTimeout);
     clearTimeout(tab.loadTimeout);
 
