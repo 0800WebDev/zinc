@@ -1380,7 +1380,20 @@ window.addEventListener("message", event => {
 
         const frame = tab.frame.frame;
 
-        frame.srcdoc = "<!DOCTYPE html><html><head><title>about:blank</title></head><body></body></html>";
+ let baseUrl = "";
+
+try {
+    baseUrl = data.baseUrl || "";
+} catch {}
+
+frame.srcdoc = `<!DOCTYPE html>
+<html>
+<head>
+<title>about:blank</title>
+${baseUrl ? `<base href="${baseUrl.replace(/"/g, "&quot;")}">` : ""}
+</head>
+<body></body>
+</html>`;
 
         window.__aboutBlankTabs ??= {};
         window.__aboutBlankTabs[data.id] = tab;
@@ -1576,56 +1589,57 @@ function setupNewTabInterception(tab) {
         script.textContent = `
             (() => {
                 const zincOpen = (url) => {
-                    if (!url || String(url).toLowerCase() === "about:blank") {
-                        const id = crypto.randomUUID();
+if (!url || String(url).toLowerCase() === "about:blank") {
+    const id = crypto.randomUUID();
 
-                        window.parent.postMessage({
-                            type: "zinc-about-blank",
-                            id
-                        }, "*");
+    window.parent.postMessage({
+        type: "zinc-about-blank",
+        id,
+        baseUrl: location.href
+    }, "*");
 
-                        let html = "";
+    let html = "";
 
-                        return {
-                            document: {
-                                open() {
-                                    html = "";
-                                },
+    return {
+        document: {
+            open() {
+                html = "";
+            },
 
-                                write(content) {
-                                    html += String(content);
+            write(content) {
+                html += String(content);
 
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
-                                },
+                window.parent.postMessage({
+                    type: "zinc-about-blank-write",
+                    id,
+                    html
+                }, "*");
+            },
 
-                                writeln(content) {
-                                    html += String(content) + "\\n";
+            writeln(content) {
+                html += String(content) + "\n";
 
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
-                                },
+                window.parent.postMessage({
+                    type: "zinc-about-blank-write",
+                    id,
+                    html
+                }, "*");
+            },
 
-                                close() {
-                                    window.parent.postMessage({
-                                        type: "zinc-about-blank-write",
-                                        id,
-                                        html
-                                    }, "*");
-                                }
-                            },
+            close() {
+                window.parent.postMessage({
+                    type: "zinc-about-blank-write",
+                    id,
+                    html
+                }, "*");
+            }
+        },
 
-                            location: {
-                                href: "about:blank"
-                            }
-                        };
-                    }
+        location: {
+            href: "about:blank"
+        }
+    };
+}
 
                     try {
                         url = new URL(url, location.href).href;
