@@ -718,6 +718,10 @@ input.bar::placeholder {
 }
 
 .bookmark-button {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
     padding: 0px 5px;
     border-radius: 6px;
     cursor: pointer;
@@ -729,11 +733,20 @@ input.bar::placeholder {
     font-size: 0.999vh;
     position: relative;
     top: -0.3vh;
+    white-space: nowrap;
 }
-
 .bookmark-button:hover {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
 }
+
+.bookmark-favicon {
+    width: 1.4vh;
+    height: 1.4vh;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
+}
+
 
 #extension-toolbar {
     margin-left: auto;
