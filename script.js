@@ -1610,7 +1610,7 @@ window.addEventListener("message", event => {
 
 
     
-}
+});
 
 
 async function viewSourceNav() {
