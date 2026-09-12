@@ -1815,6 +1815,7 @@ const tab = {
     loading: false,
     favicon: null,
     skipTimeout: null,
+    loadTimeout: null,
     loadStartTime: null
 };
     
@@ -1834,8 +1835,18 @@ const tab = {
     } catch {}
 
     tab.url = displayUrl;
-    tab.loading = true;
-        tab.loadStartTime = Date.now();
+   tab.loading = true;
+tab.loadStartTime = Date.now();
+
+clearTimeout(tab.loadTimeout);
+
+tab.loadTimeout = setTimeout(() => {
+    if (!tab.loading || tab.id !== activeTabId) return;
+
+    showIframeError(
+        `Could not load ${tab.url}. The URL may be invalid, unreachable, or the server may be offline.`
+    );
+}, 15000);
 
         if (tab.id === activeTabId) {
             showIframeLoading(true, tab.url);
@@ -1873,6 +1884,9 @@ tab.skipTimeout = setTimeout(() => {
 frame.frame.addEventListener('load', () => {
     tab.loading = false;
     clearTimeout(tab.skipTimeout);
+    clearTimeout(tab.loadTimeout);
+
+    hideIframeError();
 
     setupNewTabInterception(tab);
 
@@ -1903,6 +1917,44 @@ frame.frame.addEventListener('load', () => {
     if (makeActive) switchTab(tab.id);
     return tab;
 }
+
+
+
+
+
+
+function showIframeError(message) {
+    const loading = document.getElementById("loading");
+    const error = document.getElementById("error");
+    const errorMessage = document.getElementById("error-message");
+
+    if (loading) loading.style.display = "none";
+
+    if (error) {
+        errorMessage.textContent = message;
+        error.style.display = "flex";
+    }
+
+    const tab = getActiveTab();
+
+    if (tab) {
+        tab.loading = false;
+        clearTimeout(tab.skipTimeout);
+        clearTimeout(tab.loadTimeout);
+        updateTabsUI();
+    }
+}
+
+function hideIframeError() {
+    const error = document.getElementById("error");
+
+    if (error) {
+        error.style.display = "none";
+    }
+}
+
+
+
 
 function showIframeLoading(show, url = '') {
     const loader = document.getElementById("loading");
