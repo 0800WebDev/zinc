@@ -38,7 +38,7 @@ default wisp server:
 [staticsjv2](https://github.com/Destroyed12121/staticsjv2)
 
 
----
+## legal info about Zinc
 
 Zinc is open source and free to use under the MIT License.
 
