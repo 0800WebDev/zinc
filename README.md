@@ -47,3 +47,5 @@ You are welcome to fork, modify, and redistribute Zinc. If you distribute a modi
 All modified or redistributed versions must retain the original copyright notices, license, and credits.
 
 This helps distinguish community forks from the official Zinc project while preserving proper attribution and allowing existing code to remain functional.
+
+<sub>Legal information and requirements may be updated at any time. You are responsible for ensuring that your version of Zinc complies with the latest applicable requirements and terms published by the official Zinc project.</sub>
