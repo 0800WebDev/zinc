@@ -2333,18 +2333,25 @@ if (input.startsWith("zinc://")) {
     // =========================
     // BOOKMARKLET SUPPORT
     // =========================
-    const bookmarkletCode = parseBookmarklet(input);
+const bookmarkletCode = parseBookmarklet(input);
 
-    if (bookmarkletCode) {
-        const ok = runInActiveFrame(bookmarkletCode);
+if (bookmarkletCode) {
+    const previousUrl = tab?.url;
 
-        if (!ok) {
-            notify('error', 'Bookmarklet failed', 'Could not inject into page');
-        }
+    const ok = runInActiveFrame(bookmarkletCode);
 
-        return; // IMPORTANT: do not navigate
+    if (!ok) {
+        notify('error', 'Bookmarklet failed', 'Could not inject into page');
     }
 
+    if (tab && previousUrl) {
+        tab.url = previousUrl;
+        updateAddressBar();
+        updateTabsUI();
+    }
+
+    return;
+}
     // =========================
     // NORMAL NAVIGATION
     // =========================
