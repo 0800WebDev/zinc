@@ -36,7 +36,7 @@ const WISP_SERVERS = [
     
     {
         group: "PGIS Wisp",
-        url: "wss://pgis-wisp.getvoroa.com"
+        url: "wss://pgis-wisp.getvoroa.com/"
     },
     {
         group: "Other",
