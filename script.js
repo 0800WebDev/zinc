@@ -2693,15 +2693,20 @@ function initializeAutoswitchSetting() {
 // =====================================================
 // UTILITIES
 // =====================================================
+let devToolsOpen = false;
+
 function toggleDevTools() {
     const win = getActiveTab()?.frame.frame.contentWindow;
     if (!win) return;
 
     if (win.eruda) {
-        if (win.eruda._isShow) {
+        if (devToolsOpen) {
             win.eruda.hide();
+            devToolsOpen = false;
         } else {
             win.eruda.show();
+            win.eruda.get('entryBtn').hide();
+            devToolsOpen = true;
         }
         return;
     }
@@ -2712,6 +2717,7 @@ function toggleDevTools() {
         win.eruda.init();
         win.eruda.get('entryBtn').hide();
         win.eruda.show();
+        devToolsOpen = true;
     };
     win.document.body.appendChild(script);
 }
