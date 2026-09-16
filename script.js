@@ -1298,15 +1298,12 @@ if (STARTUP_URL) {
 
 
 window.addEventListener("message", async event => {
-
     const data = event.data;
 
     if (!data) return;
 
     switch (data.type) {
-
-        case "zinc-execute-script":
-
+        case "zinc-execute-script": {
             const result = runInActiveFrame(data.code);
 
             event.source.postMessage({
@@ -1316,9 +1313,45 @@ window.addEventListener("message", async event => {
             }, "*");
 
             break;
+        }
 
+        case "zinc-storage-get": {
+            const key = `${data.extensionId}:${data.key}`;
+            const stored = localStorage.getItem(key);
+
+            let value = null;
+
+            try {
+                value = stored === null ? null : JSON.parse(stored);
+            } catch {
+                value = null;
+            }
+
+            event.source.postMessage({
+                type: "zinc-storage-response",
+                id: data.id,
+                value
+            }, "*");
+
+            break;
+        }
+
+        case "zinc-storage-set": {
+            const key = `${data.extensionId}:${data.key}`;
+
+            localStorage.setItem(
+                key,
+                JSON.stringify(data.value)
+            );
+
+            event.source.postMessage({
+                type: "zinc-storage-set-response",
+                id: data.id
+            }, "*");
+
+            break;
+        }
     }
-
 });
 
     
@@ -2884,28 +2917,58 @@ tabs: {
     }
 },
 
-        storage: {
+storage: {
+    get(key) {
+        return new Promise(resolve => {
+            const id = Math.random().toString(36).slice(2);
 
-            get(key) {
-
-                return JSON.parse(
-                    localStorage.getItem(
-                        `${extension.id}:${key}`
-                    )
-                );
-
-            },
-
-            set(key, value) {
-
-                localStorage.setItem(
-                    `${extension.id}:${key}`,
-                    JSON.stringify(value)
-                );
-
+            function listener(event) {
+                if (
+                    event.data?.type === "zinc-storage-response" &&
+                    event.data.id === id
+                ) {
+                    window.removeEventListener("message", listener);
+                    resolve(event.data.value);
+                }
             }
 
-        }
+            window.addEventListener("message", listener);
+
+            window.parent.postMessage({
+                type: "zinc-storage-get",
+                id,
+                extensionId: extension.id,
+                key
+            }, "*");
+        });
+    },
+
+    set(key, value) {
+        return new Promise(resolve => {
+            const id = Math.random().toString(36).slice(2);
+
+            function listener(event) {
+                if (
+                    event.data?.type === "zinc-storage-set-response" &&
+                    event.data.id === id
+                ) {
+                    window.removeEventListener("message", listener);
+                    resolve(true);
+                }
+            }
+
+            window.addEventListener("message", listener);
+
+            window.parent.postMessage({
+                type: "zinc-storage-set",
+                id,
+                extensionId: extension.id,
+                key,
+                value
+            }, "*");
+        });
+    }
+}
 
     };
 
