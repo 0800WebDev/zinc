@@ -2715,15 +2715,6 @@ function toggleDevTools() {
     };
     win.document.body.appendChild(script);
 }
-    const script = win.document.createElement('script');
-    script.src = "https://cdn.jsdelivr.net/npm/eruda";
-    script.onload = () => {
-        win.eruda.init();
-        win.eruda.get('entryBtn').hide();
-        win.eruda.show();
-    };
-    win.document.body.appendChild(script);
-}
 
 async function checkHashParameters() {
     if (window.location.hash) {
