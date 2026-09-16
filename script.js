@@ -2466,31 +2466,36 @@ for (const [groupName, servers] of Object.entries(groups)) {
 }
 function saveCustomWisp() {
     const input = document.getElementById('custom-wisp-input');
-    const url = input.value.trim();
+    let url = input.value.trim();
 
     if (!url) return;
-    if (!url.startsWith('ws://') && !url.startsWith('wss://')) {
-        notify('error', 'Invalid URL', 'URL must start with wss:// or ws://');
-        return;
+
+    if (url.startsWith('https://')) {
+        url = 'wss://' + url.slice('https://'.length);
+    } else if (url.startsWith('http://')) {
+        url = 'ws://' + url.slice('http://'.length);
+    } else if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
+        url = 'wss://' + url;
     }
 
     const customWisps = getStoredWisps();
+
     if (customWisps.some(w => w.url === url) || WISP_SERVERS.some(w => w.url === url)) {
         notify('warning', 'Already Exists', 'This server is already in the list.');
         return;
     }
 
     const newServer = {
-    group: "Custom",
-    name: `Custom ${customWisps.length + 1}`,
-    url
-};
+        group: "Custom",
+        name: `Custom ${customWisps.length + 1}`,
+        url
+    };
+
     customWisps.push(newServer);
     localStorage.setItem('customWisps', JSON.stringify(customWisps));
-    
-    // Switch to the newly added server
+
     setWisp(url);
-    
+
     input.value = '';
 }
 
