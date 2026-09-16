@@ -2700,14 +2700,21 @@ function toggleDevTools() {
     if (win.eruda) {
         if (win.eruda._isShow) {
             win.eruda.hide();
-            win.eruda.get('entryBtn').hide();
         } else {
-            win.eruda.get('entryBtn').show();
             win.eruda.show();
         }
         return;
     }
 
+    const script = win.document.createElement('script');
+    script.src = "https://cdn.jsdelivr.net/npm/eruda";
+    script.onload = () => {
+        win.eruda.init();
+        win.eruda.get('entryBtn').hide();
+        win.eruda.show();
+    };
+    win.document.body.appendChild(script);
+}
     const script = win.document.createElement('script');
     script.src = "https://cdn.jsdelivr.net/npm/eruda";
     script.onload = () => {
