@@ -2873,15 +2873,16 @@ function startBackground(extension, code) {
             manifest: extension.manifest
         },
 
-        tabs: {
+tabs: {
+    getActive() {
+        const tab = getActiveTab();
+        return tab ? { url: tab.url } : null;
+    },
 
-            executeScript(script) {
-
-                return runInActiveFrame(script);
-
-            }
-
-        },
+    executeScript(script) {
+        return runInActiveFrame(script);
+    }
+},
 
         storage: {
 
