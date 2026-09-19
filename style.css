@@ -685,73 +685,52 @@ input.bar::placeholder {
 }
 
 #toolbar {
-    width: 100vw;
+    width: 100%;
     height: 1.5vh;
-    min-height: 0;
-    background: transparent;
+    min-height: 12px;
     display: flex;
-    align-items: stretch;
-    gap: 5px;
+    align-items: center;
+    gap: 4px;
     padding: 0 5px;
     overflow-x: auto;
     overflow-y: hidden;
-    box-sizing: border-box;
-    scrollbar-width: none;
+    flex-shrink: 0;
 }
 
-#toolbar::-webkit-scrollbar {
-    display: none;
-}
-
-#bookmark-btn {
-    position: absolute;
-    right: 28px;
-    top: 0;
-    width: 28px;
+#toolbar > * {
     height: 100%;
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
-
-#bookmark-btn:hover {
-    color: var(--text);
-    background: var(--surface-hover);
+    max-height: 100%;
+    min-height: 0;
 }
 
 .bookmark-button {
-    display: flex;
-    flex: 0 0 auto;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
+
     height: 100%;
-    min-height: 0;
     max-height: 100%;
+    min-height: 0;
+
     width: auto;
     padding: 0 5px;
     margin: 0;
+
+    background: transparent;
     border: none;
     border-radius: 6px;
-    background: transparent;
+
     color: white;
-    cursor: pointer;
-    font-size: 0.999vh;
+    font-size: clamp(6px, 0.9vh, 14px);
     line-height: 1;
+
+    cursor: pointer;
     position: static;
-    top: auto;
-    transform: none;
+
     white-space: nowrap;
-    box-sizing: border-box;
-    align-self: stretch;
+    flex: 0 0 auto;
+    overflow: hidden;
 }
 
 .bookmark-button:hover {
@@ -759,10 +738,11 @@ input.bar::placeholder {
 }
 
 .bookmark-favicon {
-    width: 1.4vh;
-    height: 1.4vh;
-    max-width: 100%;
-    max-height: 100%;
+    width: auto;
+    height: 70%;
+    max-width: 70%;
+    max-height: 70%;
+    aspect-ratio: 1 / 1;
     object-fit: contain;
     flex: 0 0 auto;
     display: block;
@@ -771,42 +751,52 @@ input.bar::placeholder {
 #extension-toolbar {
     margin-left: auto;
     height: 100%;
-    min-height: 0;
     max-height: 100%;
+    min-height: 0;
+
     display: flex;
-    align-items: stretch;
+    align-items: center;
     gap: 4px;
+
     flex: 0 0 auto;
-    flex-shrink: 0;
 }
 
 #extension-toolbar > * {
-    height: 100% !important;
-    min-height: 0 !important;
-    max-height: 100% !important;
-    width: auto !important;
-    min-width: unset !important;
-    max-width: unset !important;
-    aspect-ratio: auto !important;
-    flex: 0 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    align-self: stretch !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
 }
 
 #extension-toolbar img,
-#extension-toolbar svg,
-#extension-toolbar i {
-    width: 75% !important;
-    height: 75% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
+#extension-toolbar i,
+#extension-toolbar svg {
+    width: auto;
+    height: 65%;
+    max-width: 100%;
+    max-height: 65%;
     object-fit: contain;
-    display: block;
+}
+
+#extension-toolbar button {
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+
+    width: auto;
+    aspect-ratio: 1 / 1;
+
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
