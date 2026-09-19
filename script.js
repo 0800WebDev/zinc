@@ -3024,42 +3024,48 @@ loadBackgroundScripts();
 //show extensions in toolbar
 const extensionChannel = new BroadcastChannel("zinc-extensions");
 
+let renderingExtensions = false;
+let renderExtensionsAgain = false;
+
 extensionChannel.onmessage = async (event) => {
     if (event.data?.type === "extensions-changed") {
         await renderExtensions();
     }
 };
-    
-async function renderExtensions() {
 
+async function renderExtensions() {
     const toolbar = document.getElementById("extension-toolbar");
 
     if (!toolbar) return;
 
-    toolbar.innerHTML = "";
+    if (renderingExtensions) {
+        renderExtensionsAgain = true;
+        return;
+    }
 
-    const db = await openDB();
+    renderingExtensions = true;
 
-    const tx = db.transaction(STORE_NAME, "readonly");
+    try {
+        const db = await openDB();
 
-    const req = tx.objectStore(STORE_NAME).getAll();
+        const extensions = await new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, "readonly");
+            const req = tx.objectStore(STORE_NAME).getAll();
 
-    req.onsuccess = () => {
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
 
-        for (const extension of req.result) {
+        toolbar.innerHTML = "";
 
-            if (extension.enabled === false)
-                continue;
+        for (const extension of extensions) {
+            if (extension.enabled === false) continue;
 
             const iconPath = extension.manifest.icon;
-
-            if (!iconPath)
-                continue;
+            if (!iconPath) continue;
 
             const iconFile = extension.files[iconPath];
-
-            if (!iconFile)
-                continue;
+            if (!iconFile) continue;
 
             const img = document.createElement("img");
 
@@ -3073,17 +3079,23 @@ async function renderExtensions() {
             img.style.position = "relative";
             img.style.top = "-0.4vh";
 
-img.onclick = () => {
-    createTab(true);
-    openExtensionUrl(
-        `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
-    );
-};
+            img.onclick = () => {
+                createTab(true);
+                openExtensionUrl(
+                    `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
+                );
+            };
 
             toolbar.appendChild(img);
-
         }
+    } catch (error) {
+        console.error("Failed to render extensions:", error);
+    } finally {
+        renderingExtensions = false;
 
-    };
-
+        if (renderExtensionsAgain) {
+            renderExtensionsAgain = false;
+            renderExtensions();
+        }
+    }
 }
