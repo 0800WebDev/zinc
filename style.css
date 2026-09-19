@@ -710,23 +710,27 @@ input.bar::placeholder {
 }
 
 .bookmark-button {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 5px;
-  padding: 0px 5px;
-  border-radius: 6px;
-  cursor: pointer;
-  height: 100%;
-  width: auto;
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 65cqh;
-  position: relative;
-  white-space: nowrap;
+display: inline-flex;
+flex-direction: row;
+align-items: center;
+gap: 5px;
+padding: 0px 5px;
+border-radius: 6px;
+cursor: pointer;
+height: 1vh;
+width: auto;
+background: transparent;
+border: none;
+color: white;
+font-size: 0.999vh;
+position: relative;
+top: -0.3vh;
+white-space: nowrap;
 }
+.bookmark-button\:hover {
+filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+}
+ 
 
 .bookmark-favicon {
   width: 90cqh;
@@ -740,20 +744,39 @@ input.bar::placeholder {
   margin-left: auto;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   height: 100%;
-  gap: 4px;
+  gap: 5px;
 }
 
 #extension-toolbar > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   height: 100%;
+  width: auto;
   aspect-ratio: 1;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  top: 0;
   font-size: 65cqh;
+  line-height: 1;
 }
 
 #extension-toolbar img,
 #extension-toolbar svg {
   width: 90cqh;
   height: 90cqh;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+#extension-toolbar i {
+  font-size: 65cqh;
+  line-height: 1;
 }
 
 .fullscreen-browser > *:not(.iframe-container) {
