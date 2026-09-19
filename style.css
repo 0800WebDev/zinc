@@ -771,6 +771,14 @@ input.bar::placeholder {
     height: 100%;
 }
 
+#extension-toolbar img,
+#extension-toolbar svg {
+  object-fit: contain;
+  height: 1.5vh;
+  flex-shrink: 0;
+  display: block;
+}
+
 
 
 
