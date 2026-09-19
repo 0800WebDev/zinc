@@ -685,14 +685,20 @@ input.bar::placeholder {
 }
 
 #toolbar {
-    width: 100vw;
-    height: 1.5vh;
-    background: transparent;
-    display: flex;
-    gap: 5px;
-    padding: 5px;
-    overflow-x: auto;
-    overflow-y: hidden;
+  container-type: size;
+  width: 100vw;
+  height: 1.5vh;
+  background: transparent;
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+#toolbar::-webkit-scrollbar {
+  display: none;
 }
 
 #bookmark-btn {
@@ -716,6 +722,15 @@ input.bar::placeholder {
     color: var(--text);
     background: var(--surface-hover);
 }
+
+#bookmark-toolbar {
+  display: flex;
+  gap: 5px;
+  height: 100%;
+}
+
+
+
 
 .bookmark-button {
     display: inline-flex;
@@ -749,9 +764,11 @@ input.bar::placeholder {
 
 
 #extension-toolbar {
+     display: flex;
     margin-left: auto;
     display: flex;
     gap: 4px;
+    height: 100%;
 }
 
 
