@@ -269,9 +269,6 @@ document.addEventListener("change", async e => {
 
         e.target.value = "";
 
-        if (window.parent && typeof window.parent.renderExtensions === "function") {
-            window.parent.renderExtensions();
-        }
 
     } catch (err) {
         console.error("Extension installation failed:", err);
