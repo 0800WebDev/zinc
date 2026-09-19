@@ -704,14 +704,16 @@ input.bar::placeholder {
     padding: 0 5px;
     border-radius: 6px;
     cursor: pointer;
-    height: 11px;
+    height: 1vh;
     width: auto;
     background: transparent;
     border: none;
     color: white;
-    font-size: 11px;
+    font-size: 0.999vh;
     position: relative;
+    top: 0;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .bookmark-button:hover {
@@ -719,8 +721,8 @@ input.bar::placeholder {
 }
 
 .bookmark-favicon {
-    width: 15px;
-    height: 15px;
+    width: 1.4vh;
+    height: 1.4vh;
     object-fit: contain;
     flex-shrink: 0;
     display: block;
@@ -732,6 +734,7 @@ input.bar::placeholder {
     align-items: center;
     gap: 4px;
     height: 100%;
+    flex-shrink: 0;
 }
 
 #extension-toolbar > * {
