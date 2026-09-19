@@ -696,7 +696,11 @@ input.bar::placeholder {
     padding: 0 5px;
     overflow-x: auto;
     overflow-y: hidden;
-    box-sizing: border-box;
+    scrollbar-width: none;
+}
+
+#toolbar::-webkit-scrollbar {
+    display: none;
 }
 
 #bookmark-btn {
