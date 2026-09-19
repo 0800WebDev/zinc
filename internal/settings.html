@@ -137,7 +137,7 @@
         background: white !important;
       }
 #menu button.active {
-    background: white;
+    background: #e8e8e8;
     color: black;
 }
     </style>
@@ -219,7 +219,9 @@ function general() {
 </div> <br>
             </div>
   `
-
+        document.querySelector(".menu-btn.active")?.classList.remove("active");
+        button.classList.add("active");
+  
   const titleInput = document.getElementById("titleInput");
 const faviconInput = document.getElementById("faviconInput");
 
