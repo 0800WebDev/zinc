@@ -687,15 +687,19 @@ input.bar::placeholder {
 #toolbar {
   container-type: size;
   width: 100vw;
-  height: 3vh;
-  min-height: 28px;
+  height: 1.5vh;
   background: transparent;
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 5px;
+  padding: 0 5px;
   overflow-x: auto;
   overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+#toolbar::-webkit-scrollbar {
+  display: none;
 }
 
 #bookmark-toolbar {
@@ -709,6 +713,7 @@ input.bar::placeholder {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
+  flex-shrink: 0;
   gap: 5px;
   padding: 0px 5px;
   border-radius: 6px;
@@ -718,14 +723,14 @@ input.bar::placeholder {
   background: transparent;
   border: none;
   color: white;
-  font-size: 50cqh;
+  font-size: 65cqh;
   position: relative;
   white-space: nowrap;
 }
 
 .bookmark-favicon {
-  width: 60cqh;
-  height: 60cqh;
+  width: 90cqh;
+  height: 90cqh;
   object-fit: contain;
   flex-shrink: 0;
   display: block;
@@ -742,13 +747,13 @@ input.bar::placeholder {
 #extension-toolbar > * {
   height: 100%;
   aspect-ratio: 1;
-  font-size: 50cqh;
+  font-size: 65cqh;
 }
 
 #extension-toolbar img,
 #extension-toolbar svg {
-  width: 60cqh;
-  height: 60cqh;
+  width: 90cqh;
+  height: 90cqh;
 }
 
 .fullscreen-browser > *:not(.iframe-container) {
