@@ -740,7 +740,7 @@ input.bar::placeholder {
     padding: 0px 5px;
     border-radius: 6px;
     cursor: pointer;
-    height: 1vh;
+    height: 1.5vh;
     width: auto;
     background: transparent;
     border: none;
