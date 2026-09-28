@@ -31,7 +31,7 @@ more at zinc://urls
 - https://zinc.happy0.co.uk/
 
 default wisp server:   
-[wss://pgis-wisp.onrender.com](https://pgis-wisp.onrender.com)
+[wss://pgis-wisp.joytree.site/](https://pgis-wisp.joytree.site/)
 
 ## Credits
 
