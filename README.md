@@ -1,15 +1,16 @@
 # zinc
 Zinc is a lightweight, static proxy browser with many features designed for a simple and flexible browsing experience.
 
-## features:
-- scramjet
-- its static
-- easy to manage
-- simple interface
-- javascript: support
-- tab cloaking
-- variety of wisp servers to choose from
-- costum extensions (example and guide in [/example-extension](https://github.com/0800WebDev/zinc/tree/main/example-extension))
+## Features:
+- Scramjet
+- Its static
+- Easy to manage
+- Simple interface
+- Javascript: support
+- Tab cloaking
+- Variety of wisp servers to choose from
+- Costum extensions (example and guide in [/example-extension](https://github.com/0800WebDev/zinc/tree/main/example-extension))
+- Internal URLs/pages
 - [BYOD](https://zinc-byod.vercel.app/) (Bring Your Own Domain)
 
 ## internal urls
@@ -22,16 +23,16 @@ Zinc is a lightweight, static proxy browser with many features designed for a si
 - zinc://changelog
 - zinc://editor
 
-more at zinc://urls
+More at zinc://urls
 
-## official links
+## Official links
 - https://zinc-browser.vercel.app (Main)
 - https://zinc-proxy.vercel.app
 - https://zinc.chemistry.bumon.ar
 - https://zinc.math.bumon.ar
 - https://zinc.happy0.co.uk/
 
-default wisp server:   
+Default wisp server:   
 [wss://pgis-wisp.joytree.site/](https://pgis-wisp.joytree.site/)
 
 ## Credits
@@ -42,7 +43,7 @@ default wisp server:
 
 [PGIS 3](https://github.com/0800WebDev/pgis3)
 
-## legal info about Zinc
+## Legal info about Zinc
 
 Zinc is open source and free to use under the MIT License.
 
