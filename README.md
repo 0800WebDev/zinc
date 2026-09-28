@@ -37,7 +37,8 @@ default wisp server:
 ## Credits
 
 [staticsjv2](https://github.com/Destroyed12121/staticsjv2)
-
+[Scramjet](https://github.com/MercuryWorkshop/scramjet)
+[PGIS 3](https://github.com/0800WebDev/pgis3)
 
 ## legal info about Zinc
 
