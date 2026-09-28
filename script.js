@@ -1,3 +1,17 @@
+/*
+Zinc — Copyright © 2026 0800WebDev
+Licensed under the MIT License. See README.md or zinc://legal for terms.
+https://github.com/0800WebDev/zinc
+*/
+
+
+
+
+
+
+
+
+
 // =====================================================
 // CONFIGURATION - Gets from config.js
 // =====================================================
