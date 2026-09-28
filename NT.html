@@ -333,22 +333,24 @@ updateChangelog.addEventListener("click", () => {
 });
   
 updateImportant.addEventListener("click", () => {
-document.getElementsByClassName("update-box").innerHTML = `
+  document.querySelector(".update-box").innerHTML = `
     <h2>Important Changes</h2>
 
     <ol>
-    <li>Toolbar with bookmarks and extensions.</li>
-    <li>press star icon to bookmark and right-click bookmark to remove.</li>
-    <li>Settings and wisp servers are now separated.</li>
-    <li>More wisp servers to choose from.</li>
-    <li>Tab Cloaking and Close Protection.</li>
-    <li>The ability to switch proxy transport between Epoxy and libcurl.</li>
+      <li>Toolbar with bookmarks and extensions.</li>
+      <li>Press star icon to bookmark and right-click bookmark to remove.</li>
+      <li>Settings and Wisp servers are now separated.</li>
+      <li>More Wisp servers to choose from.</li>
+      <li>Tab Cloaking and Close Protection.</li>
+      <li>The ability to switch proxy transport between Epoxy and libcurl.</li>
     </ol>
-    
+
     <div class="update-buttons">
       <button id="updateOk">OK</button>
     </div>
-`
+  `;
+
+  document.getElementById("updateOk").addEventListener("click", closeUpdatePopup);
 });
   
 </script>
