@@ -147,7 +147,7 @@
  
 
         <button class="menu-btn" onclick="general()"><i class="fa-solid fa-gear"></i>General</button>
-<button class="menu-btn" onclick="proxy()"><i class="fa-solid fa-globe"></i> Proxy</button>
+<button id="general" class="menu-btn" onclick="proxy()"><i class="fa-solid fa-globe"></i> Proxy</button>
 <button class="menu-btn" onclick="theme()"><i class="fa-solid fa-palette"></i> Theme</button>
  <button class="menu-btn" onclick="extensions()">
     <i class="fa-solid fa-puzzle-piece"></i> Extensions</button>
@@ -219,8 +219,9 @@ function general() {
 </div> <br>
             </div>
   `
-        document.querySelector(".menu-btn.active")?.classList.remove("active");
-        button.classList.add("active");
+        document.getElementById("general").classList.add("active");
+    
+
   
   const titleInput = document.getElementById("titleInput");
 const faviconInput = document.getElementById("faviconInput");
