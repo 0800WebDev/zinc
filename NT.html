@@ -235,7 +235,101 @@
 
 <body>
   <div class="loader" id="loader"><div class="spinner"></div></div>
+<div id="updatePopup" class="update-popup">
+  <div class="update-box">
+    <h2>Zinc has been updated!</h2>
+    <p>Version 1.6 is now available.</p>
 
+    <div class="update-buttons">
+      <button id="updateOk">OK</button>
+      <button id="updateChangelog">Changelog</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.update-popup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 99999;
+}
+
+.update-box {
+  width: min(400px, calc(100% - 40px));
+  padding: 24px;
+  background: #0f0f0f;
+  color: white;
+  border: 1px solid #252525;
+  border-radius: 12px;
+  font-family: Inter, sans-serif;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.update-box h2 {
+  margin: 0 0 10px;
+}
+
+.update-box p {
+  margin: 0 0 20px;
+  color: #aaa;
+}
+
+.update-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.update-buttons button {
+  flex: 1;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  background: #252525;
+  color: white;
+}
+
+.update-buttons button:hover {
+  background: #333;
+}
+
+#updateOk {
+  background: #fff;
+  color: #000;
+}
+
+#updateOk:hover {
+  background: #ddd;
+}
+</style>
+
+<script>
+const UPDATE_VERSION = "1.6";
+
+const updatePopup = document.getElementById("updatePopup");
+const updateOk = document.getElementById("updateOk");
+const updateChangelog = document.getElementById("updateChangelog");
+
+if (localStorage.getItem("zincUpdateSeen") !== UPDATE_VERSION) {
+  updatePopup.style.display = "flex";
+}
+
+function closeUpdatePopup() {
+  localStorage.setItem("zincUpdateSeen", UPDATE_VERSION);
+  updatePopup.style.display = "none";
+}
+
+updateOk.addEventListener("click", closeUpdatePopup);
+
+updateChangelog.addEventListener("click", () => {
+  localStorage.setItem("zincUpdateSeen", UPDATE_VERSION);
+  window.location.href = "zinc://changelog";
+});
+</script>
   <div class="glass-panel">
     
 <div class="title">
