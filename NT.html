@@ -327,7 +327,7 @@ updateOk.addEventListener("click", closeUpdatePopup);
 
 updateChangelog.addEventListener("click", () => {
   localStorage.setItem("zincUpdateSeen", UPDATE_VERSION);
-  window.location.href = "zinc://changelog";
+  window.location.href = "internal/changelog.html";
 });
 </script>
   <div class="glass-panel">
@@ -336,7 +336,7 @@ updateChangelog.addEventListener("click", () => {
    <h1>Zinc</h1>
 </div>
     <div class="time-container">
-      <div class="clock" id="clock">00:00</div>
+      <div class="clock" id="clock">00:00:00</div>
       <div class="date" id="date">LOADING...</div>
     </div>
 
