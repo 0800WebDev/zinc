@@ -239,10 +239,10 @@
   <div class="update-box">
     <h2>Zinc has been updated!</h2>
     <p>Version 1.6 is now available.</p>
-
     <div class="update-buttons">
       <button id="updateOk">OK</button>
       <button id="updateChangelog">Changelog</button>
+      <button id="updateImportant">Important Changes</button>
     </div>
   </div>
 </div>
@@ -313,7 +313,9 @@ const UPDATE_VERSION = "1.6";
 const updatePopup = document.getElementById("updatePopup");
 const updateOk = document.getElementById("updateOk");
 const updateChangelog = document.getElementById("updateChangelog");
+const updateImportant = document.getElementById("updateImportant");
 
+  
 if (localStorage.getItem("zincUpdateSeen") !== UPDATE_VERSION) {
   updatePopup.style.display = "flex";
 }
@@ -329,6 +331,26 @@ updateChangelog.addEventListener("click", () => {
   localStorage.setItem("zincUpdateSeen", UPDATE_VERSION);
   window.location.href = "internal/changelog.html";
 });
+  
+updateImportant.addEventListener("click", () => {
+document.getElementsByClassName("update-box").innerHTML = `
+    <h2>Important Changes</h2>
+
+    <ol>
+    <li>Toolbar with bookmarks and extensions.</li>
+    <li>press star icon to bookmark and right-click bookmark to remove.</li>
+    <li>Settings and wisp servers are now separated.</li>
+    <li>More wisp servers to choose from.</li>
+    <li>Tab Cloaking and Close Protection.</li>
+    <li>The ability to switch proxy transport between Epoxy and libcurl.</li>
+    </ol>
+    
+    <div class="update-buttons">
+      <button id="updateOk">OK</button>
+    </div>
+`
+});
+  
 </script>
   <div class="glass-panel">
     
