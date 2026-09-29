@@ -721,7 +721,18 @@ async function initializeCloseProtection() {
 
 
 
+function updateToolbarVisibility() {
+    const toolbar = document.getElementById("toolbar");
+    const bookmarkToolbar = document.getElementById("bookmark-toolbar");
+    const extensionToolbar = document.getElementById("extension-toolbar");
 
+    if (!toolbar || !bookmarkToolbar || !extensionToolbar) return;
+
+    const hasBookmarks = bookmarkToolbar.children.length > 0;
+    const hasExtensions = extensionToolbar.children.length > 0;
+
+    toolbar.style.display = hasBookmarks || hasExtensions ? "" : "none";
+}
 
 
 
@@ -824,6 +835,8 @@ function renderBookmarks() {
 
         toolbar.appendChild(button);
     });
+
+        updateToolbarVisibility();
 }
 
 
@@ -3102,6 +3115,9 @@ async function renderExtensions() {
 
             toolbar.appendChild(img);
         }
+
+                updateToolbarVisibility();
+        
     } catch (error) {
         console.error("Failed to render extensions:", error);
     } finally {
