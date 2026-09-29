@@ -1,0 +1,642 @@
+<!DOCTYPE html> 
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <style>
+      body {
+        background: black;
+      }
+      #menu {
+    position: fixed;
+    left: 0;
+    top: 0vh;
+    background: black;
+    border: 1px solid #444;
+    min-width: 170px;
+    z-index: 1000;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    
+      }
+      #menu button {
+            display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 17px 10px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+        border-radius: 8px;
+      }
+      #menu button:hover {
+    background: #333;
+}
+      hr {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid;
+    flex-shrink: 0;
+}
+  #content {
+    position: fixed;
+    height: 100dvh;
+    width: calc(100vw - 170px);
+    background: black;
+    color: white;
+    bottom: 0px;
+    right: 0px;
+  }
+
+      .settings-content {
+    margin: 0 auto;
+    width: 60%;
+    height: 100%;
+    max-height: none;
+      }
+      .settings-button {
+        color: black !important;
+        width: 100%
+      }
+    
+    .tab-preset {
+      height: 25px;
+      width: 25px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+    .settings-header {
+        border-top: 1px solid #444;
+    }
+
+#bg-preview-container {
+  width: 55%;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+#bg-preview {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+      a {
+        color: white;
+        display: block;
+      }
+.transport-buttons,
+.theme-buttons {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.transport-buttons .settings-button,
+.theme-buttons button {
+  flex: 1;
+}
+      #folderPicker {
+    display: none !important;
+}
+      
+#custom-css-input {
+    background: #111;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    outline: none;
+}
+
+#custom-css-input:focus {
+    border-color: #666;
+}
+      .select-button {
+        border: solid white 1.5px !important;
+        color: white !important;
+        background: black !important;
+      }
+      .select-button.active {
+        border: none !important;
+        color: black !important;
+        background: white !important;
+      }
+#menu button.active {
+    background: white;
+    color: black;
+}
+    </style>
+  </head>
+  <body>
+<div id="menu">
+ 
+
+        <button id="general" class="menu-btn" onclick="general()"><i class="fa-solid fa-gear"></i>General</button>
+<button class="menu-btn" onclick="proxy()"><i class="fa-solid fa-globe"></i> Proxy</button>
+<button class="menu-btn" onclick="theme()"><i class="fa-solid fa-palette"></i> Theme</button>
+ <button class="menu-btn" onclick="extensions()">
+    <i class="fa-solid fa-puzzle-piece"></i> Extensions</button>
+
+  
+</div>
+
+<div id="content">
+</div>
+    
+  <script>
+
+const buttons = document.querySelectorAll(".menu-btn");
+
+buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        document.querySelector(".menu-btn.active")?.classList.remove("active");
+        button.classList.add("active");
+    });
+});
+document.getElementById("general").classList.add("active");
+    
+    //settings
+function general() {
+  document.getElementById("content").innerHTML = `
+  <div class="settings-header">
+                <h2><i class="fa-solid fa-gear"></i>General</h2>
+            </div>
+            <div class="settings-content">
+               
+                <div class="section-title"> Tab title</div>
+                <div class="custom-input-group">
+                    <input type="text" id="titleInput" placeholder="Google Classroom">
+                </div>
+<br>
+<div class="section-title">Favicon</div>
+                <div class="custom-input-group">
+                    <input type="text" id="faviconInput" placeholder="favicon.ico">
+                </div>
+                <br>
+                <div class="section-title">Presets</div>
+                <img class="tab-preset" src="https://zinc-browser.vercel.app/Zinc.png" onclick="setTabPreset('zinc')"> <img class="tab-preset" src="https://google.com/favicon.ico" onclick="setTabPreset('google')"> <img class="tab-preset" src="https://ssl.gstatic.com/classroom/favicon.png" onclick="setTabPreset('classroom')"> <img class="tab-preset" src="https://ssl.gstatic.com/docs/documents/images/docs-favicon-2026-v2.ico" onclick="setTabPreset('docs')"> <img class="tab-preset" src="https://ssl.gstatic.com/images/branding/productlogos/drive_2026/v2/ico/drive_2026_256dp.ico" onclick="setTabPreset('drive')"> <img class="tab-preset" src="https://ssl.gstatic.com/ui/v1/icons/mail/images/favicon_gmail_2026_v2.ico" onclick="setTabPreset('gmail')"> <img class="tab-preset" src="https://raw.githubusercontent.com/chromium/chromium/main/chrome/app/theme/default_100_percent/common/favicon_ntp.png" onclick="setTabPreset('newtab')"> <img class="tab-preset" src="https://www.wikipedia.org/static/favicon/wikipedia.ico" onclick="setTabPreset('wikipedia')">
+<br>
+                <br>
+                <div class="custom-input-group" style=" display: flex; justify-content: center; text-align: center;">
+<button onclick="applyChanges()" class="settings-button" id="applyButton">Apply</button>
+                </div>
+                <hr>
+<div class="section-title">Close protection</div>
+
+<div class="custom-input-group">
+    <div class="transport-buttons">
+        <button id="close-protection-automatic" class="settings-button select-button">
+            Automatic
+        </button>
+        <button id="close-protection-enabled" class="settings-button select-button">
+            Enabled
+        </button>
+        <button id="close-protection-disabled" class="settings-button select-button">
+            Disabled
+        </button>
+    </div>
+</div>
+
+<div class="custom-input-group">
+    <p id="close-protection-description">
+        Automatically enables close protection when a supported school extension is detected.
+    </p> <br>
+</div> <br>
+            </div>
+  `
+    
+
+  
+  const titleInput = document.getElementById("titleInput");
+const faviconInput = document.getElementById("faviconInput");
+
+titleInput.value = localStorage.getItem("pageTitle") || "";
+faviconInput.value = localStorage.getItem("pageFavicon") || "";
+
+initializeCloseProtectionSetting();
+}
+general()
+
+function proxy() {
+  document.getElementById("content").innerHTML = `
+    <div class="settings-header">
+                <h2><i class="fa-solid fa-globe"></i>Proxy</h2>
+            </div>
+             <div class="settings-content">
+                <div class="section-title">Proxy transport</div>
+
+<div class="custom-input-group">
+  <div class="transport-buttons">
+    <button id="epoxy-btn" class="settings-button select-button">Epoxy</button>
+    <button id="libcurl-btn" class="settings-button select-button">libcurl</button>
+  </div>
+</div>
+<div class="custom-input-group">
+<p>Epoxy is faster while Libcurl works on stricter networks.</p>
+
+                </div>
+<hr>
+<div class="section-title">Loading</div>
+<div class="custom-input-group">
+    <button id="autoskip-toggle" class="settings-button">Auto-skip: Off</button>
+<br> </div>
+<br>
+                
+                </div> 
+  `
+  transport();
+  initializeAutoskip();
+}
+
+function theme() {
+  document.getElementById("content").innerHTML = `
+    <div class="settings-header">
+      <h2><i class="fa-solid fa-palette"></i>Theme</h2>
+    </div>
+
+    <div class="settings-content">
+
+      <div class="section-title">Background image</div>
+
+      <div class="custom-input-group">
+        <div class="theme-buttons">
+          <button style="color: black;" id="uploadBtn">Upload</button>
+          <button style="color: black;" id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="section-title">Preview</div>
+
+      <div id="bg-preview-container">
+  <iframe src="/NT.html" id="bg-preview"></iframe>
+</div>
+      <hr>
+
+      <div class="section-title">Custom CSS</div>
+
+      <div class="custom-input-group">
+        <textarea
+          id="custom-css-input"
+          placeholder="body {
+  background: red;
+}
+
+#app {
+  border-radius: 20px;
+}"
+          style="width: 100%; min-height: 300px; resize: vertical; box-sizing: border-box; font-family: monospace;"
+        ></textarea>
+      </div>
+
+      <br>
+
+      <div class="custom-input-group">
+        <button id="apply-css-button" class="settings-button">Apply CSS</button>
+        <button id="reset-css-button" class="settings-button">Reset CSS</button>
+  <br><br>    </div>
+<br><br>
+    </div>
+  `;
+
+  fitPreview();
+  upload();
+  initializeCustomCSS();
+}
+
+      function extensions() {
+  document.getElementById("content").innerHTML = `
+    <div class="settings-header">
+                <h2><i class="fa-solid fa-puzzle-piece"></i>Extensions</h2>
+            </div>
+            <div class="settings-content">
+               
+                <div class="section-title">Import extension</div>
+               <div class="custom-input-group">
+    <button id="extensionUploadBtn" class="settings-button">Upload Extension Zip</button>
+    <input id="folderPicker" type="file" accept=".zip" style="display: none;">
+</div>
+                <br>
+                 <div class="section-title">links</div>
+                <div class="custom-input-group" style="flex-direction: column">
+                   <a href="extensions.html">Manage extensions</a>
+                   <a href="https://zinc-marketplace.vercel.app/" target="_blank">Zinc Marketplace</a>
+                             <br>   </div>
+                <br>
+                </div>
+  `
+        const folderPicker = document.getElementById("folderPicker");
+const extensionUploadBtn = document.getElementById("extensionUploadBtn");
+
+extensionUploadBtn.onclick = () => {
+    folderPicker.click();
+};
+      }
+
+
+
+
+
+
+//general
+
+function initializeCloseProtectionSetting() {
+    const automaticBtn = document.getElementById("close-protection-automatic");
+    const enabledBtn = document.getElementById("close-protection-enabled");
+    const disabledBtn = document.getElementById("close-protection-disabled");
+    const description = document.getElementById("close-protection-description");
+
+    if (!automaticBtn || !enabledBtn || !disabledBtn) return;
+
+    const update = () => {
+        const mode = localStorage.getItem("closeProtection") || "automatic";
+
+        automaticBtn.classList.toggle("active", mode === "automatic");
+        enabledBtn.classList.toggle("active", mode === "enabled");
+        disabledBtn.classList.toggle("active", mode === "disabled");
+
+        if (mode === "automatic") {
+            description.textContent =
+                "Automatically enables close protection when a school extension is detected.";
+        } else if (mode === "enabled") {
+            description.textContent =
+                "Close protection is always enabled.";
+        } else {
+            description.textContent =
+                "Close protection is completely disabled.";
+        }
+    };
+
+    automaticBtn.onclick = () => {
+        localStorage.setItem("closeProtection", "automatic");
+        update();
+    };
+
+    enabledBtn.onclick = () => {
+        localStorage.setItem("closeProtection", "enabled");
+        update();
+    };
+
+    disabledBtn.onclick = () => {
+        localStorage.setItem("closeProtection", "disabled");
+        update();
+    };
+
+    update();
+}
+    
+
+function applyChanges() {
+  const title = document.getElementById("titleInput").value;
+  const favicon = document.getElementById("faviconInput").value;
+
+  window.parent.document.title = title;
+
+  let link = window.parent.document.querySelector("link[rel~='icon']");
+  if (!link) {
+    link = window.parent.document.createElement("link");
+    link.rel = "icon";
+    window.parent.document.head.appendChild(link);
+  }
+
+  link.href = favicon;
+
+  localStorage.setItem("pageTitle", title);
+  localStorage.setItem("pageFavicon", favicon);
+
+  
+const applyBtn = document.getElementById("applyButton");
+
+applyBtn.textContent = "Saved!";
+
+setTimeout(() => {
+  applyBtn.textContent = "Apply";
+}, 1000);
+  }
+
+
+    function setTabPreset(tab) {
+      const TabPreset = tab;
+      if (TabPreset === "zinc") {
+      document.getElementById("titleInput").value = "Zinc";
+      document.getElementById("faviconInput").value = "/Zinc.png";
+      } else if (TabPreset === "google") {
+      document.getElementById("titleInput").value = "Google";
+      document.getElementById("faviconInput").value = "https://google.com/favicon.ico";
+      } else if (TabPreset === "classroom") {
+      document.getElementById("titleInput").value = "Google Classroom";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/classroom/favicon.png";
+      } else if (TabPreset === "docs") {
+      document.getElementById("titleInput").value = "Google Docs";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/docs/documents/images/docs-favicon-2026-v2.ico";
+      } else if (TabPreset === "drive") {
+      document.getElementById("titleInput").value = "Google Drive";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/images/branding/productlogos/drive_2026/v2/ico/drive_2026_256dp.ico";
+      } else if (TabPreset === "gmail") {
+      document.getElementById("titleInput").value = "Gmail";
+      document.getElementById("faviconInput").value = "https://ssl.gstatic.com/ui/v1/icons/mail/images/favicon_gmail_2026_v2.ico";
+      } else if (TabPreset === "newtab") {
+      document.getElementById("titleInput").value = "New Tab";
+      document.getElementById("faviconInput").value = "https://raw.githubusercontent.com/chromium/chromium/main/chrome/app/theme/default_100_percent/common/favicon_ntp.png";
+      } else if (TabPreset === "wikipedia") {
+      document.getElementById("titleInput").value = "Wikipedia";
+      document.getElementById("faviconInput").value = "https://www.wikipedia.org/static/favicon/wikipedia.ico";
+      }
+      applyChanges()
+    }
+
+
+
+
+    //theme
+
+function initializeCustomCSS() {
+    const textarea = document.getElementById("custom-css-input");
+    const applyButton = document.getElementById("apply-css-button");
+    const resetButton = document.getElementById("reset-css-button");
+
+    if (!textarea) return;
+
+    textarea.value = localStorage.getItem("customCSS") || "";
+
+    function applyCSS() {
+        const css = textarea.value;
+
+        localStorage.setItem("customCSS", css);
+
+        if (window.parent && window.parent !== window) {
+            window.parent.applyCustomCSS();
+        }
+
+        applyButton.textContent = "Saved!";
+
+        setTimeout(() => {
+            applyButton.textContent = "Apply";
+        }, 1000);
+    }
+
+    applyButton.onclick = applyCSS;
+
+    resetButton.onclick = () => {
+        localStorage.removeItem("customCSS");
+        textarea.value = "";
+
+        if (window.parent && window.parent !== window) {
+            window.parent.applyCustomCSS();
+        }
+
+        resetButton.textContent = "Reset!";
+
+        setTimeout(() => {
+            resetButton.textContent = "Reset";
+        }, 1000);
+    };
+}
+    
+function fitPreview() {
+  const container = document.getElementById("bg-preview-container");
+  const iframe = document.getElementById("bg-preview");
+
+  if (!container || !iframe) return;
+
+  const virtualWidth = 1920;
+  const virtualHeight = 1080;
+
+  const scale = Math.min(
+    container.clientWidth / virtualWidth,
+    container.clientHeight / virtualHeight
+  );
+
+  iframe.style.width = `${virtualWidth}px`;
+  iframe.style.height = `${virtualHeight}px`;
+  iframe.style.transform = `scale(${scale})`;
+  iframe.style.transformOrigin = "top left";
+}
+
+function reloadPreview() {
+  const oldPreview = document.getElementById("bg-preview");
+
+  if (!oldPreview) return;
+
+  const newPreview = oldPreview.cloneNode(true);
+  newPreview.src = "/NT.html?" + Date.now();
+
+  oldPreview.replaceWith(newPreview);
+
+  fitPreview();
+}
+
+    
+
+    
+    function upload() {
+  const uploadBtn = document.getElementById("uploadBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  const bgUpload = document.createElement("input");
+  bgUpload.type = "file";
+  bgUpload.accept = "image/*";
+  bgUpload.style.display = "none";
+  document.body.appendChild(bgUpload);
+
+  uploadBtn.onclick = () => {
+    bgUpload.click();
+  };
+
+  resetBtn.onclick = () => {
+    localStorage.removeItem("customBg");
+    reloadPreview();
+  };
+
+  bgUpload.onchange = e => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      try {
+        localStorage.setItem("customBg", event.target.result);
+        reloadPreview();
+      } catch (err) {
+        alert("Image too large! Try a smaller file.");
+      }
+    };
+
+    reader.readAsDataURL(file);
+  };
+    }
+
+
+
+
+
+
+
+
+    //proxy
+function transport() {
+    const epoxyBtn = document.getElementById("epoxy-btn");
+const libcurlBtn = document.getElementById("libcurl-btn");
+
+const currentTransport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+epoxyBtn.classList.toggle("active", currentTransport === "epoxy");
+libcurlBtn.classList.toggle("active", currentTransport === "libcurl");
+
+epoxyBtn.onclick = () => {
+    localStorage.setItem("proxyTransport", "epoxy");
+    location.reload();
+};
+
+libcurlBtn.onclick = () => {
+    localStorage.setItem("proxyTransport", "libcurl");
+    location.reload();
+};
+}
+    function initializeAutoskip() {
+    const toggle = document.getElementById("autoskip-toggle");
+
+    if (!toggle) return;
+
+    const updateToggle = () => {
+        const enabled = localStorage.getItem("autoSkip") === "true";
+
+        toggle.textContent = `Auto-skip: ${enabled ? "On" : "Off"}`;
+        toggle.classList.toggle("active", enabled);
+    };
+
+    updateToggle();
+
+    toggle.onclick = () => {
+        const enabled = localStorage.getItem("autoSkip") === "true";
+        const newState = !enabled;
+
+        localStorage.setItem("autoSkip", String(newState));
+
+        updateToggle();
+    };
+}
+  </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="/extension-importer.js"></script>
+
+  </body>
+</html>

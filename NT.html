@@ -155,6 +155,42 @@
     .shortcut-icon img { width: 24px; height: 24px; border-radius: 4px; }
     .shortcut-label {color: #FAFAFA; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; text-align: center; }
 
+
+.custom-shortcut {
+    position: relative;
+}
+
+.delete-shortcut {
+    position: absolute;
+    top: -4px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: #222;
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 2;
+}
+
+.custom-shortcut:hover .delete-shortcut {
+    opacity: 1;
+}
+
+.delete-shortcut:hover {
+    transform: scale(1.15);
+    background: #444;
+}
+
+
+      
     .quote {color: white; margin-top: 30px; font-size: 0.9rem; font-style: italic; opacity: 0.7; }
 
     .loader {
@@ -199,14 +235,134 @@
 
 <body>
   <div class="loader" id="loader"><div class="spinner"></div></div>
+<div id="updatePopup" class="update-popup">
+  <div class="update-box">
+    <h2>Zinc has been updated!</h2>
+    <p>Version 1.6 is now available.</p>
+    <div class="update-buttons">
+      <button id="updateOk">OK</button>
+      <button id="updateChangelog">Changelog</button>
+      <button id="updateImportant">Important Changes</button>
+    </div>
+  </div>
+</div>
 
+<style>
+.update-popup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+}
+
+.update-box {
+  width: min(400px, calc(100% - 40px));
+  padding: 24px;
+  background: #0f0f0f;
+  color: white;
+  border: 1px solid #252525;
+  border-radius: 12px;
+  font-family: Inter, sans-serif;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.update-box h2 {
+  margin: 0 0 10px;
+}
+
+.update-box p {
+  margin: 0 0 20px;
+  color: #aaa;
+}
+
+.update-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.update-buttons button {
+  flex: 1;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  background: #252525;
+  color: white;
+}
+
+.update-buttons button:hover {
+  background: #333;
+}
+
+#updateOk {
+  background: #fff;
+  color: #000;
+}
+
+#updateOk:hover {
+  background: #ddd;
+}
+</style>
+
+<script>
+const UPDATE_VERSION = "1.6";
+
+const updatePopup = document.getElementById("updatePopup");
+const updateOk = document.getElementById("updateOk");
+const updateChangelog = document.getElementById("updateChangelog");
+const updateImportant = document.getElementById("updateImportant");
+
+  
+if (localStorage.getItem("zincUpdateSeen") !== UPDATE_VERSION) {
+  updatePopup.style.display = "flex";
+}
+
+function closeUpdatePopup() {
+  localStorage.setItem("zincUpdateSeen", UPDATE_VERSION);
+  updatePopup.style.display = "none";
+}
+
+updateOk.addEventListener("click", closeUpdatePopup);
+
+updateChangelog.addEventListener("click", () => {
+  localStorage.setItem("zincUpdateSeen", UPDATE_VERSION);
+  window.location.href = "internal/changelog.html";
+});
+  
+updateImportant.addEventListener("click", () => {
+  document.querySelector(".update-box").innerHTML = `
+    <h2>Important Changes</h2>
+
+    <ol>
+      <li>Toolbar with bookmarks and extensions.</li>
+      <li>Press star icon to bookmark and right-click bookmark to remove.</li>
+      <li>Settings and Wisp servers are now separated.</li>
+      <li>More Wisp servers to choose from.</li>
+      <li>Tab Cloaking and Close Protection.</li>
+      <li>The ability to switch proxy transport between Epoxy and libcurl.</li>
+    </ol>
+
+    <div class="update-buttons">
+      <button id="updateOk">OK</button>
+    </div>
+  `;
+
+  document.getElementById("updateOk").addEventListener("click", closeUpdatePopup);
+});
+  
+</script>
   <div class="glass-panel">
     
 <div class="title">
    <h1>Zinc</h1>
 </div>
     <div class="time-container">
-      <div class="clock" id="clock">00:00</div>
+      <div class="clock" id="clock">00:00:00</div>
       <div class="date" id="date">LOADING...</div>
     </div>
 
@@ -233,24 +389,24 @@
         <div class="shortcut-icon"><img src="https://favicon.run/favicon?domain=open.spotify.com&sz=256" alt="Spotify shortcut"></div>
         <span class="shortcut-label">Spotify</span>
       </a>
-      <a class="shortcut" data-url="https://pluto.tv/">
-        <div class="shortcut-icon"><img src="https://cdn.theorg.com/a250f7c7-8d93-487f-bc35-69a5e2145115_medium.jpg" alt="Pluto TV shortcut"></div>
-        <span class="shortcut-label">Pluto TV</span>
+      <a class="shortcut" data-url="https://chatgpt.com/">
+        <div class="shortcut-icon"><img src="https://images.seeklogo.com/logo-png/46/1/chatgpt-logo-png_seeklogo-465219.png" alt="Chatgpt shortcut"></div>
+        <span class="shortcut-label">ChatGPT</span>
       </a>
+        <div id="customShortcuts" style="display: contents;"></div>
       <a class="shortcut" href="/internal/games.html">
         <div class="shortcut-icon"><img src="https://pgis3.vercel.app/assets/games.png" alt="PGIS 3 games shortcut"></div>
         <span class="shortcut-label">Games</span>
       </a>
-      <div id="customShortcuts" style="display: contents;"></div>
 
-      <div class="shortcut" id="uploadBtn">
+      <!--<div class="shortcut" id="uploadBtn">
         <div class="shortcut-icon"><i class="fa-solid fa-image"></i></div>
         <span class="shortcut-label">Set BG</span>
       </div>
       <div class="shortcut" id="resetBtn">
         <div class="shortcut-icon"><i class="fa-solid fa-rotate-left"></i></div>
         <span class="shortcut-label">Reset BG</span>
-      </div>
+      </div> -->
       <div class="shortcut" id="addShortcut">
         <div class="shortcut-icon"><i class="fa-solid fa-plus"></i></div>
         <span class="shortcut-label">Add</span>
@@ -348,20 +504,58 @@
       }
     };
 
-    function renderCustom() {
-      const container = $('#customShortcuts');
-      container.innerHTML = '';
-      const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
-      shortcuts.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'shortcut';
-        div.dataset.url = s.url;
-        div.innerHTML = `<div class="shortcut-icon"><i class="fa-solid fa-link"></i></div><span class="shortcut-label">${s.name}</span>`;
-        container.appendChild(div);
-      });
-    }
+function renderCustom() {
+  const container = $('#customShortcuts');
+  container.innerHTML = '';
+  const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
 
-    const quotes = ["Gaming Paradise", "Made by 0800", "Bro just do your work", "Best Browser awarded by me", "better than nexus", "check out PGIS", "like nexus but better", "The best proxy"];
+  shortcuts.forEach((s, index) => {
+    const div = document.createElement('div');
+    div.className = 'shortcut custom-shortcut';
+    div.dataset.url = s.url;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-shortcut';
+    deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    deleteBtn.title = 'Delete shortcut';
+
+    deleteBtn.onclick = e => {
+      e.stopPropagation();
+
+      const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
+      shortcuts.splice(index, 1);
+      localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
+
+      renderCustom();
+    };
+
+    const icon = document.createElement('img');
+    icon.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(s.url).hostname)}&sz=64`;
+    icon.alt = `${s.name} shortcut`;
+
+    icon.onerror = () => {
+      icon.remove();
+      const fallback = document.createElement('i');
+      fallback.className = 'fa-solid fa-link';
+      div.querySelector('.shortcut-icon').appendChild(fallback);
+    };
+
+    const iconContainer = document.createElement('div');
+    iconContainer.className = 'shortcut-icon';
+    iconContainer.appendChild(icon);
+
+    const label = document.createElement('span');
+    label.className = 'shortcut-label';
+    label.textContent = s.name;
+
+    div.appendChild(deleteBtn);
+    div.appendChild(iconContainer);
+    div.appendChild(label);
+    container.appendChild(div);
+  });
+}
+
+    const quotes = ["Gaming Paradise", "Made by 0800", "Bro just do your work", "Best Browser awarded by me", "One of the best proxies out there.", "check out PGIS", "The best proxy"];
     $('#quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
     renderCustom();
   </script>

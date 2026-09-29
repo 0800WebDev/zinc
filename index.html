@@ -1,10 +1,20 @@
+<!--
+Zinc — Copyright © 2026 0800WebDev
+Licensed under the MIT License. See README.md or zinc://legal for terms.
+https://github.com/0800WebDev/zinc
+-->
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="https://google.com/favicon.ico" type="image/png">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <!--   <link rel="icon" href="https://google.com/favicon.ico" type="image/png"> -->
+    <link rel="icon" href="zinc.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="a lightweight, static proxy browser with many features designed for a simple and flexible browsing experience.">
 <meta name="keywords" content="zinc, zinc browser, web proxy, browser, static proxy, web browser, scramjet, privacy browser, school, unblocker, school proxy, ubg">
 <meta name="author" content="0800">
@@ -12,18 +22,86 @@
 <meta name="google-site-verification" content="Ow9BnhH-kBrfEmLu70Kz_fn9oZhUVvhZzlTfRvrlRY8" />   
     <title>Zinc Browser</title>
     <script>
-document.title = "Google";
+const title = localStorage.getItem("pageTitle") || "Google";
+const favicon = localStorage.getItem("pageFavicon") || "https://google.com/favicon.ico";
+
+window.parent.document.title = title;
+
+let link = window.parent.document.querySelector("link[rel~='icon']");
+
+if (!link) {
+  link = window.parent.document.createElement("link");
+  link.rel = "icon";
+  window.parent.document.head.appendChild(link);
+}
+
+link.href = favicon;
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script type="module">
         import * as BareMux from "https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
         window.BareMux = BareMux;
     </script>
+<style id="custom-user-css"></style>
+
+<script>
+function applyCustomCSS() {
+    const css = localStorage.getItem("customCSS") || "";
+    const output = document.getElementById("custom-user-css");
+
+    if (!output) return;
+
+    output.textContent = "";
+
+    if (!css.trim()) return;
+
+    const temp = document.createElement("style");
+    temp.textContent = css;
+    document.head.appendChild(temp);
+
+    try {
+        const rules = Array.from(temp.sheet.cssRules);
+
+        for (const rule of rules) {
+            processCSSRule(rule);
+        }
+
+        output.textContent = rules.map(rule => rule.cssText).join("\n");
+    } catch {
+        output.textContent = css;
+    }
+
+    temp.remove();
+}
+
+function processCSSRule(rule) {
+    if (rule.style) {
+        for (const property of Array.from(rule.style)) {
+            rule.style.setProperty(
+                property,
+                rule.style.getPropertyValue(property),
+                "important"
+            );
+        }
+    }
+
+    if (rule.cssRules) {
+        for (const childRule of rule.cssRules) {
+            processCSSRule(childRule);
+        }
+    }
+}
+
+applyCustomCSS();
+</script>
     <link rel="stylesheet" href="style.css">
     <script src="./script.js" defer></script>
     <style>
-
+#save-custom-wisp {
+    color: black !important;
+}
     </style>
 </head>
 
@@ -42,20 +120,49 @@ document.title = "Google";
             <div class="settings-content">
                 <div class="section-title"><i class="fa-solid fa-cloud"></i> Select Server</div>
                 <div class="server-list" id="server-list"></div>
-                <div class="section-title"><i class="fa-solid fa-plus-circle"></i> Custom Server</div>
+           <!--     <div class="section-title"><i class="fa-solid fa-plus-circle"></i> Custom Server</div>
                 <div class="custom-input-group">
                     <input type="text" id="custom-wisp-input" placeholder="wss://your-wisp-server.com/wisp/">
                     <button id="save-custom-wisp"><i class="fa-solid fa-plus"></i></button>
-                </div>
+                </div> -->
             </div>
             
-            <div class="settings-footer">
-                Lower ping = faster browsing
-                <br><br><br>
-<hr>
-            </div>
+           <div class="settings-footer">
+
+
+
+    <br>
+
+    <div class="section-title">
+        <i class="fa-solid fa-plus-circle"></i> Custom Server
+    </div>
+
+    <div class="custom-input-group">
+        <input type="text" id="custom-wisp-input" placeholder="wss://your-wisp-server.com/wisp/">
+        <button id="save-custom-wisp">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+
+    <br>
+    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>
+            <i class="fa-solid fa-rotate"></i>
+            Auto-switch on error
+        </span>
+
+        <div class="toggle-switch" id="autoswitch-toggle">
+            <div class="toggle-knob"></div>
+        </div>
+    </div>
+               <hr>
+               <br>
+               
+    Lower ping = faster browsing
+
+</div>
                 
-                <div class="settings-header">
+            <!--    <div class="settings-header">
                 <h2><i class="fa-solid fa-user"></i> User Settings</h2>
             </div>
             <div class="settings-content">
@@ -84,11 +191,11 @@ document.title = "Google";
                 <div class="section-title"><i class="fa-solid fa-file-import"></i> Import extension</div>
                 <div class="custom-input-group">
                    <input id="folderPicker" type="file" webkitdirectory multiple>
-                   <script src="extension-importer.js"></script>
+                   
                 </div>
                 <br>
                
-                </div>
+                </div> -->
             </div>
                             </div>
 
@@ -117,7 +224,7 @@ function applyChanges() {
 
 
 
-
+<script src="extension-importer.js"></script>
     
 
 <script>
@@ -150,19 +257,7 @@ function applyChanges() {
     });
   };
 </script>
-<script>
-const direct = document.referrer === "";
 
-window.vercelFlags = {
-  direct_visit: direct
-};
-
-document.documentElement.setAttribute(
-  "data-flag-direct_visit",
-  direct ? "true" : "false"
-);
-</script>
-    
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

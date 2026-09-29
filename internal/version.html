@@ -38,6 +38,9 @@ body {
     max-width: 60%;
     word-break: break-word;
 }
+    a {
+        color: whitesmoke;
+    }
 </style>
 </head>
 
@@ -47,12 +50,12 @@ body {
 
 <div class="row">
 <span class="label">Version</span>
-<span class="value">1.5.2 Stable</span>
+<span class="value">1.6.0 Stable</span>
 </div>
 
 <div class="row">
 <span class="label">Build</span>
-<span class="value">2026.07.17</span>
+<span class="value">2026.09.29.160</span>
 </div>
 
 <div class="row">
@@ -67,12 +70,17 @@ body {
 
 <div class="row">
 <span class="label">License</span>
-<span class="value">MIT</span>
+<span class="value">MIT <small>(read <a href="/internal/legal.html">zinc://legal</a>)</small></span>
 </div>
-
+    
+<div class="row">
+<span class="label">Commit</span>
+<span class="value"><a id="latestCommit" href="#" target="_blank">Loading...</a></span>
+</div>
+    
 <div class="row">
 <span class="label">Build Date</span>
-<span class="value">July 17, 2026</span>
+<span class="value" id="buildDate">September 29, 2026</span>
 </div>
 
 <div class="row">
@@ -98,6 +106,32 @@ if (!id) {
 }
 
 document.getElementById("browserID").textContent = id;
+
+    fetch("https://api.github.com/repos/0800WebDev/Zinc/commits/main")
+  .then(res => res.json())
+  .then(data => {
+    const date = new Date(data.commit.author.date);
+
+    document.getElementById("buildDate").textContent =
+      date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+  });
+
+    fetch("https://api.github.com/repos/0800WebDev/zinc/commits/main")
+  .then(res => res.json())
+  .then(data => {
+    const hash = data.sha.substring(0, 7);
+    const link = document.getElementById("latestCommit");
+
+    link.textContent = hash;
+    link.href = data.html_url;
+  })
+  .catch(() => {
+    document.getElementById("latestCommit").textContent = "Unavailable";
+  });
 </script>
 
 </body>
