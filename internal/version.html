@@ -75,7 +75,7 @@ body {
 
 <div class="row">
 <span class="label">Build Date</span>
-<span class="value">September 29, 2026</span>
+<span class="value" id="buildDate">September 29, 2026</span>
 </div>
 
 <div class="row">
@@ -101,6 +101,19 @@ if (!id) {
 }
 
 document.getElementById("browserID").textContent = id;
+
+    fetch("https://api.github.com/repos/0800WebDev/Zinc/commits/main")
+  .then(res => res.json())
+  .then(data => {
+    const date = new Date(data.commit.author.date);
+
+    document.getElementById("buildDate").textContent =
+      date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+  });
 </script>
 
 </body>
