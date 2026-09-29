@@ -72,7 +72,12 @@ body {
 <span class="label">License</span>
 <span class="value">MIT <small>(read <a href="/internal/legal.html">zinc://legal</a>)</small></span>
 </div>
-
+    
+<div class="row">
+<span class="label">Commit</span>
+<span class="value"><a id="latestCommit" href="#" target="_blank">Loading...</a></span>
+</div>
+    
 <div class="row">
 <span class="label">Build Date</span>
 <span class="value" id="buildDate">September 29, 2026</span>
@@ -113,6 +118,19 @@ document.getElementById("browserID").textContent = id;
         month: "long",
         day: "numeric"
       });
+  });
+
+    fetch("https://api.github.com/repos/0800WebDev/zinc/commits/main")
+  .then(res => res.json())
+  .then(data => {
+    const hash = data.sha.substring(0, 7);
+    const link = document.getElementById("latestCommit");
+
+    link.textContent = hash;
+    link.href = data.html_url;
+  })
+  .catch(() => {
+    document.getElementById("latestCommit").textContent = "Unavailable";
   });
 </script>
 
