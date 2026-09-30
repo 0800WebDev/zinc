@@ -3128,4 +3128,4 @@ async function renderExtensions() {
             renderExtensions();
         }
     }
-}
+                           }
