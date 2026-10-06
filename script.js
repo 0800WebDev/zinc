@@ -52,6 +52,16 @@ const WISP_SERVERS = [
         group: "PGIS Wisp",
         url: "wss://pgis-wisp.getvoroa.com/"
     },
+    
+    {
+        group: "PGIS Wisp",
+        url: "ws://us.cloud.enzonic.com:25847/"
+    },
+    
+    {
+        group: "PGIS Wisp",
+        url: "ws://78.154.103.49:11376/"
+    },
     {
         group: "Other",
         name: "MercuryWorkshop",
